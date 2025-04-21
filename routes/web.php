@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\CategoryItemControllerAdmin;
 use App\Http\Controllers\Admin\FoodControllerAdmin;
 use Illuminate\Support\Facades\Route;
 
@@ -22,4 +23,5 @@ Route::get('/admin', function () {
     return view('admin.page.dashboard');
 })->name('admin.page.dashboard');
 
-Route::get('/admin/foods', [FoodControllerAdmin::class, 'index'])->name('admin.page.foods');;
+Route::get('/admin/foods', [FoodControllerAdmin::class, 'index'])->name('admin.page.foods');
+Route::get('/admin/category', [CategoryItemControllerAdmin::class, 'index'])->name('admin.page.categories');

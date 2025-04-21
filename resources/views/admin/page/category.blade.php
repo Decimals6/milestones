@@ -7,31 +7,27 @@
                 <div class="col-lg-12 grid-margin stretch-card">
                     <div class="card">
                         <div class="card-body">
-                            <h4 class="card-title">Menu Table</h4>
+                            <h4 class="card-title">Category Table</h4>
                             <p class="card-description">
-                                List Menu
+                                List Category
                             </p>
                             <div class="table-responsive">
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
                                             <th>Nama</th>
-                                            <th>Deskripsi</th>
-                                            <th>Harga</th>
                                             <th>Status</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @forelse ($foods as $food)
+                                        @forelse ($categories as $category)
                                             <tr>
-                                                <td>{{ $food->name }}</td>
-                                                <td>{{ $food->desc }}</td>
-                                                <td>{{ $food->base_price }}</td>
+                                                <td>{{ $category->name }}</td>
                                                 <td><label class="badge badge-success">Active</label></td>
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="3">Belum ada data makanan.</td>
+                                                <td>Belum ada data kategori.</td>
                                                 <td><label class="badge badge-danger">Inactive</label></td>
                                             </tr>
                                         @endforelse
