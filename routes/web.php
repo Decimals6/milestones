@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\FoodControllerAdmin;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,3 +17,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/admin', function () {
+    return view('admin.page.dashboard');
+})->name('admin.page.dashboard');
+
+Route::get('/admin/foods', [FoodControllerAdmin::class, 'index'])->name('admin.page.foods');;
