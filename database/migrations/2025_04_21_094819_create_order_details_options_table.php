@@ -11,15 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('order_details_options', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 45);
-            $table->string('email', 45)->unique();
-            $table->string('password', 255);
-            $table->string('address', 100);
-            $table->string('phone', 15);
-            $table->boolean('is_admin')->default(false);
-            $table->rememberToken();
+            $table->foreignId('order_detail_id')->constrained('order_details')->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignId('food_item_id')->constrained('foods_items')->onDelete('restrict')->onUpdate('cascade');
             $table->timestamps();
         });
     }
@@ -29,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('order_details_options');
     }
 };

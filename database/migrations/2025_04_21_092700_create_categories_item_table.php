@@ -4,17 +4,16 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('payments', function (Blueprint $table) {
+        Schema::create('categories_item', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('transaction_id')->constrained()->onDelete('cascade');
-            $table->decimal('amount_paid', 8, 2);
-            $table->enum('payment_method', ['credit_card', 'bank_transfer', 'cash']);
+            $table->string('name', 45);
             $table->timestamps();
         });
     }
@@ -24,6 +23,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('payments');
+        Schema::dropIfExists('categories_item');
     }
 };
