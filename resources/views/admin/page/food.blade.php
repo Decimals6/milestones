@@ -7,18 +7,18 @@
                 <div class="col-lg-12 grid-margin stretch-card">
                     <div class="card">
                         <div class="card-body">
-                            <h4 class="card-title">Menu Table</h4>
+                            <h4 class="card-title">Food Menu</h4>
                             <p class="card-description">
-                                List Menu
+                                List of all available food items
                             </p>
                             <div class="table-responsive">
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
-                                            <th>Nama</th>
-                                            <th>Deskripsi</th>
-                                            <th>Harga</th>
-                                            <th>Status</th>
+                                            <th>Name</th>
+                                            <th>Description</th>
+                                            <th>Price</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -27,12 +27,17 @@
                                                 <td>{{ $food->name }}</td>
                                                 <td>{{ $food->desc }}</td>
                                                 <td>{{ $food->base_price }}</td>
-                                                <td><label class="badge badge-success">Active</label></td>
+                                                <td>
+                                                    <button type="button" class="btn btn-outline-primary btn-icon-text"
+                                                        data-toggle="modal" data-target="#categoryModal{{ $food->id }}">
+                                                        <i class="ti-file btn-icon-prepend"></i>
+                                                        View Categories
+                                                    </button>
+                                                </td>
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="3">Belum ada data makanan.</td>
-                                                <td><label class="badge badge-danger">Inactive</label></td>
+                                                <td class="text-center" colspan="4">No food data available.</td>
                                             </tr>
                                         @endforelse
                                     </tbody>
@@ -44,4 +49,32 @@
             </div>
         </div>
     </div>
+
+    @foreach ($foods as $food)
+        <!-- Category Modal -->
+        <div class="modal fade" id="categoryModal{{ $food->id }}" tabindex="-1" role="dialog"
+            aria-labelledby="modalLabel{{ $food->id }}" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalLabel{{ $food->id }}">Categories for {{ $food->name }}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        @if ($food->categories->count())
+                            <ul>
+                                @foreach ($food->categories as $category)
+                                    <li>{{ $category->name }}</li>
+                                @endforeach
+                            </ul>
+                        @else
+                            <p class="text-muted">No categories available.</p>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endforeach
 @endsection

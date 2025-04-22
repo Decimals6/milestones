@@ -13,7 +13,7 @@ class FoodControllerAdmin extends Controller
      */
     public function index()
     {
-        $foods = Food::all();
+        $foods = Food::with('categories')->get();
         return view('admin.page.food', compact('foods'));
     }
 
