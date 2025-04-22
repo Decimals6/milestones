@@ -75,7 +75,6 @@
     </div>
 
     @foreach ($foods as $food)
-        <!-- Category Modal -->
         <div class="modal fade" id="categoryModal{{ $food->id }}" tabindex="-1" role="dialog"
             aria-labelledby="modalLabel{{ $food->id }}" aria-hidden="true">
             <div class="modal-dialog" role="document">

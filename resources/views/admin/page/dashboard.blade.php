@@ -4,7 +4,6 @@
 <div class="main-panel">
   <div class="content-wrapper">
 
-    {{-- Quick Actions --}}
     <div class="row mb-4">
       <div class="col-sm-12 text-right">
         <a href="{{ route('admin.food.create') }}" class="btn btn-primary mx-1"><i class="mdi mdi-food-plus"></i> Add Food</a>
@@ -13,7 +12,6 @@
       </div>
     </div>
 
-    {{-- Stat Cards --}}
     <div class="row">
       @php
         $cards = [
