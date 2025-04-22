@@ -36,6 +36,15 @@
 
 
 
+    {{-- sidebar-toogle --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            sidebarToggle.addEventListener('click', function () {
+                document.body.classList.toggle('sidebar-icon-only');
+            });
+        });
+    </script>
 
     <!-- plugins:js -->
     <script src="{{ asset('vendors/js/vendor.bundle.base.js') }}"></script>
