@@ -19,9 +19,14 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// Dashboard
 Route::get('/admin', function () {
     return view('admin.page.dashboard');
-})->name('admin.page.dashboard');
+})->name('admin.dashboard');
 
-Route::get('/admin/foods', [FoodControllerAdmin::class, 'index'])->name('admin.page.foods');
-Route::get('/admin/category', [CategoryItemControllerAdmin::class, 'index'])->name('admin.page.categories');
+// Food admin
+Route::get('/admin/foods', [FoodControllerAdmin::class, 'index'])->name('admin.food.index');
+Route::post('/admin/foods', [FoodControllerAdmin::class, 'store'])->name('admin.food.store');
+
+// Category admin
+Route::get('/admin/category', [CategoryItemControllerAdmin::class, 'index'])->name('admin.category.index');

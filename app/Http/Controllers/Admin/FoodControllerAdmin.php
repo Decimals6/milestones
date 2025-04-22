@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\CategoryItem;
 use Illuminate\Http\Request;
 use App\Models\Food;
 
@@ -13,8 +14,9 @@ class FoodControllerAdmin extends Controller
      */
     public function index()
     {
+        $categories = CategoryItem::all();
         $foods = Food::with('categories')->get();
-        return view('admin.page.food', compact('foods'));
+        return view('admin.page.food', compact('foods', 'categories'));
     }
 
     /**
@@ -30,8 +32,22 @@ class FoodControllerAdmin extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string',
+            'desc' => 'required|string',
+            'base_price' => 'required|numeric',
+            'categories' => 'array|nullable',
+        ]);
+
+        $food = Food::create($validated);
+
+        if ($request->has('categories')) {
+            $food->categories()->sync($request->categories);
+        }
+
+        return redirect()->back()->with('success', 'Food created successfully!');
     }
+
 
     /**
      * Display the specified resource.

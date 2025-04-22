@@ -12,10 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('foods_categories_list', function (Blueprint $table) {
-            $table->id();
             $table->foreignId('food_id')->constrained('foods')->onDelete('restrict')->onUpdate('cascade');
             $table->foreignId('category_item_id')->constrained('categories_item')->onDelete('restrict')->onUpdate('cascade');
-            $table->timestamps();
         });
     }
 
