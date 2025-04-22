@@ -21,6 +21,13 @@
                 <span class="menu-title">Category</span>
             </a>
         </li>
+
+        <li class="nav-item {{ request()->routeIs('admin.orders.index') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('admin.orders.index') }}">
+                <i class="ti-shopping-cart menu-icon"></i>
+                <span class="menu-title">Order</span>
+            </a>
+        </li>
     </ul>
 </nav>
 <!-- partial -->

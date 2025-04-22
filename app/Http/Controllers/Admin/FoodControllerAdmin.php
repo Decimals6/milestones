@@ -24,8 +24,11 @@ class FoodControllerAdmin extends Controller
      */
     public function create()
     {
-        //
+        // perlu data kategori agar bisa assign pivot
+        $categories = CategoryItem::all();
+        return view('admin.page.food_create', compact('categories'));
     }
+
 
     /**
      * Store a newly created resource in storage.
