@@ -86,7 +86,7 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body" style="max-height: 600px; overflow-y: auto;">
                         @if ($food->categories->count())
                             <ul>
                                 @foreach ($food->categories as $category)
