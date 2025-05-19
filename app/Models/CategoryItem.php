@@ -8,12 +8,16 @@ use Illuminate\Database\Eloquent\Model;
 class CategoryItem extends Model
 {
     use HasFactory;
-    protected $table = 'categories_item';
+
     protected $fillable = ['name'];
 
-    public function foods()
-    {return $this->belongsToMany(Food::class, 'foods_categories_list', 'category_item_id', 'food_id');}
+    public function foodItems()
+    {
+        return $this->hasMany(FoodItem::class, 'categories_item_id');
+    }
 
-    public function foodsItems()
-    {return $this->hasMany(FoodsItem::class, 'category_item_id');}
+    public function foods()
+    {
+        return $this->belongsToMany(Food::class, 'food_category_lists', 'categories_item_id', 'foods_id');
+    }
 }

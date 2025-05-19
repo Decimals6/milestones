@@ -5,28 +5,24 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class OrderDetail extends Model
+class DefaultFoodItem extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'foods_id',
-        'orders_id',
-        'notes',
-    ];
+    protected $primaryKey = 'idDefault_Foods_Item';
 
-    public function order()
-    {
-        return $this->belongsTo(Order::class, 'orders_id');
-    }
+    protected $fillable = [
+        'foods_items_id',
+        'foods_id',
+    ];
 
     public function food()
     {
         return $this->belongsTo(Food::class, 'foods_id');
     }
 
-    public function options()
+    public function foodItem()
     {
-        return $this->hasMany(OrderDetailOption::class);
+        return $this->belongsTo(FoodItem::class, 'foods_items_id');
     }
 }

@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string('name', 45);
             $table->string('email', 45)->unique();
             $table->string('password', 255);
-            $table->string('address', 100);
-            $table->string('phone', 15);
+            $table->string('address', 45);
+            $table->string('phone', 15)->nullable();
             $table->boolean('is_admin')->default(false);
             $table->rememberToken();
             $table->timestamps();

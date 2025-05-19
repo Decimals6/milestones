@@ -10,16 +10,24 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasFactory, Notifiable;
 
-    protected $fillable = ['name', 'email', 'password', 'address', 'phone', 'is_admin'];
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'address',
+        'phone',
+        'is_admin',
+    ];
 
-    protected $hidden = ['password', 'remember_token'];
-
-    protected $casts = [
-        'is_admin' => 'boolean',
+    protected $hidden = [
+        'password',
+        'remember_token',
     ];
 
     public function orders()
-    {return $this->hasMany(Order::class);}
+    {
+        return $this->hasMany(Order::class);
+    }
 }

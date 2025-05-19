@@ -14,13 +14,15 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->timestamp('order_time')->useCurrent();
-            $table->double('total_price')->nullable();
-            $table->foreignId('user_id')->constrained('users')->onDelete('restrict')->onUpdate('cascade');
-            $table->enum('payment_method', ['EWALLET', 'CREDIT_CARD', 'DEBIT_CARD', 'QRIS'])->nullable();
-            $table->enum('status', ['RECEIVED', 'INPROGRESS', 'READY', 'COMPLETED'])->nullable();
-            $table->enum('type', ['DINEIN', 'TAKEAWAY'])->nullable();
-            $table->string('orderscol', 45)->nullable();
+            $table->double('total_price');
+            $table->unsignedBigInteger('user_id');
+            $table->enum('status', ['Received', 'INPROGRESS', 'READY', 'COMPLETED']);
+            $table->enum('type', ['DINEIN', 'TAKEAWAY']);
+            $table->unsignedBigInteger('payments_id');
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('payments_id')->references('id')->on('payments')->onDelete('cascade');
         });
     }
 
