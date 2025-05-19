@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name', 45);
             $table->double('price');
-            $table->interger('calories');
+            $table->integer('calories');
             $table->unsignedBigInteger('categories_item_id');
             $table->timestamps();
 
