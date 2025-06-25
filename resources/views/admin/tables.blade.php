@@ -397,7 +397,7 @@
                         <p class="text-sm font-weight-bold mb-0">$2,300</p>
                       </td>
                       <td>
-                        <span class="text-xs font-weight-bold">done</span>
+                        <span class="text-xs font-weight-bold">DONE</span>
                       </td>
                       <td class="align-middle text-center">
                         <div class="d-flex align-items-center justify-content-center">
