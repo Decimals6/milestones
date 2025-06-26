@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\FoodController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'roleOr404:admin'])->group(function () {
@@ -7,5 +8,5 @@ Route::middleware(['auth', 'roleOr404:admin'])->group(function () {
         return view('admin.index');
     })->name('admin.dashboard');
 
-    // Tambah route admin lainnya di sini
+    Route::resource('foods', FoodController::class);
 });
