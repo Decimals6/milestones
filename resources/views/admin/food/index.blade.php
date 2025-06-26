@@ -24,6 +24,68 @@
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
+                            <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createFoodModal">
+                                <i class="icon-plus"></i> Add Food
+                            </button>
+
+                            <!-- Modal Create -->
+                            <div class="modal fade" id="createFoodModal" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <form id="createFoodForm">
+                                        @csrf
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Create Food</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="mb-3">
+                                                    <label>Name</label>
+                                                    <input type="text" name="name" class="form-control" required>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label>Base Price</label>
+                                                    <input type="number" step="0.01" name="base_price"
+                                                        class="form-control" required>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label>Description</label>
+                                                    <textarea name="description" class="form-control"></textarea>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label>Nutrition Info</label>
+                                                    <textarea name="nutrition_info" class="form-control"></textarea>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label>Categories</label>
+                                                    <div class="form-group">
+                                                        @foreach ($categories as $category)
+                                                            <div class="form-check">
+                                                                <input type="checkbox" class="form-check-input"
+                                                                    name="category_ids[]" value="{{ $category->id }}"
+                                                                    id="cat_{{ $category->id }}">
+                                                                <label class="form-check-label"
+                                                                    for="cat_{{ $category->id }}">{{ $category->name }}</label>
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                </div>
+                                                <div class="form-check mb-3">
+                                                    <input class="form-check-input" type="checkbox" name="is_active"
+                                                        value="1">
+                                                    <label class="form-check-label">Active</label>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-primary">Create</button>
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Cancel</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
                             <table class="display" id="basic-1">
                                 <thead>
                                     <tr>
@@ -48,9 +110,9 @@
                                                     <li class="edit">
                                                         <a href="javascript:void(0)" class="text-success edit-food-btn"
                                                             data-bs-toggle="modal"
-                                                            data-bs-target="#editFoodModal{{ $food->id }}"
-                                                            data-id="{{ $food->id }}"
-                                                            data-json='@json($food)'>
+                                                            data-bs-target="#editFoodModal{{ $food['id'] }}"
+                                                            data-id="{{ $food['id'] }}"
+                                                            data-json='{{ $food['json_data'] }}'>
                                                             <i class="icon-pencil-alt"></i>
                                                         </a>
                                                     </li>
@@ -96,6 +158,22 @@
                                                             <div class="mb-3">
                                                                 <label>Nutrition Info</label>
                                                                 <textarea name="nutrition_info" class="form-control">{{ $food->nutrition_info }}</textarea>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label>Categories</label>
+                                                                <div class="form-group">
+                                                                    @foreach ($categories as $category)
+                                                                        <div class="form-check">
+                                                                            <input type="checkbox"
+                                                                                class="form-check-input"
+                                                                                name="category_ids[]"
+                                                                                value="{{ $category->id }}"
+                                                                                id="cat_{{ $category->id }}">
+                                                                            <label class="form-check-label"
+                                                                                for="cat_{{ $category->id }}">{{ $category->name }}</label>
+                                                                        </div>
+                                                                    @endforeach
+                                                                </div>
                                                             </div>
                                                             <div class="form-check mb-3">
                                                                 <input class="form-check-input" type="checkbox"
@@ -152,15 +230,28 @@
         </script>
     @endif
 
-    {{-- delte --}}
     <script>
+        // Tampilkan alert sukses setelah reload
+        $(document).ready(function() {
+            const successMessage = sessionStorage.getItem('foods_success');
+            if (successMessage) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: successMessage,
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                sessionStorage.removeItem('foods_success');
+            }
+        });
+
+        // Delete
         $(document).ready(function() {
             const deleteUrl = "{{ route('foods.destroy', ':id') }}";
 
             $(document).on('click', '.delete-food', function() {
                 const foodId = $(this).data('id');
-                const row = $(this).closest('tr');
-
                 Swal.fire({
                     title: 'Are you sure?',
                     text: "You won't be able to revert this!",
@@ -179,16 +270,9 @@
                                 _token: '{{ csrf_token() }}'
                             },
                             success: function(response) {
-                                row.remove();
-
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Deleted!',
-                                    text: response.message ||
-                                        'Food deleted successfully',
-                                    timer: 2000,
-                                    showConfirmButton: false
-                                });
+                                sessionStorage.setItem('foods_success', response
+                                    .message || 'Food deleted successfully');
+                                location.reload();
                             },
                             error: function() {
                                 Swal.fire({
@@ -202,21 +286,16 @@
                 });
             });
         });
-    </script>
 
-
-    {{-- edit --}}
-    <script>
+        // Edit
         $(document).ready(function() {
             const updateUrl = "{{ route('foods.update', ':id') }}";
 
-            // Handle tombol edit diklik
             $(document).on('click', '.edit-food-btn', function() {
                 const data = $(this).data('json');
                 const id = $(this).data('id');
                 const modal = $('#editFoodModal' + id);
 
-                // Set data ke input di dalam modal
                 modal.find('input[name="name"]').val(data.name);
                 modal.find('input[name="base_price"]').val(data.base_price);
                 modal.find('textarea[name="description"]').val(data.description);
@@ -224,7 +303,6 @@
                 modal.find('input[name="is_active"]').prop('checked', data.is_active ? true : false);
             });
 
-            // Handle form submit
             $(document).on('submit', '.edit-food-form', function(e) {
                 e.preventDefault();
 
@@ -237,24 +315,9 @@
                     method: 'POST',
                     data: formData,
                     success: function(response) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Updated!',
-                            text: response.message,
-                            timer: 2000,
-                            showConfirmButton: false
-                        });
-
-                        const row = $('#food-row-' + foodId);
-                        row.find('td:eq(0)').text(response.data.name);
-                        row.find('td:eq(1)').text(
-                            `$ ${parseFloat(response.data.base_price).toFixed(2).replace('.', ',')}`
-                        );
-                        row.find('td:eq(2)').text(response.data.description);
-                        row.find('td:eq(3)').text(response.data.nutrition_info);
-                        row.find('td:eq(4)').text(response.data.is_active ? 'Yes' : 'No');
-
-                        $('#editFoodModal' + foodId).modal('hide');
+                        sessionStorage.setItem('foods_success', response.message ||
+                            'Food updated successfully');
+                        location.reload();
                     },
                     error: function() {
                         Swal.fire({
@@ -266,7 +329,36 @@
                 });
             });
         });
-    </script>
 
+        // Create
+        $('#createFoodForm').on('submit', function(e) {
+            e.preventDefault();
+
+            const form = $(this);
+            const formData = form.serialize();
+
+            $.ajax({
+                url: "{{ route('foods.store') }}",
+                method: 'POST',
+                data: formData,
+                success: function(response) {
+                    sessionStorage.setItem('foods_success', response.message ||
+                        'Food created successfully');
+                    location.reload();
+                },
+                error: function() {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Failed',
+                        text: 'Create failed, please try again.'
+                    });
+                }
+            });
+        });
+
+        $('#createFoodModal').on('hidden.bs.modal', function() {
+            $(this).find('form')[0].reset();
+        });
+    </script>
 
 @endsection

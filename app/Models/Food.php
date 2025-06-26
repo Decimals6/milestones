@@ -19,4 +19,9 @@ class Food extends Model
         'nutrition_info',
         'is_active',
     ];
+
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class, 'foods_categories_list');
+    }
 }
