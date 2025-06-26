@@ -40,10 +40,11 @@
 
                                     <div class="form-group">
                                         <label class="col-form-label">Password</label>
-                                        <input class="form-control pwd" name="password" type="password"
-                                            placeholder="*********" required>
+                                        <input class="form-control" type="password" name="password" required
+                                            placeholder="*********">
                                         <div class="show-hide"><span class="show"></span></div>
                                     </div>
+
 
                                     <div class="form-group mb-0">
                                         <div class="checkbox p-0">
@@ -97,6 +98,23 @@
                     "Error!", "Sorry, looks like some data are not filled, please try again !", "error"
                 )
             }
+        });
+    </script>
+
+    <script>
+        document.querySelectorAll('.show-hide').forEach(function(wrapper) {
+            const input = wrapper.previousElementSibling;
+            const toggle = wrapper.querySelector('span');
+
+            toggle.addEventListener('click', function() {
+                if (input.type === "password") {
+                    input.type = "text";
+                    toggle.classList.remove("show");
+                } else {
+                    input.type = "password";
+                    toggle.classList.add("show");
+                }
+            });
         });
     </script>
 @endsection
