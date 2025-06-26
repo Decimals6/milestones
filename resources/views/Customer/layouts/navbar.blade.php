@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-white bg-white shadow-sm px-4">
     <div class="container-fluid">
-        <a class="navbar-brand fw-bold text-primary" href="#">Milestones</a>
+        <a class="navbar-brand fw-bold text-primary fs-4" href="#">Milestones</a>
 
         <ul class="navbar-nav ms-auto">
             <li class="nav-item dropdown">
