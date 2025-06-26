@@ -1,12 +1,8 @@
 @extends('admin.layouts.master')
 @section('title', 'Foods Data')
 
-@section('css')
-
-@endsection
-
 @section('style')
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/datatables.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/vendors/datatables.css') }}">
 @endsection
 
 @section('breadcrumb-title')
@@ -14,21 +10,17 @@
 @endsection
 
 @section('breadcrumb-items')
-    <li class="breadcrumb-item">Foods Tables</li>
+    <li class="breadcrumb-item">Data</li>
     <li class="breadcrumb-item active">Foods</li>
 @endsection
 
 @section('content')
     <div class="container-fluid">
         <div class="row">
-            <!-- Foods Starts-->
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header pb-0 card-no-border">
-                        <h3>Zero Configuration</h3><span>DataTables has most features enabled by default, so all you need to
-                            do to use it with your own tables is to call the construction
-                            function:<code>$().DataTable();</code>.</span><span>Searching, ordering and paging goodness will
-                            be immediately added to the table, as shown in this example.</span>
+                        <h3>Foods</h3>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -37,34 +29,91 @@
                                     <tr>
                                         <th>Name</th>
                                         <th>Price</th>
+                                        <th>Description</th>
+                                        <th>Nutrition Info</th>
                                         <th>Active</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($foods as $food)
-                                        <tr>
+                                        <tr id="food-row-{{ $food->id }}">
                                             <td>{{ $food->name }}</td>
-                                            <td>Rp {{ number_format($food->base_price, 0, ',', '.') }}</td>
+                                            <td>$ {{ number_format($food->base_price, 2, ',', '.') }}</td>
+                                            <td>{{ $food->description }}</td>
+                                            <td>{{ $food->nutrition_info }}</td>
                                             <td>{{ $food->is_active ? 'Yes' : 'No' }}</td>
                                             <td>
                                                 <ul class="action">
                                                     <li class="edit">
-                                                        <a href="{{ route('foods.edit', $food->id) }}"><i
-                                                                class="icon-pencil-alt"></i></a>
+                                                        <a href="javascript:void(0)" class="text-success edit-food-btn"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#editFoodModal{{ $food->id }}"
+                                                            data-id="{{ $food->id }}"
+                                                            data-json='@json($food)'>
+                                                            <i class="icon-pencil-alt"></i>
+                                                        </a>
                                                     </li>
                                                     <li class="delete">
-                                                        <form action="{{ route('foods.destroy', $food->id) }}"
-                                                            method="POST">
-                                                            @csrf @method('DELETE')
-                                                            <button style="border: none; background: none;" type="submit">
-                                                                <i class="icon-trash"></i>
-                                                            </button>
-                                                        </form>
+                                                        <a href="javascript:void(0)" class="text-danger delete-food"
+                                                            data-id="{{ $food->id }}">
+                                                            <i class="icon-trash"></i>
+                                                        </a>
                                                     </li>
                                                 </ul>
                                             </td>
                                         </tr>
+
+                                        <!-- Modal Edit -->
+                                        <div class="modal fade" id="editFoodModal{{ $food->id }}" tabindex="-1"
+                                            aria-labelledby="editModalLabel{{ $food->id }}" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <form class="edit-food-form" data-id="{{ $food->id }}">
+                                                    @csrf
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="editModalLabel{{ $food->id }}">
+                                                                Edit Food</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                                aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div class="mb-3">
+                                                                <label>Name</label>
+                                                                <input type="text" name="name" class="form-control"
+                                                                    value="{{ $food->name }}" required>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label>Base Price</label>
+                                                                <input type="number" step="0.01" name="base_price"
+                                                                    class="form-control" value="{{ $food->base_price }}"
+                                                                    required>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label>Description</label>
+                                                                <textarea name="description" class="form-control">{{ $food->description }}</textarea>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label>Nutrition Info</label>
+                                                                <textarea name="nutrition_info" class="form-control">{{ $food->nutrition_info }}</textarea>
+                                                            </div>
+                                                            <div class="form-check mb-3">
+                                                                <input class="form-check-input" type="checkbox"
+                                                                    name="is_active" value="1"
+                                                                    {{ $food->is_active ? 'checked' : '' }}>
+                                                                <label class="form-check-label">Active</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="submit" class="btn btn-success">Update</button>
+                                                            <button type="button" class="btn btn-secondary"
+                                                                data-bs-dismiss="modal">Cancel</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        <!-- End Modal -->
                                     @endforeach
                                 </tbody>
                             </table>
@@ -72,12 +121,152 @@
                     </div>
                 </div>
             </div>
-            <!-- Foods Ends-->
         </div>
     </div>
+
 @endsection
 
 @section('script')
     <script src="{{ asset('assets/js/datatable/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('assets/js/datatable/datatables/datatable.custom.js') }}"></script>
+
+    @if (session('success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: '{{ session('success') }}',
+                timer: 2500,
+                showConfirmButton: false
+            });
+        </script>
+    @endif
+
+    @if (session('error'))
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: '{{ session('error') }}',
+            });
+        </script>
+    @endif
+
+    {{-- delte --}}
+    <script>
+        $(document).ready(function() {
+            const deleteUrl = "{{ route('foods.destroy', ':id') }}";
+
+            $(document).on('click', '.delete-food', function() {
+                const foodId = $(this).data('id');
+                const row = $(this).closest('tr');
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc3545',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: deleteUrl.replace(':id', foodId),
+                            type: 'POST',
+                            data: {
+                                _method: 'DELETE',
+                                _token: '{{ csrf_token() }}'
+                            },
+                            success: function(response) {
+                                row.remove();
+
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Deleted!',
+                                    text: response.message ||
+                                        'Food deleted successfully',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+                            },
+                            error: function() {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Failed!',
+                                    text: 'Failed to delete food item.'
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+
+
+    {{-- edit --}}
+    <script>
+        $(document).ready(function() {
+            const updateUrl = "{{ route('foods.update', ':id') }}";
+
+            // Handle tombol edit diklik
+            $(document).on('click', '.edit-food-btn', function() {
+                const data = $(this).data('json');
+                const id = $(this).data('id');
+                const modal = $('#editFoodModal' + id);
+
+                // Set data ke input di dalam modal
+                modal.find('input[name="name"]').val(data.name);
+                modal.find('input[name="base_price"]').val(data.base_price);
+                modal.find('textarea[name="description"]').val(data.description);
+                modal.find('textarea[name="nutrition_info"]').val(data.nutrition_info);
+                modal.find('input[name="is_active"]').prop('checked', data.is_active ? true : false);
+            });
+
+            // Handle form submit
+            $(document).on('submit', '.edit-food-form', function(e) {
+                e.preventDefault();
+
+                const form = $(this);
+                const foodId = form.data('id');
+                const formData = form.serialize() + '&_method=PUT';
+
+                $.ajax({
+                    url: updateUrl.replace(':id', foodId),
+                    method: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Updated!',
+                            text: response.message,
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+
+                        const row = $('#food-row-' + foodId);
+                        row.find('td:eq(0)').text(response.data.name);
+                        row.find('td:eq(1)').text(
+                            `$ ${parseFloat(response.data.base_price).toFixed(2).replace('.', ',')}`
+                        );
+                        row.find('td:eq(2)').text(response.data.description);
+                        row.find('td:eq(3)').text(response.data.nutrition_info);
+                        row.find('td:eq(4)').text(response.data.is_active ? 'Yes' : 'No');
+
+                        $('#editFoodModal' + foodId).modal('hide');
+                    },
+                    error: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Failed',
+                            text: 'Update failed, please try again.'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+
+
 @endsection

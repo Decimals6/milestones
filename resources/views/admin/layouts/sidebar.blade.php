@@ -40,16 +40,14 @@
                             <svg class="fill-icon">
                                 <use href="{{ asset('assets/svg/icon-sprite.svg#fill-form') }}"></use>
                             </svg><span>Documentation </span></a></li>
-                    <li class="sidebar-list">
-                        <label class="badge badge-light-danger">Latest </label><a
-                            class="sidebar-link sidebar-title link-nav" href="{{ route('kanban') }}">
+                    <li class="sidebar-list"><a class="sidebar-link sidebar-title"
+                            href="{{ route('foods.index') }}">
                             <svg class="stroke-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-board') }}"></use>
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-home') }}"></use>
                             </svg>
                             <svg class="fill-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-board') }}"></use>
-                            </svg><span>kanban Board</span></a>
-                    </li>
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-home') }}"></use>
+                            </svg><span>Foods</span></a></li>
                 </ul>
             </div>
             <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>
