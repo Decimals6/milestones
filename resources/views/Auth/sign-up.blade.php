@@ -52,15 +52,13 @@
 
                                 <div class="form-group">
                                     <label class="col-form-label">Password</label>
-                                    <input class="form-control" type="password" name="password" required
-                                        placeholder="*********">
+                                    <input class="form-control" type="password" name="password" required placeholder="*********">
                                     <div class="show-hide"><span class="show"></span></div>
                                 </div>
 
                                 <div class="form-group">
                                     <label class="col-form-label">Confirm Password</label>
-                                    <input class="form-control" type="password" name="password_confirmation" required
-                                        placeholder="*********">
+                                    <input class="form-control" type="password" name="password_confirmation" required placeholder="*********">
                                     <div class="show-hide"><span class="show"></span></div>
                                 </div>
 
@@ -103,4 +101,21 @@
             swal("Error!", "{{ $errors->first() }}", "error");
         </script>
     @endif
+
+    <script>
+        document.querySelectorAll('.show-hide').forEach(function(wrapper) {
+            const input = wrapper.previousElementSibling;
+            const toggle = wrapper.querySelector('span');
+
+            toggle.addEventListener('click', function () {
+                if (input.type === "password") {
+                    input.type = "text";
+                    toggle.classList.remove("show");
+                } else {
+                    input.type = "password";
+                    toggle.classList.add("show");
+                }
+            });
+        });
+    </script>
 @endsection
