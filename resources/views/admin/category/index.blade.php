@@ -52,16 +52,15 @@
                                         <tr id="cat-row-{{ $cat->id }}">
                                             <td>{{ $cat->name }}</td>
                                             <td>{{ $cat->description }}</td>
-                                            <td>{{ $cat->foods->count() }}</td>
+                                            <td>
+                                                <a href="#" class="text-info show-foods-btn" data-bs-toggle="modal"
+                                                    data-bs-target="#showFoodsModal"
+                                                    data-json='@json($cat->foods->pluck('name', 'id'))'>
+                                                    <i class="icon-list"></i>
+                                                </a>
+                                            </td>
                                             <td>
                                                 <ul class="action">
-                                                    <li class="show">
-                                                        <a href="#" class="text-info show-foods-btn"
-                                                            data-bs-toggle="modal" data-bs-target="#showFoodsModal"
-                                                            data-json='@json($cat->foods->pluck('id', 'name'))'>
-                                                            <i class="icon-list"></i>
-                                                        </a>
-                                                    </li>
                                                     <li class="edit">
                                                         <a href="#" class="text-success edit-cat-btn"
                                                             data-bs-toggle="modal"
@@ -259,12 +258,20 @@
             });
 
             // Show foods list
-            $('body').on('click', '.show-foods-btn', function() {
-                const arr = $(this).data('json');
-                $('#foodsList').empty();
-                Object.entries(arr).forEach(([id, name]) => {
-                    $('#foodsList').append(`<li>${name}</li>`);
-                });
+            $(document).on('click', '.show-foods-btn', function() {
+                const foods = $(this).data('json');
+                const $list = $('#foodsList');
+                $list.empty();
+
+                $list.append(`<li><strong>Total Foods:</strong> ${Object.keys(foods).length}</li>`);
+
+                if (Object.keys(foods).length === 0) {
+                    $list.append('<li><em>No foods available.</em></li>');
+                } else {
+                    Object.entries(foods).forEach(([id, name]) => {
+                        $list.append(`<li>${name}</li>`);
+                    });
+                }
             });
         });
     </script>

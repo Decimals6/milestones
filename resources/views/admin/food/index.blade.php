@@ -28,64 +28,6 @@
                                 <i class="icon-plus"></i> Add Food
                             </button>
 
-                            <!-- Modal Create -->
-                            <div class="modal fade" id="createFoodModal" tabindex="-1" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <form id="createFoodForm">
-                                        @csrf
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title">Create Food</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <div class="mb-3">
-                                                    <label>Name</label>
-                                                    <input type="text" name="name" class="form-control" required>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label>Base Price</label>
-                                                    <input type="number" step="0.01" name="base_price"
-                                                        class="form-control" required>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label>Description</label>
-                                                    <textarea name="description" class="form-control"></textarea>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label>Nutrition Info</label>
-                                                    <textarea name="nutrition_info" class="form-control"></textarea>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label>Categories</label>
-                                                    <div class="form-group">
-                                                        @foreach ($categories as $category)
-                                                            <div class="form-check">
-                                                                <input type="checkbox" class="form-check-input"
-                                                                    name="category_ids[]" value="{{ $category->id }}"
-                                                                    id="cat_{{ $category->id }}">
-                                                                <label class="form-check-label"
-                                                                    for="cat_{{ $category->id }}">{{ $category->name }}</label>
-                                                            </div>
-                                                        @endforeach
-                                                    </div>
-                                                </div>
-                                                <div class="form-check mb-3">
-                                                    <input class="form-check-input" type="checkbox" name="is_active"
-                                                        value="1">
-                                                    <label class="form-check-label">Active</label>
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="submit" class="btn btn-primary">Create</button>
-                                                <button type="button" class="btn btn-secondary"
-                                                    data-bs-dismiss="modal">Cancel</button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-
                             <table class="display" id="basic-1">
                                 <thead>
                                     <tr>
@@ -94,6 +36,7 @@
                                         <th>Description</th>
                                         <th>Nutrition Info</th>
                                         <th>Active</th>
+                                        <th>Categories</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -106,13 +49,20 @@
                                             <td>{{ $food->nutrition_info }}</td>
                                             <td>{{ $food->is_active ? 'Yes' : 'No' }}</td>
                                             <td>
+                                                <a href="#" class="text-info show-categories-btn"
+                                                    data-bs-toggle="modal" data-bs-target="#showCategoriesModal"
+                                                    data-json='@json($food->categories->pluck('name'))'>
+                                                    <i class="icon-list"></i>
+                                                </a>
+                                            </td>
+                                            <td>
                                                 <ul class="action">
                                                     <li class="edit">
                                                         <a href="javascript:void(0)" class="text-success edit-food-btn"
                                                             data-bs-toggle="modal"
-                                                            data-bs-target="#editFoodModal{{ $food['id'] }}"
-                                                            data-id="{{ $food['id'] }}"
-                                                            data-json='{{ $food['json_data'] }}'>
+                                                            data-bs-target="#editFoodModal{{ $food->id }}"
+                                                            data-id="{{ $food->id }}"
+                                                            data-json='@json($food)'>
                                                             <i class="icon-pencil-alt"></i>
                                                         </a>
                                                     </li>
@@ -164,8 +114,7 @@
                                                                 <div class="form-group">
                                                                     @foreach ($categories as $category)
                                                                         <div class="form-check">
-                                                                            <input type="checkbox"
-                                                                                class="form-check-input"
+                                                                            <input type="checkbox" class="form-check-input"
                                                                                 name="category_ids[]"
                                                                                 value="{{ $category->id }}"
                                                                                 id="cat_{{ $category->id }}">
@@ -197,6 +146,77 @@
                             </table>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Modal Create -->
+    <div class="modal fade" id="createFoodModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <form id="createFoodForm">
+                @csrf
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Create Food</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label>Name</label>
+                            <input type="text" name="name" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label>Base Price</label>
+                            <input type="number" step="0.01" name="base_price" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label>Description</label>
+                            <textarea name="description" class="form-control"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label>Nutrition Info</label>
+                            <textarea name="nutrition_info" class="form-control"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label>Categories</label>
+                            <div class="form-group">
+                                @foreach ($categories as $category)
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" name="category_ids[]"
+                                            value="{{ $category->id }}" id="cat_{{ $category->id }}">
+                                        <label class="form-check-label"
+                                            for="cat_{{ $category->id }}">{{ $category->name }}</label>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" name="is_active" value="1">
+                            <label class="form-check-label">Active</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Create</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Show Categories Modal -->
+    <div class="modal fade" id="showCategoriesModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Categories</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <ul id="categoriesList"></ul>
                 </div>
             </div>
         </div>
@@ -301,6 +321,12 @@
                 modal.find('textarea[name="description"]').val(data.description);
                 modal.find('textarea[name="nutrition_info"]').val(data.nutrition_info);
                 modal.find('input[name="is_active"]').prop('checked', data.is_active ? true : false);
+
+                const categoryIds = (data.categories || []).map(cat => cat.id);
+                modal.find('input[name="category_ids[]"]').each(function() {
+                    const checkbox = $(this);
+                    checkbox.prop('checked', categoryIds.includes(parseInt(checkbox.val())));
+                });
             });
 
             $(document).on('submit', '.edit-food-form', function(e) {
@@ -358,6 +384,23 @@
 
         $('#createFoodModal').on('hidden.bs.modal', function() {
             $(this).find('form')[0].reset();
+        });
+
+        // Show categories list
+        $(document).on('click', '.show-categories-btn', function() {
+            const categories = $(this).data('json');
+            const $list = $('#categoriesList');
+            $list.empty();
+
+            $list.append(`<li><strong>Total Categories:</strong> ${categories.length}</li>`);
+
+            if (categories.length === 0) {
+                $list.append('<li><em>No categories assigned.</em></li>');
+            } else {
+                categories.forEach(cat => {
+                    $list.append(`<li>${cat}</li>`);
+                });
+            }
         });
     </script>
 
