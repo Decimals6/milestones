@@ -1,6 +1,7 @@
-<div class="input-group w-100">
-    <span class="input-group-text bg-white dark:bg-secondary border-end-0">
-        <i class="bi bi-search text-muted"></i>
-    </span>
-    <input type="text" class="form-control border-start-0 dark:bg-dark dark:text-light" placeholder="Are you hungry?">
+@props(['action' => '#','name' => 'q','value' => ''])
+<div class="position-relative w-100" style="max-width:640px">
+    <input name="{{ $name }}" value="{{ $value }}"
+           class="form-control ps-5 py-2 rounded-pill border-0 shadow-sm dark:bg-dark dark:text-light"
+           placeholder="Search menu or item…" autocomplete="off">
+    <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-4 text-muted"></i>
 </div>
