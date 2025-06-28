@@ -2,99 +2,139 @@
 @section('title','Home')
 
 @section('content')
+<style>
+.section-title{font-weight:700;margin-bottom:.5rem}
+.special-box{border-radius:1.25rem;overflow:hidden}
+.discover-box{background:#f4f8ff;border-radius:1.25rem;padding:1.5rem}
+.discover-item{display:flex;flex-direction:column;align-items:center;gap:.35rem;width:85px}
+.discover-item img{width:68px;height:68px;object-fit:cover;border-radius:.75rem}
+.dark .discover-box{background:#232323;border:1px solid #3a3a3a}
+.dark .discover-item small{color:#f1f1f1}
+
+/* horizontal scroll container */
+.scroll-x{display:flex;gap:1.25rem;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:.5rem}
+.scroll-x::-webkit-scrollbar{display:none}
+.scroll-x{-ms-overflow-style:none;scrollbar-width:none}
+.scroll-x > *{scroll-snap-align:start;flex-shrink:0}
+
+/* preserve full size card */
+.card-wrapper, .card2-wrapper{width:auto;max-width:none}
+
+/* fallback for mobile */
+@media (max-width:575.98px){
+  .discover-box{padding:1rem}
+  .discover-item{width:64px}
+  .discover-item img{width:54px;height:54px}
+  .scroll-x>.card-wrapper,
+  .scroll-x>.card2-wrapper{flex:0 0 85%;max-width:85%}
+}
+
+.chef-wrap{background:#fff6f6;border-radius:1.25rem;padding:1.5rem;position:relative}
+.dark .chef-wrap{background:#2b2b2b}
+.chef-arrow{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;border:2px solid #e63946;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#fff;color:#e63946;cursor:pointer;transition:.2s}
+.chef-arrow:hover{background:#e63946;color:#fff}
+.chef-arrow.prev{left:-21px}
+.chef-arrow.next{right:-21px}
+</style>
+
 <div class="container">
-
-    {{-- === 1. TOP SECTION (Banner + Discoveries) ========================== --}}
-    <div class="row g-3 mb-4">
-
-        {{-- Banner / Today’s Specials ------------------------------------------------ --}}
-        <div class="col-12 col-md-8">
-            <h5 class="fw-bold text-light-emphasis dark:text-white mb-2">Today’s Specials</h5>
-
-            <div id="bannerCarousel" class="carousel slide rounded-3 overflow-hidden shadow-sm" data-bs-ride="carousel">
-                <div class="carousel-inner">
-                    @foreach([
-                        'https://picsum.photos/seed/pizza/1200/300',
-                        'https://picsum.photos/seed/burger/1200/300',
-                        'https://picsum.photos/seed/salad/1200/300'
-                    ] as $i=>$img)
-                        <div class="carousel-item {{ $i==0?'active':'' }}">
-                            <img src="{{ $img }}" class="d-block w-100" alt="Banner {{ $i+1 }}" loading="lazy">
-                        </div>
-                    @endforeach
-                </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#bannerCarousel" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon"></span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#bannerCarousel" data-bs-slide="next">
-                    <span class="carousel-control-next-icon"></span>
-                </button>
+  <div class="row g-4 mb-5">
+    <div class="col-12 col-lg-8">
+      <h5 class="section-title">Today’s Specials</h5>
+      <div id="specialCarousel" class="carousel slide special-box" data-bs-touch="true" data-bs-ride="carousel">
+        <div class="carousel-inner">
+          @foreach(['pizza','burger','salad','coffee'] as $k=>$seed)
+            <div class="carousel-item {{ !$k?'active':'' }}">
+              <img src="https://picsum.photos/seed/{{ $seed }}/1200/350" class="d-block w-100" loading="lazy">
             </div>
+          @endforeach
         </div>
-
-        {{-- Dish Discoveries --------------------------------------------------------- --}}
-        <div class="col-12 col-md-4">
-            <div class="p-3 rounded-3 bg-light dark:bg-dark shadow-sm h-100">
-                <h5 class="fw-bold text-center mb-3">Dish Discoveries</h5>
-                <div class="row row-cols-4 row-cols-md-3 g-2 text-center">
-                    @foreach(['Set Menu','Hot Item','Biriyani','Drinks','Pizza','Sandwich','Burger','Dessert'] as $cat)
-                        <div class="col">
-                            <div class="rounded-3 bg-white dark:bg-black p-2 h-100 d-flex flex-column align-items-center justify-content-center">
-                                <img src="https://picsum.photos/seed/{{ Str::slug($cat) }}/60/60"
-                                     class="rounded-2 mb-1" alt="{{ $cat }}" loading="lazy">
-                                <small class="fw-medium text-dark dark:text-white">{{ $cat }}</small>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-
+      </div>
     </div>
-
-    {{-- === 2. LOCAL EATS ========================================================= --}}
-    <section class="mb-4">
-
-        <div class="d-flex justify-content-between align-items-center mb-2">
-            <h5 class="fw-bold mb-0">Local Eats</h5>
-            <a href="#" class="small text-decoration-none text-primary">Discover All</a>
+    <div class="col-12 col-lg-4">
+      <div class="discover-box h-100">
+        <h5 class="text-center fw-semibold mb-3">Dish Discoveries</h5>
+        <div class="d-flex flex-wrap justify-content-center gap-3">
+          @foreach(['Set Menu','Hot Item','Biriyani','Drinks','Pizza','Sandwich','Burger','Dessert'] as $cat)
+            <div class="discover-item text-center">
+              <img src="https://picsum.photos/seed/{{ Str::slug($cat) }}/120" loading="lazy">
+              <small class="fw-semibold">{{ $cat }}</small>
+            </div>
+          @endforeach
         </div>
+      </div>
+    </div>
+  </div>
 
-        {{-- 2a •  GRID (desktop) ---------------------------------------------------- --}}
-        <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 g-3 d-none d-md-flex">
-            @foreach([
-                ['Zinger & Pop','https://picsum.photos/seed/zinger/400/300',100,4.0,false],
-                ['Popcorn Rice Bowl','https://picsum.photos/seed/rice/400/300',130,4.2,false],
-                ['Chizza Meal','https://picsum.photos/seed/chizza/400/300',258,4.0,true],
-                ['Spicy Burger','https://picsum.photos/seed/spicy/400/300',72,3.0,true],
-            ] as [$name,$img,$price,$rating,$sale])
-                <div class="col">
-                    @include('Customer.components.product-card',[
-                        'image'=>$img,'title'=>$name,'price'=>$price,
-                        'rating'=>$rating,'sale'=>$sale,'isFav'=>false
-                    ])
-                </div>
-            @endforeach
+  <section class="mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h5 class="section-title">Local Eats</h5>
+      <a href="#" class="small fw-semibold text-primary text-decoration-none">Discover All</a>
+    </div>
+    <div class="scroll-x">
+      @foreach([['Zinger & Pop','zinger',100,4.0,0,false],['Popcorn Rice Bowl','rice',130,4.2,0,false],['Chizza Meal','chizza',258,4.1,14,false],['Spicy Burger','spicy',72,4.0,40,false]] as $item)
+        <div class="card-wrapper">
+          <x-product-card
+            :image="'https://picsum.photos/seed/'.$item[1].'/400/300'"
+            :title="$item[0]"
+            :price="$item[2]"
+            :rating="$item[3]"
+            :off="$item[4] ?: null"
+            :sold-out="$item[5]" />
         </div>
+      @endforeach
+    </div>
+  </section>
 
-        {{-- 2b •  HORIZONTAL SCROLL (mobile) -------------------------------------- --}}
-        <div class="d-flex gap-3 overflow-auto d-md-none pb-2">
-            @foreach([
-                ['Zinger & Pop','https://picsum.photos/seed/zinger/400/300',100,4.0,false],
-                ['Popcorn Rice Bowl','https://picsum.photos/seed/rice/400/300',130,4.2,false],
-                ['Chizza Meal','https://picsum.photos/seed/chizza/400/300',258,4.0,true],
-                ['Spicy Burger','https://picsum.photos/seed/spicy/400/300',72,3.0,true],
-            ] as [$name,$img,$price,$rating,$sale])
-                <div style="min-width: 60%; max-width: 60%;">
-                    @include('Customer.components.product-card',[
-                        'image'=>$img,'title'=>$name,'price'=>$price,
-                        'rating'=>$rating,'sale'=>$sale,'isFav'=>false
-                    ])
-                </div>
-            @endforeach
+  <section class="mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h5 class="section-title">Flavorful Set</h5>
+      <a href="#" class="small fw-semibold text-primary text-decoration-none">Discover All</a>
+    </div>
+    <div class="scroll-x">
+      @foreach([['Popcorn Rice Bowl','rice',130,4.2,0,false],['Zinger & Pop','zinger',100,4.0,0,false],['Set Menu 2','set',240,4.4,0,false],['Special Cold Coffee','coffee',171,5.0,0,false]] as $item)
+        <div class="card2-wrapper">
+          <x-product-card-2
+            :image="'https://picsum.photos/seed/'.$item[1].'/500/350'"
+            :title="$item[0]"
+            :price="$item[2]"
+            :rating="$item[3]"
+            :off="$item[4] ?: null"
+            :sold-out="$item[5]" />
         </div>
+      @endforeach
+    </div>
+  </section>
 
-    </section>
-
+  <section class="mb-5 position-relative">
+    <h5 class="section-title text-center mb-3">Chef's Recommendation <i class="bi bi-emoji-smile"></i></h5>
+    <div class="chef-wrap">
+      <div class="scroll-x" id="chefScroll">
+        @foreach([['Beef Biriyani With Spice','biriyani',300,4.6,20,true],['Ice Cream cremmm','ice',270,4.9,30,false],['Special Cold Coffee','coffee',171,4.4,5,false],['Cheese Sandwich','sandwich',110,4.1,0,false]] as $item)
+          <div class="card-wrapper">
+            <x-product-card
+              :image="'https://picsum.photos/seed/'.$item[1].'/500/350'"
+              :title="$item[0]"
+              :price="$item[2]"
+              :rating="$item[3]"
+              :off="$item[4] ?: null"
+              :sold-out="$item[5]" />
+          </div>
+        @endforeach
+      </div>
+      <div class="chef-arrow prev" onclick="chefNavigate(-1)"><i class="bi bi-arrow-left"></i></div>
+      <div class="chef-arrow next" onclick="chefNavigate(1)"><i class="bi bi-arrow-right"></i></div>
+    </div>
+  </section>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+const chefScroll = document.getElementById('chefScroll');
+function chefNavigate(dir) {
+  chefScroll.scrollBy({left: chefScroll.clientWidth*0.8*dir, behavior:'smooth'});
+}
+new bootstrap.Carousel('#specialCarousel',{interval:4000, ride:'carousel'});
+</script>
+@endpush
