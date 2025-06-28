@@ -16,6 +16,7 @@ class FoodItem extends Model
         'name',
         'extra_price',
         'is_active',
+        'is_default',
     ];
 
     public function food()

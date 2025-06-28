@@ -114,21 +114,22 @@
                                                                 <div class="form-group">
                                                                     @foreach ($categories as $category)
                                                                         <div class="form-check">
-                                                                            <input type="checkbox" class="form-check-input"
-                                                                                name="category_ids[]"
-                                                                                value="{{ $category->id }}"
-                                                                                id="cat_{{ $category->id }}">
-                                                                            <label class="form-check-label"
-                                                                                for="cat_{{ $category->id }}">{{ $category->name }}</label>
+                                                                            <label
+                                                                                class="form-check-label">
+                                                                                <input type="checkbox"
+                                                                                    class="form-check-input"
+                                                                                    name="category_ids[]"
+                                                                                    value="{{ $category->id }}"
+                                                                                    id="cat_{{ $category->id }}">{{ $category->name }}</label>
                                                                         </div>
                                                                     @endforeach
                                                                 </div>
                                                             </div>
                                                             <div class="form-check mb-3">
-                                                                <input class="form-check-input" type="checkbox"
-                                                                    name="is_active" value="1"
-                                                                    {{ $food->is_active ? 'checked' : '' }}>
-                                                                <label class="form-check-label">Active</label>
+                                                                <label class="form-check-label">
+                                                                    <input class="form-check-input" type="checkbox"
+                                                                        name="is_active" value="1"
+                                                                        {{ $food->is_active ? 'checked' : '' }}>Active</label>
                                                             </div>
                                                         </div>
                                                         <div class="modal-footer">
@@ -185,17 +186,18 @@
                             <div class="form-group">
                                 @foreach ($categories as $category)
                                     <div class="form-check">
-                                        <input type="checkbox" class="form-check-input" name="category_ids[]"
-                                            value="{{ $category->id }}" id="cat_{{ $category->id }}">
-                                        <label class="form-check-label"
-                                            for="cat_{{ $category->id }}">{{ $category->name }}</label>
+                                        <label class="form-check-label">
+                                            <input type="checkbox" class="form-check-input" name="category_ids[]"
+                                                value="{{ $category->id }}"
+                                                id="cat_{{ $category->id }}">{{ $category->name }}</label>
                                     </div>
                                 @endforeach
                             </div>
                         </div>
                         <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" name="is_active" value="1">
-                            <label class="form-check-label">Active</label>
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox" name="is_active"
+                                    value="1">Active</label>
                         </div>
                     </div>
                     <div class="modal-footer">

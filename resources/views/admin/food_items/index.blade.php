@@ -32,6 +32,7 @@
                                     <tr>
                                         <th>Name</th>
                                         <th>Price Addon</th>
+                                        <th>Default</th>
                                         <th>Active</th>
                                         <th>Food</th>
                                         <th>Action</th>
@@ -42,6 +43,7 @@
                                         <tr id="item-row-{{ $item->id }}">
                                             <td>{{ $item->name }}</td>
                                             <td>$ {{ number_format($item->extra_price, 2, ',', '.') }}</td>
+                                            <td>{{ $item->is_default ? 'Yes' : 'No' }}</td>
                                             <td>{{ $item->is_active ? 'Yes' : 'No' }}</td>
                                             <td>{{ $item->food->name ?? '-' }}</td>
                                             <td>
@@ -99,10 +101,16 @@
                                                                 </select>
                                                             </div>
                                                             <div class="form-check mb-3">
-                                                                <input class="form-check-input" type="checkbox"
-                                                                    name="is_active" value="1"
-                                                                    {{ $item->is_active ? 'checked' : '' }}>
-                                                                <label class="form-check-label">Active</label>
+                                                                <label class="form-check-label">
+                                                                    <input class="form-check-input" type="checkbox"
+                                                                        name="is_default" value="1"
+                                                                        {{ $item->is_default ? 'checked' : '' }}>Default</label>
+                                                            </div>
+                                                            <div class="form-check mb-3">
+                                                                <label class="form-check-label">
+                                                                    <input class="form-check-input" type="checkbox"
+                                                                        name="is_active" value="1"
+                                                                        {{ $item->is_active ? 'checked' : '' }}>Active</label>
                                                             </div>
                                                         </div>
                                                         <div class="modal-footer">
@@ -140,7 +148,7 @@
                             <input type="text" name="name" class="form-control" required>
                         </div>
                         <div class="mb-3">
-                            <label>Price Addon</label>
+                            <label>Extra Price</label>
                             <input type="number" step="0.01" name="extra_price" class="form-control" required>
                         </div>
                         <div class="mb-3">
@@ -152,8 +160,14 @@
                             </select>
                         </div>
                         <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" name="is_active" value="1">
-                            <label class="form-check-label">Active</label>
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox" name="is_default"
+                                    value="1">Default</label>
+                        </div>
+                        <div class="form-check mb-3">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox" name="is_active"
+                                    value="1">Active</label>
                         </div>
                     </div>
                     <div class="modal-footer">

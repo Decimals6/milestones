@@ -23,15 +23,23 @@ class FoodItemController extends Controller
             'name' => 'required|string|max:255',
             'extra_price' => 'required|numeric',
             'food_id' => 'required|exists:foods,id',
+            'is_default' => 'nullable|boolean',
             'is_active' => 'nullable|boolean',
         ]);
 
-        FoodItem::create([
+        $foodItem = FoodItem::create([
             'name' => $request->name,
             'extra_price' => $request->extra_price,
             'food_id' => $request->food_id,
+            'is_default' => $request->has('is_default'),
             'is_active' => $request->has('is_active'),
         ]);
+
+        if ($request->has('is_default')) {
+            FoodItem::where('food_id', $request->food_id)
+                ->where('id', '!=', $foodItem->id)
+                ->update(['is_default' => false]);
+        }
 
         return response()->json(['message' => 'Food item created successfully']);
     }
@@ -42,6 +50,7 @@ class FoodItemController extends Controller
             'name' => 'required|string|max:255',
             'extra_price' => 'required|numeric',
             'food_id' => 'required|exists:foods,id',
+            'is_default' => 'nullable|boolean',
             'is_active' => 'nullable|boolean',
         ]);
 
@@ -49,8 +58,15 @@ class FoodItemController extends Controller
             'name' => $request->name,
             'extra_price' => $request->extra_price,
             'food_id' => $request->food_id,
+            'is_default' => $request->has('is_default'),
             'is_active' => $request->has('is_active'),
         ]);
+
+        if ($request->has('is_default')) {
+            FoodItem::where('food_id', $request->food_id)
+                ->where('id', '!=', $foodItem->id)
+                ->update(['is_default' => false]);
+        }
 
         return response()->json(['message' => 'Food item updated successfully']);
     }
