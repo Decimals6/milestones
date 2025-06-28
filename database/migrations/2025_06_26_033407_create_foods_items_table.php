@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('food_id')->constrained('foods')->onDelete('cascade');
             $table->string('name');
             $table->decimal('extra_price', 10, 2)->default(0);
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }
