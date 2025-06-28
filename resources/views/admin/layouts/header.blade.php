@@ -14,7 +14,7 @@
             </div>
         </form>
         <div class="header-logo-wrapper col-auto p-0">
-            <div class="logo-wrapper"><a href="{{ route('admin.dashboard') }}"><img class="img-fluid"
+            <div class="logo-wrapper"><a href="{{ route('dashboard.index') }}"><img class="img-fluid"
                         src="{{ asset('assets/images/logo/logo.png') }}" alt=""></a></div>
             <div class="toggle-sidebar"><i class="status_toggle middle sidebar-toggle" data-feather="align-center"></i>
             </div>
@@ -205,9 +205,14 @@
                 <li class="profile-nav onhover-dropdown pe-0 py-0">
                     <div class="media profile-media"><img class="b-r-10"
                             src="{{ asset('assets/images/dashboard/profile.png') }}" alt="">
-                        <div class="media-body"><span>Emay Walter</span>
-                            <p class="mb-0 font-roboto">Admin <i class="middle fa fa-angle-down"></i></p>
+                        <div class="media-body">
+                            <span>{{ Auth::user()->first_name . ' ' . Auth::user()->last_name }}</span>
+                            <p class="mb-0 font-roboto">
+                                {{ ucfirst(Auth::user()->getRoleNames()->first() ?? 'No Role') }}
+                                <i class="middle fa fa-angle-down"></i>
+                            </p>
                         </div>
+
                     </div>
                     <ul class="profile-dropdown onhover-show-div">
                         <li><a href="#"><i data-feather="user"></i><span>Account </span></a></li>

@@ -18,6 +18,8 @@
         rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i,900&amp;display=swap"
         rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     @include('admin.layouts.css')
     @yield('style')
 </head>
@@ -58,7 +60,7 @@
                             </div>
                             <div class="col-6">
                                 <ol class="breadcrumb">
-                                    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">
+                                    <li class="breadcrumb-item"><a href="{{ route('dashboard.index') }}">
                                             <svg class="stroke-icon">
                                                 <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-home') }}"></use>
                                             </svg></a></li>

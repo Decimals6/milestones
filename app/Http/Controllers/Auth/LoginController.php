@@ -27,7 +27,7 @@ class LoginController extends Controller
 
             $user = User::find(Auth::id());
             if ($user && $user->hasRole('admin'))  {
-                return redirect()->route('admin.dashboard');
+                return redirect()->route('dashboard.index');
             } else {
                 return redirect()->route('customer.home');
             }
