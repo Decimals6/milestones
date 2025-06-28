@@ -34,4 +34,9 @@ class Food extends Model
     {
         return $this->belongsToMany(FoodItem::class, 'default_foods_item');
     }
+
+    public function orderDetails()
+    {
+        return $this->hasMany(OrderDetail::class);
+    }
 }

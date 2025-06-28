@@ -11,7 +11,8 @@ class FoodItemSeeder extends Seeder
     public function run(): void
     {
         Food::all()->each(function ($food) {
-            $items = FoodItem::factory()->count(3)->create(['food_id' => $food->id]);
+            $items = FoodItem::factory()->count(4)->create(['food_id' => $food->id]);
+            $food->defaultFoodItems()->attach($items->random(rand(1, $items->count()))->pluck('id')->toArray());
         });
     }
 }

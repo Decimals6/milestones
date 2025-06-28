@@ -47,6 +47,14 @@
                             <svg class="fill-icon">
                                 <use href="{{ asset('assets/svg/icon-sprite.svg#tag') }}"></use>
                             </svg><span>Food Items</span></a></li>
+                    <li class="sidebar-list"><a class="sidebar-link sidebar-title"
+                            href="{{ route('orders.index') }}">
+                            <svg class="stroke-icon">
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#tag') }}"></use>
+                            </svg>
+                            <svg class="fill-icon">
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#tag') }}"></use>
+                            </svg><span>Orders</span></a></li>
                 </ul>
             </div>
             <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>

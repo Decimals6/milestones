@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Order extends Model
 {
@@ -11,11 +12,21 @@ class Order extends Model
 
     protected $fillable = [
         'user_id',
+        'payment_id',
         'order_number',
         'order_type',
         'total_amount',
         'status',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($order) {
+            $order->order_number = 'ORD-' . now()->format('Ymd') . '-' . strtoupper(Str::random(8));
+        });
+    }
 
     public function user()
     {
@@ -29,6 +40,6 @@ class Order extends Model
 
     public function payment()
     {
-        return $this->hasOne(Payment::class);
+        return $this->belongsTo(Payment::class);
     }
 }
