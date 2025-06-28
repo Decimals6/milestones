@@ -1,41 +1,51 @@
-{{-- resources/views/components/product-card-horizontal.blade.php --}}
 @props([
-    'image'   => 'https://picsum.photos/seed/horizontal/600/400',
-    'title'   => 'Product',
-    'price'   => 0,
-    'rating'  => 4.4,
-    'fav'     => false,
-    'off'     => null,
-    'soldOut' => false
+    'image' => 'https://picsum.photos/seed/hor/600/400',
+    'title' => 'Product',
+    'price' => 0,
+    'rating' => 4.2,
+    'fav' => false,
+    'off' => null,
+    'soldOut' => false,
 ])
 
 <style>
-    .ph-card{border-radius:1.25rem;transition:transform .25s,box-shadow .25s,background .25s}
-    .ph-img{width:140px;height:100%;object-fit:cover;border-radius:1.25rem 0 0 1.25rem;transition:filter .25s}
-    .ph-btn{
-        background:#e63946;color:#fff;border:none;border-radius:50rem;
-        box-shadow:0 6px 16px rgba(230,57,70,.35);transition:background .2s,color .2s,transform .2s
+.ph-card{border-radius:1.25rem;transition:.25s}
+.ph-img{width:140px;height:100%;object-fit:cover;border-radius:1.25rem 0 0 1.25rem;transition:filter .25s}
+.ph-card:hover{box-shadow:0 .75rem 1.5rem rgba(0,0,0,.12);transform:translateY(-4px);background:#f8f9fa}
+.qty-box{display:flex;gap:.5rem}
+.qty-btn{background:#e63946;border:none;color:#fff;width:30px;height:30px;border-radius:50%}
+.ph-btn{background:#e63946;border:none;color:#fff;border-radius:50rem;padding:.35rem 1.4rem;box-shadow:0 6px 16px rgba(230,57,70,.35);transition:.2s}
+.ph-btn:hover{transform:scale(1.05)}
+.like-btn{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.like-btn.active{background:#e63946;color:#fff}
+.dark .ph-card{background:#1e1e1e}
+.dark .ph-card:hover{background:#2a2a2a}
+.dark .ph-img{filter:brightness(.85)}
+.dark .ph-card:hover .ph-img{filter:brightness(.7)}
+.dark .ph-btn:hover{background:#2a2a2a;color:#fff}
+.dark .like-btn {
+    background-color: rgba(255, 255, 255, 0.209);
+    color: rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(255,255,255,0.15);
     }
-    .ph-btn:hover{background:#ffffff;color:#000;transform:scale(1.05)}
 
-    .ph-card:hover{box-shadow:0 .75rem 1.5rem rgba(0,0,0,.12);transform:translateY(-4px);background:#f8f9fa}
-    .ph-card:hover .ph-img{filter:brightness(.8)}
-    .ph-card:hover .ph-title,.ph-card:hover .ph-price{color:#212529}
-
-    .dark .ph-card{background:#1e1e1e}
-    .dark .ph-img{filter:brightness(.85)}
-    .dark .ph-card:hover{
-        box-shadow:0 .75rem 1.5rem rgba(0,0,0,.5);
-        background:#1a1a1a
+    .dark .like-btn:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #fff;
     }
-    .dark .ph-card:hover .ph-img{filter:brightness(.7)}
-    .dark .ph-card:hover .ph-title,
-    .dark .ph-card:hover .ph-price{color:#f1f1f1}
-    .dark .ph-btn:hover{background:#2a2a2a;color:#fff}
+
+    .dark .like-btn.active {
+    background-color: #e63946;
+    color: #fff;
+    border: none;
+    }
 </style>
 
-<div class="card ph-card d-flex flex-row border-0 text-body dark:text-light">
-
+<div class="card ph-card d-flex flex-row border-0 text-body dark:text-light"
+     data-id="{{ Str::slug($title) }}"
+     data-title="{{ $title }}"
+     data-price="{{ $price }}"
+     data-image="{{ $image }}">
     <div class="position-relative">
         <img src="{{ $image }}" class="ph-img" alt="{{ $title }}">
         @isset($off)
@@ -44,21 +54,22 @@
         @if($soldOut)
             <span class="badge bg-danger position-absolute top-50 start-50 translate-middle px-4">Not&nbsp;Available</span>
         @endif
-        <button class="btn btn-light btn-sm position-absolute top-0 end-0 m-2 rounded-circle">
-            <i class="bi bi-heart{{ $fav ? '-fill text-danger' : '' }}"></i>
+        <button class="btn btn-light btn-sm position-absolute top-0 end-0 m-2 like-btn{{ $fav ? ' active' : '' }}">
+            <i class="bi bi-heart{{ $fav ? '-fill' : '' }}"></i>
         </button>
     </div>
-
     <div class="flex-grow-1 p-3 d-flex flex-column justify-content-between">
         <div>
-            <h6 class="fw-semibold mb-1 ph-title text-truncate">{{ $title }}</h6>
-            <div class="d-flex align-items-center small gap-2 mb-2">
+            <h6 class="fw-semibold mb-1 text-truncate">{{ $title }}</h6>
+            <div class="d-flex justify-content-between align-items-center small mb-2">
                 <span class="text-warning"><i class="bi bi-star-fill me-1"></i>{{ number_format($rating,1) }}</span>
-                <span class="fw-bold text-danger ph-price">Rp{{ number_format($price,0,',','.') }}</span>
+                <span class="fw-bold text-danger">Rp{{ number_format($price,0,',','.') }}</span>
             </div>
         </div>
-        <button class="btn ph-btn align-self-start px-4 py-1 d-flex align-items-center gap-1">
-            <i class="bi bi-plus-circle"></i> Add
-        </button>
+        <div class="action-area">
+            <button class="ph-btn add-btn d-flex align-items-center gap-1">
+                <i class="bi bi-plus-circle"></i> Add
+            </button>
+        </div>
     </div>
 </div>

@@ -50,4 +50,8 @@ Route::middleware(['auth'])->prefix('customer')->group(function () {
     Route::get('/track', function () {
         return view('Customer.pages.track');
     })->name('track');
+
+    Route::get('/reviews', function () {
+        return view('Customer.pages.reviews');
+    })->name('reviews');
 });

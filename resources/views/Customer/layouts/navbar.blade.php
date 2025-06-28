@@ -8,7 +8,9 @@
         transition: color .2s
     }
 
-    .icon-btn:hover { color: #0d6efd }
+    .icon-btn:hover {
+        color: #0d6efd
+    }
 
     .nav-icon {
         position: relative;
@@ -16,24 +18,42 @@
         transition: color .2s
     }
 
-    .nav-icon.nav-active { color: #0d6efd }
+    .nav-icon.nav-active {
+        color: #0d6efd
+    }
 
-    .nav-icon .badge { font-size: .6rem }
+    .nav-icon .badge {
+        font-size: .6rem
+    }
 
     .dark .icon-btn,
-    .dark .nav-icon { color: #ffffff }
+    .dark .nav-icon {
+        color: #ffffff
+    }
 
-    .dark .nav-icon.nav-active { color: #0d6efd }
+    .dark .nav-icon.nav-active {
+        color: #0d6efd
+    }
 
-    .dark .dropdown-menu { background: #1e1e1e }
+    .dark .dropdown-menu {
+        background: #1e1e1e
+    }
 
     .dropdown-item:hover,
-    .dropdown-item:focus { background: #f8f9fa; color: #000 }
+    .dropdown-item:focus {
+        background: #f8f9fa;
+        color: #000
+    }
 
     .dark .dropdown-item:hover,
-    .dark .dropdown-item:focus { background: #343a40; color: #ffffff }
+    .dark .dropdown-item:focus {
+        background: #343a40;
+        color: #ffffff
+    }
 
-    .nav-cats { min-width: 130px }
+    .nav-cats {
+        min-width: 130px
+    }
 
     .btn-cats {
         border: none;
@@ -41,7 +61,10 @@
         color: #6c757d
     }
 
-    .btn-cats:hover, .btn-cats:focus { color: #0d6efd }
+    .btn-cats:hover,
+    .btn-cats:focus {
+        color: #0d6efd
+    }
 
     .search-wrapper {
         position: relative;
@@ -69,7 +92,10 @@
         box-shadow: none;
     }
 
-    .dark .search-wrapper i { color: #bcbcbc }
+    .dark .search-wrapper i {
+        color: #bcbcbc
+    }
+
     .dark .search-wrapper input {
         background: #1e1e1e !important;
         color: #f1f1f1 !important;
@@ -104,7 +130,9 @@
         padding: .5rem 0;
     }
 
-    .dark .suggestions-box { background: #2b2b2b }
+    .dark .suggestions-box {
+        background: #2b2b2b
+    }
 
     .suggestion-item {
         padding: .65rem 1rem;
@@ -114,9 +142,13 @@
         transform: translateY(10px);
     }
 
-    .suggestion-item:hover { background: #f8f9fa }
+    .suggestion-item:hover {
+        background: #f8f9fa
+    }
 
-    .dark .suggestion-item:hover { background: #3a3a3a }
+    .dark .suggestion-item:hover {
+        background: #3a3a3a
+    }
 
     @keyframes fadeInUp {
         to {
@@ -129,6 +161,23 @@
         .search-wrapper {
             margin-top: .5rem;
         }
+    }
+
+    @keyframes shake {
+
+        0%,
+        100% {
+            transform: scale(1)
+        }
+
+        25%,
+        75% {
+            transform: scale(1.05)
+        }
+    }
+
+    .btn-shake {
+        animation: shake .3s ease-in-out;
     }
 </style>
 
@@ -162,17 +211,17 @@
                     @endforeach
                 </div>
             </div>
-            {{-- <div class="search-overlay" onclick="hideSearchOverlay()"></div> --}}
-
 
             <div class="d-flex align-items-center gap-4 ms-2">
                 <a href="{{ route('like') }}" class="nav-icon {{ request()->routeIs('like') ? 'nav-active' : '' }}">
                     <i class="bi bi-heart fs-5"></i>
-                    <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">0</span>
+                    <span
+                        id="badge-like"class="badge bg-danger position-absolute top-0 start-100 translate-middle">0</span>
                 </a>
                 <a href="{{ route('cart') }}" class="nav-icon {{ request()->routeIs('cart') ? 'nav-active' : '' }}">
                     <i class="bi bi-cart fs-5"></i>
-                    <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">0</span>
+                    <span id="badge-cart"
+                        class="badge bg-danger position-absolute top-0 start-100 translate-middle">0</span>
                 </a>
             </div>
         </div>
@@ -188,7 +237,8 @@
     <nav class="navbar bg-white dark:bg-dark shadow-sm d-md-none px-3 py-2">
         <a class="navbar-brand text-danger m-0 p-0" href="{{ route('customer.home') }}">eFood</a>
         <div class="ms-auto d-flex gap-2">
-            <button class="icon-btn" data-bs-toggle="collapse" data-bs-target="#mobileSearch"><i class="bi bi-search"></i></button>
+            <button class="icon-btn" data-bs-toggle="collapse" data-bs-target="#mobileSearch"><i
+                    class="bi bi-search"></i></button>
             <button class="icon-btn" id="themeToggleMobile"><i class="bi bi-circle-half"></i></button>
         </div>
     </nav>
@@ -197,10 +247,12 @@
         <div class="search-wrapper w-100 position-relative">
             <i class="bi bi-search"></i>
             <input type="text" class="form-control shadow-sm search-input" placeholder="Are you hungry?"
-                onfocus="showSearchOverlay(this)" onblur="hideSearchOverlayDelayed(this)" oninput="filterSuggestions(this)">
+                onfocus="showSearchOverlay(this)" onblur="hideSearchOverlayDelayed(this)"
+                oninput="filterSuggestions(this)">
             <div class="suggestions-box rounded-4">
                 @foreach (['Pizza', 'Burger', 'Sandwich', 'Hot Item', 'Set Menu'] as $i => $item)
-                    <div class="suggestion-item" style="animation-delay: {{ $i * 80 }}ms">{{ $item }}</div>
+                    <div class="suggestion-item" style="animation-delay: {{ $i * 80 }}ms">{{ $item }}
+                    </div>
                 @endforeach
             </div>
         </div>
@@ -210,72 +262,62 @@
 <div class="search-overlay" onclick="hideSearchOverlay()"></div>
 
 @push('scripts')
-<script>
-    function switchTheme() {
-        document.body.classList.toggle('dark');
-        localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
-    }
+    <script>
 
-    document.getElementById('themeToggleDesktop')?.addEventListener('click', switchTheme);
-    document.getElementById('themeToggleMobile')?.addEventListener('click', switchTheme);
+        document.addEventListener('DOMContentLoaded', () => {
 
-    document.addEventListener('DOMContentLoaded', () => {
-        if (localStorage.getItem('theme') === 'dark') {
-            document.body.classList.add('dark');
-        }
+            document.querySelectorAll('.search-input').forEach(input => {
+                input.addEventListener('focus', () => {
+                    showSearchOverlay(input);
+                });
 
-        document.querySelectorAll('.search-input').forEach(input => {
-            input.addEventListener('focus', () => {
-                showSearchOverlay(input);
-            });
+                input.addEventListener('blur', () => {
+                    hideSearchOverlayDelayed(input);
+                });
 
-            input.addEventListener('blur', () => {
-                hideSearchOverlayDelayed(input);
-            });
+                input.addEventListener('input', () => {
+                    filterSuggestions(input);
+                });
 
-            input.addEventListener('input', () => {
-                filterSuggestions(input);
-            });
-
-            input.closest('.search-wrapper').querySelectorAll('.suggestion-item').forEach(item => {
-                item.addEventListener('mousedown', function (e) {
-                    e.preventDefault();
-                    input.value = this.textContent;
-                    hideSearchOverlay();
+                input.closest('.search-wrapper').querySelectorAll('.suggestion-item').forEach(item => {
+                    item.addEventListener('mousedown', function(e) {
+                        e.preventDefault();
+                        input.value = this.textContent;
+                        hideSearchOverlay();
+                    });
                 });
             });
         });
-    });
 
-    function showSearchOverlay(inputEl) {
-        document.querySelector('.search-overlay').style.display = 'block';
-        const wrap = inputEl.closest('.search-wrapper');
-        wrap.classList.add('suggestions-open');
+        function showSearchOverlay(inputEl) {
+            document.querySelector('.search-overlay').style.display = 'block';
+            const wrap = inputEl.closest('.search-wrapper');
+            wrap.classList.add('suggestions-open');
 
-        wrap.querySelectorAll('.suggestion-item').forEach((el, i) => {
-            el.style.animation = 'none';
-            el.offsetHeight;
-            el.style.animation = `fadeInUp .3s ease forwards`;
-            el.style.animationDelay = `${i * 80}ms`;
-        });
-    }
+            wrap.querySelectorAll('.suggestion-item').forEach((el, i) => {
+                el.style.animation = 'none';
+                el.offsetHeight;
+                el.style.animation = `fadeInUp .3s ease forwards`;
+                el.style.animationDelay = `${i * 80}ms`;
+            });
+        }
 
-    function hideSearchOverlayDelayed(inputEl) {
-        setTimeout(() => {
-            if (!inputEl.matches(':focus')) hideSearchOverlay();
-        }, 150);
-    }
+        function hideSearchOverlayDelayed(inputEl) {
+            setTimeout(() => {
+                if (!inputEl.matches(':focus')) hideSearchOverlay();
+            }, 150);
+        }
 
-    function hideSearchOverlay() {
-        document.querySelector('.search-overlay').style.display = 'none';
-        document.querySelectorAll('.search-wrapper').forEach(wrap => wrap.classList.remove('suggestions-open'));
-    }
+        function hideSearchOverlay() {
+            document.querySelector('.search-overlay').style.display = 'none';
+            document.querySelectorAll('.search-wrapper').forEach(wrap => wrap.classList.remove('suggestions-open'));
+        }
 
-    function filterSuggestions(inputEl) {
-        const q = inputEl.value.toLowerCase();
-        inputEl.closest('.search-wrapper').querySelectorAll('.suggestion-item').forEach(el => {
-            el.style.display = el.textContent.toLowerCase().includes(q) ? 'block' : 'none';
-        });
-    }
-</script>
+        function filterSuggestions(inputEl) {
+            const q = inputEl.value.toLowerCase();
+            inputEl.closest('.search-wrapper').querySelectorAll('.suggestion-item').forEach(el => {
+                el.style.display = el.textContent.toLowerCase().includes(q) ? 'block' : 'none';
+            });
+        }
+    </script>
 @endpush
