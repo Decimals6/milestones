@@ -12,10 +12,6 @@ class FoodItemSeeder extends Seeder
     {
         Food::all()->each(function ($food) {
             $items = FoodItem::factory()->count(3)->create(['food_id' => $food->id]);
-
-            if ($items->isNotEmpty()) {
-                $items->random()->update(['is_default' => true]);
-            }
         });
     }
 }

@@ -43,7 +43,8 @@
                                         <tr id="item-row-{{ $item->id }}">
                                             <td>{{ $item->name }}</td>
                                             <td>$ {{ number_format($item->extra_price, 2, ',', '.') }}</td>
-                                            <td>{{ $item->is_default ? 'Yes' : 'No' }}</td>
+                                            <td>{{ $item->food && $item->food->defaultFoodItems->contains($item->id) ? 'Yes' : 'No' }}
+                                            </td>
                                             <td>{{ $item->is_active ? 'Yes' : 'No' }}</td>
                                             <td>{{ $item->food->name ?? '-' }}</td>
                                             <td>
@@ -104,7 +105,8 @@
                                                                 <label class="form-check-label">
                                                                     <input class="form-check-input" type="checkbox"
                                                                         name="is_default" value="1"
-                                                                        {{ $item->is_default ? 'checked' : '' }}>Default</label>
+                                                                        {{ $item->food && $item->food->defaultFoodItems->contains($item->id) ? 'checked' : '' }}>
+                                                                    Default</label>
                                                             </div>
                                                             <div class="form-check mb-3">
                                                                 <label class="form-check-label">
@@ -248,7 +250,9 @@
                 modal.find('input[name="name"]').val(data.name);
                 modal.find('input[name="extra_price"]').val(data.extra_price);
                 modal.find('select[name="food_id"]').val(data.food_id);
-                modal.find('input[name="is_active"]').prop('checked', data.is_active ? true : false);
+                modal.find('input[name="is_default"]').prop('checked',
+                    data.food && data.food.default_food_items?.some(item => item.id === data.id)
+                );
             });
 
             // update

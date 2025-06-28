@@ -12,7 +12,7 @@ class FoodItemController extends Controller
     public function index()
     {
         $foods = Food::all();
-        $foodItems = FoodItem::with('food')->get();
+        $foodItems = FoodItem::with('defaultOfFoods')->get();
 
         return view('admin.food_items.index', compact('foods', 'foodItems'));
     }
@@ -31,14 +31,12 @@ class FoodItemController extends Controller
             'name' => $request->name,
             'extra_price' => $request->extra_price,
             'food_id' => $request->food_id,
-            'is_default' => $request->has('is_default'),
             'is_active' => $request->has('is_active'),
         ]);
 
         if ($request->has('is_default')) {
-            FoodItem::where('food_id', $request->food_id)
-                ->where('id', '!=', $foodItem->id)
-                ->update(['is_default' => false]);
+            $food = Food::find($request->food_id);
+            $food->defaultFoodItems()->syncWithoutDetaching([$foodItem->id]);
         }
 
         return response()->json(['message' => 'Food item created successfully']);
@@ -58,14 +56,15 @@ class FoodItemController extends Controller
             'name' => $request->name,
             'extra_price' => $request->extra_price,
             'food_id' => $request->food_id,
-            'is_default' => $request->has('is_default'),
             'is_active' => $request->has('is_active'),
         ]);
 
         if ($request->has('is_default')) {
-            FoodItem::where('food_id', $request->food_id)
-                ->where('id', '!=', $foodItem->id)
-                ->update(['is_default' => false]);
+            $food = Food::find($request->food_id);
+            $food->defaultFoodItems()->syncWithoutDetaching([$foodItem->id]);
+        } else {
+            $food = Food::find($request->food_id);
+            $food->defaultFoodItems()->detach($foodItem->id);
         }
 
         return response()->json(['message' => 'Food item updated successfully']);

@@ -17,7 +17,6 @@ class FoodItemFactory extends Factory
             'extra_price' => $this->faker->randomFloat(2, 0.5, 5),
             'food_id' => Food::inRandomOrder()->first()->id ?? Food::factory(),
             'is_active' => $this->faker->boolean(75),
-            'is_default' => false,
         ];
     }
 }
