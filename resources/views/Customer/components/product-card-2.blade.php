@@ -63,7 +63,7 @@
             <h6 class="fw-semibold mb-1 text-truncate">{{ $title }}</h6>
             <div class="d-flex justify-content-between align-items-center small mb-2">
                 <span class="text-warning"><i class="bi bi-star-fill me-1"></i>{{ number_format($rating,1) }}</span>
-                <span class="fw-bold text-danger">$ {{ number_format($price,0,',','.') }}</span>
+                <span class="fw-bold text-danger">$ {{ number_format($price,2,',','.') }}</span>
             </div>
         </div>
         <div class="action-area">
