@@ -158,15 +158,42 @@
         }
 
         .summary-card {
-            background-color: #f8f9fa;
-            color: #000;
-            border-radius: var(--card-radius);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            background: #f8f9fa;
+            color: #212529;
+            border-radius: 14px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+            transition: background 0.3s, box-shadow 0.3s, color 0.3s;
+        }
+
+        .summary-card .summary-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .summary-card .summary-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px dashed rgba(0, 0, 0, 0.05);
+            font-size: 0.95rem;
         }
 
         body.dark .summary-card {
-            background-color: #1f1f1f;
-            color: #fff;
+            background: #252525;
+            color: #f1f1f1;
+            box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05), 0 4px 16px rgba(0, 0, 0, 0.5);
+        }
+
+        body.dark .summary-card .summary-list li {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .summary-card {
+                margin-bottom: 90px;
+                padding: 1.25rem;
+            }
         }
 
         .btn-success {
@@ -180,10 +207,6 @@
         @media (max-width: 768px) {
             .card {
                 border-radius: 0.75rem;
-            }
-
-            .summary-card {
-                margin-bottom: 90px;
             }
 
             .container {
@@ -291,17 +314,24 @@
             </div>
         @endforeach
 
-        <div class="card summary-card mt-5 p-3">
+        <div class="card summary-card mt-5 p-4">
             <div class="card-body">
-                <h5 class="fw-bold mb-3">Summary</h5>
-                <p>Total Items: <span id="totalItems">0</span></p>
-                <p>Total Calories: <span id="totalCalories">0</span> cal</p>
-                <p>Subtotal: $<span id="subtotal">0.00</span></p>
-                <p>Tax (10%): $<span id="tax">0.00</span></p>
-                <h5>Total: $<span id="total">0.00</span></h5>
-                <button class="btn btn-success w-100 mt-3 btn-modern" onclick="confirmAddToCart()">Add to Cart</button>
+                <h5 class="fw-bold mb-4">Ringkasan Pesanan</h5>
+                <ul class="summary-list mb-3">
+                    <li>Total Item: <span id="totalItems">0</span></li>
+                    <li>Total Kalori: <span id="totalCalories">0</span> cal</li>
+                    <li>Subtotal: <span>$<span id="subtotal">0.00</span></span></li>
+                    <li>Pajak (10%): <span>$<span id="tax">0.00</span></span></li>
+                </ul>
+                <div class="d-flex justify-content-between align-items-center border-top pt-3 mt-3">
+                    <strong>Total:</strong>
+                    <strong>$<span id="total">0.00</span></strong>
+                </div>
+                <button class="btn btn-success w-100 mt-4 rounded-pill fw-semibold shadow-sm"
+                    onclick="confirmAddToCart()">Tambah ke Keranjang</button>
             </div>
         </div>
+
     </div>
 
     {{-- MODALS --}}

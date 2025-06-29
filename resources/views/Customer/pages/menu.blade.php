@@ -8,9 +8,6 @@
     {{-- Header --}}
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="fw-bold mb-0">Our Menu</h4>
-        <button class="btn btn-outline-secondary btn-sm" id="themeToggle">
-            <i class="bi bi-circle-half"></i> Theme
-        </button>
     </div>
 
     {{-- Kategori Menu --}}

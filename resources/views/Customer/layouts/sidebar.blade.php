@@ -59,30 +59,30 @@
     }
 
     .sidebar-close-btn {
-    background: #e9ecef;
-    color: #333;
-    font-weight: 500;
-    border-radius: .8rem;
-    transition: all .25s ease;
-}
-.sidebar-close-btn:hover {
-    background: #ced4da;
-    color: #000;
-}
-.dark .sidebar-close-btn {
-    background: #333;
-    color: #f1f1f1;
-}
-.dark .sidebar-close-btn:hover {
-    background: #444;
-    color: #fff;
-}
+        background: #e9ecef;
+        color: #333;
+        font-weight: 500;
+        border-radius: .8rem;
+        transition: all .25s ease;
+    }
+    .sidebar-close-btn:hover {
+        background: #ced4da;
+        color: #000;
+    }
+    .dark .sidebar-close-btn {
+        background: #333;
+        color: #f1f1f1;
+    }
+    .dark .sidebar-close-btn:hover {
+        background: #444;
+        color: #fff;
+    }
 </style>
 
 <div id="sidebarBackdrop" class="sidebar-overlay">
     <div class="sidebar-panel">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h5 class="fw-semibold mb-0">Account Menu</h5>
+            <h5 class="fw-semibold mb-0">Menu Helper</h5>
             <button class="btn-close" onclick="toggleSidebar()"></button>
         </div>
 
@@ -95,18 +95,17 @@
                 <div class="tile-btn"><i class="bi bi-receipt"></i></div>
                 <small class="d-block mt-2">My&nbsp;Order</small>
             </a>
-            <a href="#" class="text-center text-decoration-none disabled">
-                <div class="tile-btn"><i class="bi bi-star"></i></div>
-                <small class="d-block mt-2">Loyalty</small>
+            <a href="{{ route('customer.profile') }}" class="text-center text-decoration-none">
+                <div class="tile-btn"><i class="bi bi-person"></i></div>
+                <small class="d-block mt-2">Profile</small>
             </a>
         </div>
 
         <div class="vstack gap-3">
-            <a href="{{ route('customer.profile') }}" class="menu-link"><i class="bi bi-person"></i>Profile</a>
+            <a href="{{ route('menu') }}" class="menu-link"><i class="bi bi-grid"></i>Menu</a>
             <a href="{{ route('notifications') }}" class="menu-link"><i class="bi bi-bell"></i>Notification</a>
             <a href="{{ route('coupons') }}"       class="menu-link"><i class="bi bi-ticket-perforated"></i>Coupon</a>
             <a href="{{ route('refer') }}"         class="menu-link"><i class="bi bi-people"></i>Refer &amp; Earn</a>
-            <a href="{{ route('track') }}"         class="menu-link"><i class="bi bi-geo-alt"></i>Track Order</a>
         </div>
 
         <hr class="my-4">
@@ -123,14 +122,3 @@
         </button>
     </div>
 </div>
-
-@push('scripts')
-<script>
-function toggleSidebar(){
-    document.getElementById('sidebarBackdrop').classList.toggle('show');
-}
-document.addEventListener('DOMContentLoaded',()=>{
-    if(localStorage.getItem('theme')==='dark'){document.body.classList.add('dark');}
-});
-</script>
-@endpush

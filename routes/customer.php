@@ -60,4 +60,8 @@ Route::middleware(['auth'])->prefix('customer')->group(function () {
     Route::get('/discover', function () {
         return view('Customer.pages.discover');
     })->name('discover');
+
+    Route::get('/menu', function () {
+        return view('Customer.pages.menu');
+    })->name('menu');
 });
