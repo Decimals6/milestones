@@ -1,54 +1,248 @@
 @extends('Customer.layouts.app')
-
 @section('title', 'Profil')
 
 @section('content')
-    <div class="container">
+    <style>
+        .container-profile {
+            max-width: 1140px;
+            margin: auto;
+            padding: 2rem 1rem;
+        }
 
-        {{-- Header Profil --}}
-        <div class="text-center mb-4">
-            <img src="https://via.placeholder.com/100" alt="User Avatar" class="rounded-circle mb-2"
-                style="width: 100px; height: 100px;">
-            <h5 class="fw-bold mb-0">{{ auth()->user()->first_name . ' ' . auth()->user()->last_name }}</h5>
-            <small class="text-muted">{{ auth()->user()->email}}</small>
+        .avatar-profile {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #dee2e6;
+            cursor: pointer;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1.25rem;
+            margin-top: 2rem;
+        }
+
+        .menu-item {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 1.2rem 0.5rem;
+            text-align: center;
+            color: #333;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .menu-item i {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .menu-item:hover {
+            background: #e9ecef;
+            color: #0d6efd;
+        }
+
+        .dark .menu-item {
+            background: #2a2a2a;
+            color: #eee;
+        }
+
+        .dark .menu-item:hover {
+            background: #333;
+            color: #0d6efd;
+        }
+
+        /* Modal styling */
+        .modal.profile-modal {
+            z-index: 3050;
+        }
+
+        .modal.profile-modal .modal-content {
+            border-radius: 16px;
+            padding: 2rem;
+        }
+
+        .dark .modal.profile-modal .modal-content {
+            background: #1e1e1e;
+            color: #fff;
+        }
+
+        .dark .modal.profile-modal .btn-close {
+            filter: invert(1);
+        }
+
+        .upload-avatar-wrapper {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: auto;
+        }
+
+        .upload-avatar-wrapper img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid #ccc;
+        }
+
+        .upload-avatar-wrapper label {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: #0d6efd;
+            color: #fff;
+            border-radius: 50%;
+            padding: 4px;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .logout-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            color: #dc3545;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid #dc3545;
+        }
+
+        .logout-card:hover {
+            background: #dc3545;
+            color: #fff;
+        }
+
+        .dark .logout-card {
+            background: #2b2b2b;
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+        }
+
+        .dark .logout-card:hover {
+            background: #ff6b6b;
+            color: #000;
+        }
+
+        body.dark .text-muted {
+            color: #e0e0e0 !important;
+        }
+    </style>
+
+    <div class="container-profile">
+
+        {{-- Static Account Section --}}
+        <div class="text-center">
+            <img src="https://picsum.photos/100" alt="User Avatar" class="avatar-profile mb-2 shadow"
+                onclick="showProfileModal()">
+            <h5 class="fw-bold mb-0">{{ auth()->user()->first_name }} {{ auth()->user()->last_name }}</h5>
+            <small class="text-muted">{{ auth()->user()->email }}</small>
         </div>
 
-        {{-- Form Ubah Profil --}}
-        <div class="card shadow-sm border-0 p-4 mb-4 bg-white dark:bg-dark">
-            <h6 class="fw-bold mb-3">Edit Profil</h6>
-            <form action="#" method="POST">
-                @csrf
-                <div class="mb-3">
-                    <label class="form-label">First Name</label>
-                    <input type="text" class="form-control" placeholder="First Name<" value="{{ auth()->user()->first_name }}">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Last Name</label>
-                    <input type="text" class="form-control" placeholder="Last Name" value="{{ auth()->user()->last_name }}">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Email</label>
-                    <input type="email" class="form-control" placeholder="Email" value="{{ auth()->user()->email}}">
-                </div>
-                <div class="text-end">
-                    <button class="btn btn-primary px-4">Save</button>
-                </div>
-            </form>
-        </div>
+        {{-- Grid Menu --}}
+        <div class="menu-grid">
 
-        {{-- Tambahan --}}
-        <div class="d-grid gap-2">
+            <a href="{{ route('customer.profile') }}" class="menu-item">
+                <i class="bi bi-person"></i> Profile
+            </a>
+
+            <a href="{{ route('orders') }}" class="menu-item">
+                <i class="bi bi-receipt"></i> My Order
+            </a>
+
+            <a href="#" class="menu-item">
+                <i class="bi bi-star"></i> Menu
+            </a>
+
+            <a href="{{ route('notifications') }}" class="menu-item">
+                <i class="bi bi-bell"></i> Notification
+            </a>
+
+            <a href="{{ route('wallet') }}" class="menu-item">
+                <i class="bi bi-wallet2"></i> Wallet
+            </a>
+
+            <a href="{{ route('coupons') }}" class="menu-item">
+                <i class="bi bi-ticket-perforated"></i> Coupon
+            </a>
+
+            <a href="{{ route('refer') }}" class="menu-item">
+                <i class="bi bi-people"></i> Refer &amp; Earn
+            </a>
+
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
-                <button type="submit" class="btn btn-outline-secondary w-100">
+                <button type="submit" class="logout-card w-100">
                     <i class="bi bi-box-arrow-right me-1"></i> Logout
                 </button>
             </form>
 
-            <button class="btn btn-outline-dark" id="themeToggle">
-                <i class="bi bi-circle-half me-1"></i> Ubah Mode Gelap
-            </button>
         </div>
-
     </div>
+
+    {{-- Modal Edit Profile --}}
+    <div class="modal fade profile-modal" id="profileModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content shadow">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="modal-title">Edit Profil</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <form action="#" method="POST" enctype="multipart/form-data">
+                    @csrf
+
+                    <div class="upload-avatar-wrapper mb-4">
+                        <img src="https://picsum.photos/100" alt="Avatar Preview">
+                        <label for="avatarInput"><i class="bi bi-camera"></i></label>
+                        <input type="file" id="avatarInput" name="avatar" class="d-none">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">First Name</label>
+                        <input type="text" class="form-control" value="{{ auth()->user()->first_name }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Last Name</label>
+                        <input type="text" class="form-control" value="{{ auth()->user()->last_name }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" value="{{ auth()->user()->email }}">
+                    </div>
+
+                    <div class="text-end mt-3">
+                        <button class="btn btn-primary px-4">Save</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {{-- Script --}}
+    <script>
+        function showProfileModal() {
+            const modal = new bootstrap.Modal(document.getElementById('profileModal'));
+            modal.show();
+        }
+
+        document.getElementById('avatarInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const img = document.querySelector('.upload-avatar-wrapper img');
+                img.src = URL.createObjectURL(file);
+            }
+        });
+    </script>
 @endsection
