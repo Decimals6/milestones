@@ -35,8 +35,20 @@
         color: #0d6efd
     }
 
+    .dropdown-menu {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(6px);
+        border: none;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
     .dark .dropdown-menu {
-        background: #1e1e1e
+        background: rgba(30, 30, 30, 0.85);
+        backdrop-filter: blur(6px);
+    }
+
+    .dropdown-menu {
+        border-radius: 0.75rem;
     }
 
     .dropdown-item:hover,
@@ -195,7 +207,11 @@
                         class="bi bi-chevron-down small"></i></button>
                 <ul class="dropdown-menu">
                     @foreach (['Set Menu', 'Hot Item', 'Biriyani', 'Drinks', 'Pizza', 'Sandwich', 'Burger'] as $c)
-                        <li><a class="dropdown-item" href="#">{{ $c }}</a></li>
+                        <li>
+                            <a class="dropdown-item" href="{{ url('/categories?name=' . urlencode($c)) }}">
+                                {{ $c }}
+                            </a>
+                        </li>
                     @endforeach
                 </ul>
             </div>
@@ -263,7 +279,6 @@
 
 @push('scripts')
     <script>
-
         document.addEventListener('DOMContentLoaded', () => {
 
             document.querySelectorAll('.search-input').forEach(input => {

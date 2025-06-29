@@ -54,4 +54,12 @@ Route::middleware(['auth'])->prefix('customer')->group(function () {
     Route::get('/reviews', function () {
         return view('Customer.pages.reviews');
     })->name('reviews');
+
+    Route::get('/categories', function () {
+        return view('Customer.pages.categories');
+    })->name('categories');
+
+    Route::get('/discover', function () {
+        return view('Customer.pages.discover');
+    })->name('discover');
 });
