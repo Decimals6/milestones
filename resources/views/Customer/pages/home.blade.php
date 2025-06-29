@@ -136,38 +136,107 @@
             right: -21px
         }
 
-        .discover-main {
+
+
+        .custom-builder-box {
+            background: linear-gradient(145deg, #f4f9ff, #ffffff);
             border-radius: 1.25rem;
-            background: linear-gradient(135deg, #fefefe, #e9f5ff);
-            padding: 2rem 1rem;
-            border: 1px solid #ddd;
-            transition: all 0.3s ease;
+            border: 1px solid #e0e0e0;
+            padding: 2rem 1.5rem;
+            height: 100%;
+            min-height: 100%;
+            transition: all 0.4s ease-in-out;
+            box-shadow: 0 0 0 transparent;
+            animation: fadeInUp 0.6s ease;
+            position: relative;
+            overflow: hidden;
         }
 
-        .discover-main:hover {
-            background: linear-gradient(135deg, #d6f0ff, #fff);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+        .custom-builder-box:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
         }
 
-        .dark .discover-main {
-            background: #2a2a2a;
+        .builder-icon {
+            background: #e63946;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            margin-bottom: 1rem;
+            box-shadow: 0 0 15px rgba(230, 57, 70, 0.5);
+            transition: transform 0.4s ease;
+        }
+
+        .custom-builder-box:hover .builder-icon {
+            transform: rotate(10deg) scale(1.1);
+        }
+
+        .builder-content h5 {
+            color: #222;
+            font-size: 1.1rem;
+        }
+
+        .builder-content p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .dark .custom-builder-box {
+            background: linear-gradient(145deg, #1d1d1d, #2c2c2c);
             border-color: #444;
         }
 
-        .icon-circle {
-            width: 72px;
-            height: 72px;
-            background: #e63946;
-            color: #fff;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .dark .builder-content h5 {
+            color: #ffffff;
+        }
+
+        .dark .builder-content p {
+            color: #bbbbbb;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 767.98px) {
+            .custom-builder-box {
+                padding: 1.5rem 1rem;
+            }
+
+            .builder-icon {
+                width: 64px;
+                height: 64px;
+            }
+
+            .builder-content h5 {
+                font-size: 1rem;
+            }
+
+            .builder-content p {
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 767.98px) {
+            .container {
+                padding-bottom: 5rem !important;
+            }
         }
     </style>
 
-    <div class="container">
+<div class="container" style="max-width: 1140px;">
         <div class="row g-4 mb-5">
             <div class="col-12 col-lg-8">
                 <h5 class="section-title">Today’s Specials</h5>
@@ -184,12 +253,14 @@
             </div>
             <div class="col-12 col-lg-4">
                 <a href="{{ route('discover') }}"
-                    class="discover-main d-flex flex-column align-items-center justify-content-center text-center text-decoration-none h-100">
-                    <div class="icon-circle mb-3">
+                    class="custom-builder-box d-flex flex-column justify-content-center align-items-center text-center text-decoration-none h-100 w-100">
+                    <div class="builder-icon">
                         <i class="bi bi-egg-fried fs-1"></i>
                     </div>
-                    <h5 class="fw-bold mb-1">Custom Dish Builder</h5>
-                    <p class="text-muted small mb-0">Create your healthy and tasty meal your way</p>
+                    <div class="builder-content">
+                        <h5 class="fw-bold mb-1">Custom Dish Builder</h5>
+                        <p class="mb-0">Craft your own delicious and healthy dish</p>
+                    </div>
                 </a>
             </div>
         </div>
