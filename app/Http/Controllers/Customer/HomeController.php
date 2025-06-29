@@ -18,7 +18,7 @@ class HomeController extends Controller
             ->take(2)
             ->get()
             ->map(function ($category) {
-                $category->foods = $category->foods->take(4);
+                $category->foods = $category->foods->take(3);
                 return $category;
             });
 
