@@ -1,6 +1,18 @@
 @extends('admin.layouts.master')
-
 @section('title', 'Dashboard')
+
+@section('style')
+    <link rel="stylesheet" href="{{ asset('assets/css/vendors/datatables.css') }}">
+@endsection
+
+@section('breadcrumb-title')
+    <h3>Dashboard</h3>
+@endsection
+
+@section('breadcrumb-items')
+    <li class="breadcrumb-item">Data</li>
+    <li class="breadcrumb-item active">Dashboard</li>
+@endsection
 
 @section('content')
     <div class="container-fluid">
