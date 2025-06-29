@@ -135,6 +135,56 @@
         body.dark .text-muted {
             color: #e0e0e0 !important;
         }
+
+        .profile-tile {
+            width: 100%;
+            height: 100%;
+            padding: 1.2rem 0.8rem;
+            border-radius: 0.75rem;
+            background: #f8f9fa;
+            color: #333;
+            border: none;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .profile-tile:hover {
+            background-color: #e9ecef;
+            color: #000;
+        }
+
+        .dark .profile-tile {
+            background: #2b2b2b;
+            color: #fff;
+        }
+
+        .dark .profile-tile:hover {
+            background: #353535;
+        }
+
+        .danger-tile {
+            background-color: #ffe5e5;
+            color: #dc3545;
+        }
+
+        .danger-tile:hover {
+            background-color: #dc3545;
+            color: #fff;
+        }
+
+        .dark .danger-tile {
+            background-color: #3a1c1c;
+            color: #ff6b6b;
+        }
+
+        .dark .danger-tile:hover {
+            background-color: #ff6b6b;
+            color: #000;
+        }
     </style>
 
     <div class="container-profile">
@@ -180,8 +230,9 @@
 
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
-                <button type="submit" class="logout-card w-100">
-                    <i class="bi bi-box-arrow-right me-1"></i> Logout
+                <button type="submit" class="profile-tile danger-tile">
+                    <i class="bi bi-box-arrow-right fs-4"></i>
+                    <span class="mt-2 small">Logout</span>
                 </button>
             </form>
 

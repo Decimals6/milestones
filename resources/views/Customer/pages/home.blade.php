@@ -234,6 +234,36 @@
                 padding-bottom: 5rem !important;
             }
         }
+
+        .see-more-btn {
+            display: inline-block;
+            padding: 0.65rem 1.5rem;
+            font-weight: 500;
+            font-size: 1rem;
+            color: #dc3545;
+            border: 2px solid #dc3545;
+            border-radius: .7rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            background-color: transparent;
+        }
+
+        .see-more-btn:hover {
+            background-color: #dc3545;
+            color: #fff;
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 6px 16px rgba(220, 53, 69, 0.35);
+        }
+
+        body.dark .see-more-btn {
+            color: #ff6b6b;
+            border-color: #ff6b6b;
+        }
+
+        body.dark .see-more-btn:hover {
+            background-color: #ff6b6b;
+            color: #000;
+        }
     </style>
 
     <div class="container" style="max-width: 1140px;">
@@ -312,11 +342,10 @@
             </div>
 
             {{-- See More Button --}}
-            <div class="text-center mt-4 mb-5 pb-lg-4">
-                <a href="{{ route('menu') }}" class="btn btn-outline-danger px-4">
-                    See More
-                </a>
+            <div class="text-center mt-5 mb-5 pb-lg-5">
+                <a href="{{ route('menu') }}" class="see-more-btn">See More</a>
             </div>
+
         </section>
     </div>
 @endsection
