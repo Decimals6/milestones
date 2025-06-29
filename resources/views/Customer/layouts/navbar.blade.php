@@ -208,7 +208,7 @@
                 <ul class="dropdown-menu">
                     @foreach ($categories as $c)
                         <li>
-                            <a class="dropdown-item" href="{{ route('categories') }}?name={{ urlencode($c) }}">
+                            <a class="dropdown-item" href="{{ route('category.index', ['name' => $c->name]) }}">
                                 {{ $c->name }}
                             </a>
                         </li>

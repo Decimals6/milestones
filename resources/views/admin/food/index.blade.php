@@ -144,9 +144,12 @@
                                                                     class="form-control category-select"
                                                                     multiple="multiple">
                                                                     @foreach ($categories as $category)
-                                                                        <option value="{{ $category->id }}">
-                                                                            {{ $category->name }}</option>
+                                                                        <option value="{{ $category->id }}"
+                                                                            {{ $food->categories->contains($category->id) ? 'selected' : '' }}>
+                                                                            {{ $category->name }}
+                                                                        </option>
                                                                     @endforeach
+
                                                                 </select>
                                                             </div>
                                                             <div class="mb-3">
@@ -418,7 +421,13 @@
                 modal.find('textarea[name="description"]').val(data.description);
                 modal.find('textarea[name="nutrition_info"]').val(data.nutrition_info);
                 modal.find('input[name="is_active"]').prop('checked', data.is_active);
-                modal.find('.category-select').val(data.categories).trigger('change');
+
+                $('#editModal-{{ $food->id }}').on('shown.bs.modal', function() {
+                    $(this).find('.category-select').select2({
+                        dropdownParent: $(this)
+                    });
+                });
+
             });
 
             $('.modal').on('hidden.bs.modal', function() {

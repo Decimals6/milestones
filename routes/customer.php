@@ -1,10 +1,13 @@
 <?php
 
+use App\Http\Controllers\Customer\CategoryController;
 use App\Http\Controllers\Customer\HomeController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth'])->prefix('customer')->group(function () {
     Route::resource('/home', HomeController::class);
+
+    Route::resource('/category', CategoryController::class);
 
     Route::get('/profile', function () {
         return view('Customer.pages.profile');
@@ -53,10 +56,6 @@ Route::middleware(['auth'])->prefix('customer')->group(function () {
     Route::get('/reviews', function () {
         return view('Customer.pages.reviews');
     })->name('reviews');
-
-    Route::get('/categories', function () {
-        return view('Customer.pages.categories');
-    })->name('categories');
 
     Route::get('/discover', function () {
         return view('Customer.pages.discover');
