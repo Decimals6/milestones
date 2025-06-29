@@ -50,7 +50,7 @@
             <img src="https://picsum.photos/seed/emptyCart/200/160" alt="Empty" class="opacity-50 mb-4" loading="lazy">
             <h5 class="fw-bold mb-2">Your cart is empty!</h5>
             <p class="text-muted">Please add some items from the menu</p>
-            <a href="{{ route('customer.home') }}" class="btn btn-danger px-4">Explore Menu</a>
+            <a href="{{ route('home.index') }}" class="btn btn-danger px-4">Explore Menu</a>
         </div>
     @endif
 

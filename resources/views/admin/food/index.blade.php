@@ -3,6 +3,25 @@
 
 @section('style')
     <link rel="stylesheet" href="{{ asset('assets/css/vendors/datatables.css') }}">
+
+    <style>
+        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+            font-size: 0;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            right: 0;
+            top: 0;
+            cursor: pointer;
+            z-index: 1;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            position: relative;
+            overflow: hidden;
+        }
+    </style>
+
 @endsection
 
 @section('breadcrumb-title')
@@ -37,6 +56,7 @@
                                         <th>Nutrition Info</th>
                                         <th>Active</th>
                                         <th>Categories</th>
+                                        <th>Image</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -56,13 +76,20 @@
                                                 </a>
                                             </td>
                                             <td>
+                                                <a href="javascript:void(0)" class="text-info view-image-btn"
+                                                    data-bs-toggle="modal" data-bs-target="#imageModal"
+                                                    data-image="{{ $food->image_path ? asset('storage/' . $food->image_path) : '' }}"
+                                                    data-has-image="{{ $food->image_path ? '1' : '0' }}">
+                                                    <i class="icon-image"></i>
+                                                </a>
+                                            </td>
+                                            <td>
                                                 <ul class="action">
                                                     <li class="edit">
                                                         <a href="javascript:void(0)" class="text-success edit-food-btn"
                                                             data-bs-toggle="modal"
                                                             data-bs-target="#editFoodModal{{ $food->id }}"
-                                                            data-id="{{ $food->id }}"
-                                                            data-json='@json($food)'>
+                                                            data-id="{{ $food->id }}">
                                                             <i class="icon-pencil-alt"></i>
                                                         </a>
                                                     </li>
@@ -110,20 +137,22 @@
                                                                 <textarea name="nutrition_info" class="form-control">{{ $food->nutrition_info }}</textarea>
                                                             </div>
                                                             <div class="mb-3">
-                                                                <label>Categories</label>
-                                                                <div class="form-group">
+                                                                <label
+                                                                    for="edit-cat-{{ $food->id }}">Categories</label>
+                                                                <select name="category_ids[]"
+                                                                    id="edit-cat-{{ $food->id }}"
+                                                                    class="form-control category-select"
+                                                                    multiple="multiple">
                                                                     @foreach ($categories as $category)
-                                                                        <div class="form-check">
-                                                                            <label
-                                                                                class="form-check-label">
-                                                                                <input type="checkbox"
-                                                                                    class="form-check-input"
-                                                                                    name="category_ids[]"
-                                                                                    value="{{ $category->id }}"
-                                                                                    id="cat_{{ $category->id }}">{{ $category->name }}</label>
-                                                                        </div>
+                                                                        <option value="{{ $category->id }}">
+                                                                            {{ $category->name }}</option>
                                                                     @endforeach
-                                                                </div>
+                                                                </select>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label>Image</label>
+                                                                <input type="file" name="image" class="form-control"
+                                                                    accept="image/*">
                                                             </div>
                                                             <div class="form-check mb-3">
                                                                 <label class="form-check-label">
@@ -152,6 +181,27 @@
         </div>
     </div>
 
+    <!-- Modal View Image -->
+    <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark text-white">
+                <div class="modal-header">
+                    <h5 class="modal-title">Food Image</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div id="imageWrapper">
+                        <img id="imagePreview" class="img-fluid d-none mb-3" alt="Food Image">
+                        <p id="noImageText" class="text-white">No image available</p>
+
+                        <button type="button" id="deleteImageBtn" class="btn btn-danger d-none" data-id="">
+                            <i class="icon-trash"></i> Delete Image
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
     <!-- Modal Create -->
@@ -183,16 +233,16 @@
                         </div>
                         <div class="mb-3">
                             <label>Categories</label>
-                            <div class="form-group">
+                            <select name="category_ids[]" multiple="multiple" id="category-select"
+                                class="form-control select2">
                                 @foreach ($categories as $category)
-                                    <div class="form-check">
-                                        <label class="form-check-label">
-                                            <input type="checkbox" class="form-check-input" name="category_ids[]"
-                                                value="{{ $category->id }}"
-                                                id="cat_{{ $category->id }}">{{ $category->name }}</label>
-                                    </div>
+                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
                                 @endforeach
-                            </div>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label>Image</label>
+                            <input type="file" name="image" class="form-control" accept="image/*">
                         </div>
                         <div class="form-check mb-3">
                             <label class="form-check-label">
@@ -229,6 +279,51 @@
 @section('script')
     <script src="{{ asset('assets/js/datatable/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('assets/js/datatable/datatables/datatable.custom.js') }}"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('#category-select').select2({
+                placeholder: "Select categories",
+                allowClear: true
+            });
+            $('.category-select').each(function() {
+                $(this).select2({
+                    dropdownParent: $(this).closest('.modal'),
+                    placeholder: "Select categories",
+                    width: '100%'
+                });
+            });
+
+        });
+        $(document).on('click', '.view-image-btn', function() {
+            const hasImage = $(this).data('has-image') == 1;
+            const imageUrl = $(this).data('image');
+            const foodId = $(this).closest('tr').attr('id').replace('food-row-', '');
+
+            if (hasImage) {
+                $('#imagePreview').attr('src', imageUrl).removeClass('d-none');
+                $('#noImageText').addClass('d-none');
+                $('#deleteImageBtn').removeClass('d-none').attr('data-id', foodId);
+            } else {
+                $('#imagePreview').addClass('d-none').attr('src', '');
+                $('#noImageText').removeClass('d-none');
+                $('#deleteImageBtn').addClass('d-none').attr('data-id', '');
+            }
+        });
+    </script>
+
+    <script id="food-json-{{ $food->id }}" type="application/json">
+        {!! json_encode([
+            'id' => $food->id,
+            'name' => $food->name,
+            'base_price' => $food->base_price,
+            'description' => $food->description,
+            'nutrition_info' => $food->nutrition_info,
+            'is_active' => $food->is_active,
+            'categories' => $food->categories->pluck('id')->toArray(),
+        ]) !!}
+    </script>
+
 
     @if (session('success'))
         <script>
@@ -268,7 +363,7 @@
             }
         });
 
-        // Delete
+        // Delete food
         $(document).ready(function() {
             const deleteUrl = "{{ route('foods.destroy', ':id') }}";
 
@@ -314,34 +409,35 @@
             const updateUrl = "{{ route('foods.update', ':id') }}";
 
             $(document).on('click', '.edit-food-btn', function() {
-                const data = $(this).data('json');
-                const id = $(this).data('id');
-                const modal = $('#editFoodModal' + id);
+                const foodId = $(this).data('id');
+                const modal = $('#editFoodModal' + foodId);
+                const data = JSON.parse(document.getElementById('food-json-' + foodId).textContent);
 
                 modal.find('input[name="name"]').val(data.name);
                 modal.find('input[name="base_price"]').val(data.base_price);
                 modal.find('textarea[name="description"]').val(data.description);
                 modal.find('textarea[name="nutrition_info"]').val(data.nutrition_info);
-                modal.find('input[name="is_active"]').prop('checked', data.is_active ? true : false);
+                modal.find('input[name="is_active"]').prop('checked', data.is_active);
+                modal.find('.category-select').val(data.categories).trigger('change');
+            });
 
-                const categoryIds = (data.categories || []).map(cat => cat.id);
-                modal.find('input[name="category_ids[]"]').each(function() {
-                    const checkbox = $(this);
-                    checkbox.prop('checked', categoryIds.includes(parseInt(checkbox.val())));
-                });
+            $('.modal').on('hidden.bs.modal', function() {
+                $(this).find('.category-select').val(null).trigger('change');
             });
 
             $(document).on('submit', '.edit-food-form', function(e) {
                 e.preventDefault();
-
-                const form = $(this);
-                const foodId = form.data('id');
-                const formData = form.serialize() + '&_method=PUT';
+                const form = this;
+                const foodId = $(form).data('id');
+                const formData = new FormData(form);
+                formData.append('_method', 'PUT');
 
                 $.ajax({
                     url: updateUrl.replace(':id', foodId),
                     method: 'POST',
                     data: formData,
+                    processData: false,
+                    contentType: false,
                     success: function(response) {
                         sessionStorage.setItem('foods_success', response.message ||
                             'Food updated successfully');
@@ -361,14 +457,15 @@
         // Create
         $('#createFoodForm').on('submit', function(e) {
             e.preventDefault();
-
-            const form = $(this);
-            const formData = form.serialize();
+            const form = this;
+            const formData = new FormData(form);
 
             $.ajax({
                 url: "{{ route('foods.store') }}",
                 method: 'POST',
                 data: formData,
+                processData: false,
+                contentType: false,
                 success: function(response) {
                     sessionStorage.setItem('foods_success', response.message ||
                         'Food created successfully');
@@ -385,8 +482,11 @@
         });
 
         $('#createFoodModal').on('hidden.bs.modal', function() {
-            $(this).find('form')[0].reset();
+            const form = $(this).find('form')[0];
+            form.reset();
+            $(form).find('select[name="category_ids[]"]').val(null).trigger('change');
         });
+
 
         // Show categories list
         $(document).on('click', '.show-categories-btn', function() {
@@ -403,6 +503,45 @@
                     $list.append(`<li>${cat}</li>`);
                 });
             }
+        });
+
+        // delete image
+        $(document).on('click', '#deleteImageBtn', function() {
+            const foodId = $(this).data('id');
+
+            Swal.fire({
+                title: 'Delete image?',
+                text: 'This action cannot be undone.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "{{ route('foods.update', ':id') }}".replace(':id', foodId),
+                        method: 'POST',
+                        data: {
+                            _method: 'PATCH',
+                            _token: '{{ csrf_token() }}',
+                            delete_image: true
+                        },
+                        success: function(res) {
+                            sessionStorage.setItem('foods_success', res.message ||
+                                'Image deleted successfully');
+                            location.reload();
+                        },
+                        error: function() {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Failed',
+                                text: 'Failed to delete image.'
+                            });
+                        }
+                    });
+                }
+            });
         });
     </script>
 

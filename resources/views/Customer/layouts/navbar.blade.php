@@ -196,7 +196,7 @@
 
 <nav class="navbar navbar-expand-lg bg-white dark:bg-dark shadow-sm border-bottom py-3 px-3 d-none d-md-flex">
     <div class="container-fluid">
-        <a class="navbar-brand d-flex align-items-center text-danger" href="{{ route('customer.home') }}">
+        <a class="navbar-brand d-flex align-items-center text-danger" href="{{ route('home.index') }}">
             <img src="https://picsum.photos/seed/logo/32" height="32" class="rounded-circle me-2" alt="">
             <strong>eFood</strong>
         </a>
@@ -206,10 +206,10 @@
                 <button class="btn btn-cats" data-bs-toggle="dropdown">Categories <i
                         class="bi bi-chevron-down small"></i></button>
                 <ul class="dropdown-menu">
-                    @foreach (['Set Menu', 'Hot Item', 'Biriyani', 'Drinks', 'Pizza', 'Sandwich', 'Burger'] as $c)
+                    @foreach ($categories as $c)
                         <li>
                             <a class="dropdown-item" href="{{ route('categories') }}?name={{ urlencode($c) }}">
-                                {{ $c }}
+                                {{ $c->name }}
                             </a>
                         </li>
                     @endforeach
@@ -249,9 +249,9 @@
     </div>
 </nav>
 
-@if (request()->routeIs('customer.home'))
+@if (request()->routeIs('home.index'))
     <nav class="navbar bg-white dark:bg-dark shadow-sm d-md-none px-3 py-2">
-        <a class="navbar-brand text-danger m-0 p-0" href="{{ route('customer.home') }}">eFood</a>
+        <a class="navbar-brand text-danger m-0 p-0" href="{{ route('home.index') }}">eFood</a>
         <div class="ms-auto d-flex gap-2">
             <button class="icon-btn" data-bs-toggle="collapse" data-bs-target="#mobileSearch"><i
                     class="bi bi-search"></i></button>

@@ -24,7 +24,7 @@
 
 <div class="container py-4 mb-5">
     <div class="d-md-none d-flex justify-content-between align-items-center mb-3">
-        <a href="{{ route('customer.home') }}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+        <a href="{{ route('home.index') }}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
             Back
         </a>
         <div class="dropdown">

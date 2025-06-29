@@ -1,11 +1,10 @@
 <?php
 
+use App\Http\Controllers\Customer\HomeController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth'])->prefix('customer')->group(function () {
-    Route::get('/home', function () {
-        return view('Customer.pages.home');
-    })->name('customer.home');
+    Route::resource('/home', HomeController::class);
 
     Route::get('/profile', function () {
         return view('Customer.pages.profile');

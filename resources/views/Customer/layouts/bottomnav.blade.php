@@ -71,7 +71,7 @@
 
     <div class="container-fluid d-flex align-items-end px-0">
 
-        <a href="{{ route('customer.home') }}" class="text-center {{ request()->routeIs('customer.home') ? 'nav-active' : '' }}">
+        <a href="{{ route('home.index') }}" class="text-center {{ request()->routeIs('home.index') ? 'nav-active' : '' }}">
             <i class="bi bi-house"></i><small>Home</small>
         </a>
 
