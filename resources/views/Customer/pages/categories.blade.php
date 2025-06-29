@@ -70,7 +70,7 @@
         <div class="row g-3">
             @forelse($foods as $product)
                 <div class="col-6 col-md-4 col-lg-3">
-                    <x-product-card :title="$product->name" :price="$product->base_price" />
+                    <x-product-card :image="$product->image_path ? asset('storage/' . $product->image_path) : 'https://picsum.photos/seed/food1/400/300'" :title="$product->name" :price="$product->base_price" />
                 </div>
             @empty
                 <div class="col-12">
