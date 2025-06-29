@@ -1,20 +1,25 @@
 <footer class="footer mt-auto pt-5 position-relative text-dark-subtle">
     <style>
-        html, body {
+        html,
+        body {
             height: 100%;
         }
+
         body {
             display: flex;
             flex-direction: column;
         }
+
         main.container-fluid {
             flex: 1 0 auto;
         }
+
         footer.footer {
             flex-shrink: 0;
             background-color: #f8f9fa;
             transition: background-color 0.3s ease, color 0.3s ease;
         }
+
         .dark footer.footer {
             background-color: #262626;
             color: #f1f1f1;
@@ -29,12 +34,15 @@
         .footer a {
             transition: color 0.2s ease-in-out;
         }
+
         .footer a:hover {
             color: #dc3545 !important;
         }
+
         .dark .footer a {
             color: #e0e0e0 !important;
         }
+
         .dark .footer a:hover {
             color: #f87171 !important;
         }
@@ -54,9 +62,13 @@
             align-items: center;
             justify-content: center;
         }
+
         @media (max-width: 576px) {
-            .fab-chat { bottom: 105px; }
+            .fab-chat {
+                bottom: 105px;
+            }
         }
+
         .dark .fab-chat {
             background: #2b2b2b;
         }
@@ -88,9 +100,18 @@
         .footer .btn-light {
             color: #000;
         }
+
         .dark .footer .btn-light {
             background-color: #f1f1f1;
             color: #000;
+        }
+
+        @media (min-width: 992px) {
+            .footer::before {
+                content: '';
+                display: block;
+                height: 5rem;
+            }
         }
     </style>
 
@@ -163,7 +184,8 @@
     <a href="https://wa.me/628123456789" target="_blank" class="fab-chat">
         <!-- WhatsApp Icon SVG -->
         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="white" viewBox="0 0 24 24">
-            <path d="M12.04 2.004a9.96 9.96 0 0 0-8.54 15.25l-1.13 4.11 4.22-1.11a9.95 9.95 0 0 0 5.45 1.55c5.52 0 10-4.48 10-10s-4.47-10-10-10Zm0 18.4c-1.75 0-3.37-.49-4.74-1.35l-.34-.21-2.5.66.67-2.43-.22-.35a8.37 8.37 0 0 1-1.37-4.61c0-4.66 3.79-8.45 8.45-8.45 4.66 0 8.45 3.79 8.45 8.45s-3.79 8.45-8.45 8.45Zm4.5-6.52c-.25-.13-1.5-.74-1.73-.82-.23-.08-.4-.13-.57.13s-.66.82-.81.98c-.15.17-.3.18-.55.05-.25-.13-1.05-.39-2-1.26a7.51 7.51 0 0 1-1.38-1.7c-.15-.25-.02-.39.11-.52.11-.12.25-.3.37-.45.13-.15.17-.26.26-.43.08-.17.04-.32-.02-.45s-.57-1.37-.78-1.88c-.2-.48-.4-.42-.55-.43h-.47c-.17 0-.45.06-.68.3s-.89.87-.89 2.12c0 1.25.91 2.46 1.04 2.63.13.17 1.78 2.71 4.31 3.8.6.26 1.07.41 1.43.53.6.19 1.14.16 1.57.1.48-.07 1.5-.61 1.71-1.2.21-.59.21-1.1.15-1.2-.06-.1-.23-.15-.48-.28Z"/>
+            <path
+                d="M12.04 2.004a9.96 9.96 0 0 0-8.54 15.25l-1.13 4.11 4.22-1.11a9.95 9.95 0 0 0 5.45 1.55c5.52 0 10-4.48 10-10s-4.47-10-10-10Zm0 18.4c-1.75 0-3.37-.49-4.74-1.35l-.34-.21-2.5.66.67-2.43-.22-.35a8.37 8.37 0 0 1-1.37-4.61c0-4.66 3.79-8.45 8.45-8.45 4.66 0 8.45 3.79 8.45 8.45s-3.79 8.45-8.45 8.45Zm4.5-6.52c-.25-.13-1.5-.74-1.73-.82-.23-.08-.4-.13-.57.13s-.66.82-.81.98c-.15.17-.3.18-.55.05-.25-.13-1.05-.39-2-1.26a7.51 7.51 0 0 1-1.38-1.7c-.15-.25-.02-.39.11-.52.11-.12.25-.3.37-.45.13-.15.17-.26.26-.43.08-.17.04-.32-.02-.45s-.57-1.37-.78-1.88c-.2-.48-.4-.42-.55-.43h-.47c-.17 0-.45.06-.68.3s-.89.87-.89 2.12c0 1.25.91 2.46 1.04 2.63.13.17 1.78 2.71 4.31 3.8.6.26 1.07.41 1.43.53.6.19 1.14.16 1.57.1.48-.07 1.5-.61 1.71-1.2.21-.59.21-1.1.15-1.2-.06-.1-.23-.15-.48-.28Z" />
         </svg>
     </a>
 </footer>

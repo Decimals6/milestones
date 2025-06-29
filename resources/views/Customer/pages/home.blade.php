@@ -326,7 +326,7 @@
             </section>
         @endforeach
 
-        <section class="mb-5 pb-lg-5 position-relative">
+        <section class="mb-5 position-relative">
             <h5 class="section-title text-center mb-3">Chef's Recommendation <i class="bi bi-emoji-smile"></i></h5>
             <div class="chef-wrap">
                 <div class="scroll-x" id="chefScroll">
@@ -342,7 +342,7 @@
             </div>
 
             {{-- See More Button --}}
-            <div class="text-center mt-5 mb-5 pb-lg-5">
+            <div class="text-center mt-5 mb-5">
                 <a href="{{ route('menu') }}" class="see-more-btn">See More</a>
             </div>
 

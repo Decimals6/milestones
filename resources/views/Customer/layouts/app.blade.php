@@ -302,7 +302,10 @@
 
     @include('Customer.layouts.navbar')
     @include('Customer.layouts.sidebar')
-    <main class="container-fluid p-3">@yield('content')</main>
+    <main class="container-fluid content-area pt-4 pt-md-5 mb-lg-5 pb-lg-5">
+        @yield('content')
+    </main>
+
     @include('Customer.layouts.bottomnav')
     @include('Customer.layouts.footer')
 
