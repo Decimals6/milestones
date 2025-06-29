@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Blade;
+use App\Models\Category;
+use Illuminate\Support\Facades\View;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,5 +24,9 @@ class AppServiceProvider extends ServiceProvider
     {
         Blade::component('Customer.components.product-card', 'product-card');
         Blade::component('Customer.components.product-card-2', 'product-card-2');
+
+        View::composer('Customer.layouts.navbar', function ($view) {
+            $view->with('categories', Category::all());
+        });
     }
 }
