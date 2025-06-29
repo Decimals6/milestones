@@ -208,7 +208,7 @@
                 <ul class="dropdown-menu">
                     @foreach (['Set Menu', 'Hot Item', 'Biriyani', 'Drinks', 'Pizza', 'Sandwich', 'Burger'] as $c)
                         <li>
-                            <a class="dropdown-item" href="{{ url('/categories?name=' . urlencode($c)) }}">
+                            <a class="dropdown-item" href="{{ route('categories') }}?name={{ urlencode($c) }}">
                                 {{ $c }}
                             </a>
                         </li>

@@ -139,6 +139,20 @@
     .like-btn i {
     transition: color 0.25s ease-in-out;
     }
+
+    html, body {
+        height: 100%;
+        overflow-x: hidden;
+        scrollbar-width: none;
+    }
+
+    body {
+        -ms-overflow-style: none;
+    }
+
+    body::-webkit-scrollbar {
+        display: none;
+    }
   </style>
 </head>
 <body class="position-relative">
