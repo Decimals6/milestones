@@ -311,7 +311,8 @@
       qs('#pm-price').textContent = prod.price.toLocaleString()
       qs('#pm-rating').textContent = '4.0'
       qs('#pm-rev').textContent = ' ( 0 Reviews )'
-      qs('#pm-rev').href = `/rievews/${prod.id}`
+      qs('#pm-rev').href = "{{ route('reviews') }}";
+
       qs('#pm-qty').textContent = '1'
       qs('#pm-badge').textContent = 'Veg'
       qs('#pm-like i').className = liked.has(prod.id) ? 'bi bi-heart-fill' : 'bi bi-heart'
@@ -456,6 +457,7 @@
         if (card) toggleLike(card.dataset.id)
       }
     })
+    @stack('scripts')
   </script>
 </body>
 </html>
