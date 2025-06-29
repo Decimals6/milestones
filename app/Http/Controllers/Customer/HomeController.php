@@ -8,10 +8,20 @@ use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $categories = Category::all();
+        $categoriesTop = Category::with(['foods' => function ($query) {
+            $query->where('is_active', 1)->inRandomOrder();
+        }])
+            ->withCount('foods')
+            ->orderByDesc('foods_count')
+            ->take(2)
+            ->get()
+            ->map(function ($category) {
+                $category->foods = $category->foods->take(4);
+                return $category;
+            });
 
-        return view('customer.pages.home', compact('categories'));
+        return view('customer.pages.home', compact('categoriesTop'));
     }
 }

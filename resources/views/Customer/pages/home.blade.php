@@ -236,7 +236,7 @@
         }
     </style>
 
-<div class="container" style="max-width: 1140px;">
+    <div class="container" style="max-width: 1140px;">
         <div class="row g-4 mb-5">
             <div class="col-12 col-lg-8">
                 <h5 class="section-title">Today’s Specials</h5>
@@ -265,35 +265,36 @@
             </div>
         </div>
 
-        <section class="mb-5">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <h5 class="section-title">Local Eats</h5>
-                <a href="#" class="small fw-semibold text-primary text-decoration-none">Discover All</a>
-            </div>
-            <div class="scroll-x">
-                @foreach ([['Zinger & Pop', 'zinger', 100, 4.0, 0, false], ['Popcorn Rice Bowl', 'rice', 130, 4.2, 0, false], ['Chizza Meal', 'chizza', 258, 4.1, 14, false], ['Spicy Burger', 'spicy', 72, 4.0, 40, false]] as $item)
-                    <div class="card-wrapper">
-                        <x-product-card :image="'https://picsum.photos/seed/' . $item[1] . '/400/300'" :title="$item[0]" :price="$item[2]" :rating="$item[3]"
-                            :off="$item[4] ?: null" :sold-out="$item[5]" />
-                    </div>
-                @endforeach
-            </div>
-        </section>
-
-        <section class="mb-5">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <h5 class="section-title">Flavorful Set</h5>
-                <a href="#" class="small fw-semibold text-primary text-decoration-none">Discover All</a>
-            </div>
-            <div class="scroll-x">
-                @foreach ([['Popcorn Rice Bowl', 'rice', 130, 4.2, 0, false], ['Zinger & Pop', 'zinger', 100, 4.0, 0, false], ['Set Menu 2', 'set', 240, 4.4, 0, false], ['Special Cold Coffee', 'coffee', 171, 5.0, 0, false]] as $item)
-                    <div class="card2-wrapper">
-                        <x-product-card-2 :image="'https://picsum.photos/seed/' . $item[1] . '/500/350'" :title="$item[0]" :price="$item[2]" :rating="$item[3]"
-                            :off="$item[4] ?: null" :sold-out="$item[5]" />
-                    </div>
-                @endforeach
-            </div>
-        </section>
+        @foreach ($categoriesTop as $index => $category)
+            <section class="mb-5">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="section-title">{{ $category->name }}</h5>
+                    <a href="{{ route('categories.index', ['name' => $category->name]) }}"
+                        class="small fw-semibold text-primary text-decoration-none">
+                        Discover All
+                    </a>
+                </div>
+                <div class="scroll-x">
+                    @foreach ($category->foods as $food)
+                        @if ((int) $index === 0)
+                            <div class="card-wrapper">
+                                <x-product-card :image="$food->image_path
+                                    ? asset('storage/' . $food->image_path)
+                                    : 'https://picsum.photos/seed/food1/400/300'" :title="$food->name" :price="$food->base_price" :rating="4.5"
+                                    :off="null" :sold-out="false" />
+                            </div>
+                        @else
+                            <div class="card2-wrapper">
+                                <x-product-card-2 :image="$food->image_path
+                                    ? asset('storage/' . $food->image_path)
+                                    : 'https://picsum.photos/seed/food1/500/350'" :title="$food->name" :price="$food->base_price" :rating="4.5"
+                                    :off="null" :sold-out="false" />
+                            </div>
+                        @endif
+                    @endforeach
+                </div>
+            </section>
+        @endforeach
 
         <section class="mb-5 position-relative">
             <h5 class="section-title text-center mb-3">Chef's Recommendation <i class="bi bi-emoji-smile"></i></h5>
