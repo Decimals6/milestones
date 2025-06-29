@@ -9,8 +9,8 @@
         <div class="text-center mb-4">
             <img src="https://via.placeholder.com/100" alt="User Avatar" class="rounded-circle mb-2"
                 style="width: 100px; height: 100px;">
-            <h5 class="fw-bold mb-0">Nama Pengguna</h5>
-            <small class="text-muted">email@example.com</small>
+            <h5 class="fw-bold mb-0">{{ auth()->user()->first_name . ' ' . auth()->user()->last_name }}</h5>
+            <small class="text-muted">{{ auth()->user()->email}}</small>
         </div>
 
         {{-- Form Ubah Profil --}}
@@ -19,19 +19,19 @@
             <form action="#" method="POST">
                 @csrf
                 <div class="mb-3">
-                    <label class="form-label">Nama Lengkap</label>
-                    <input type="text" class="form-control" placeholder="Masukkan nama Anda" value="Nama Pengguna">
+                    <label class="form-label">First Name</label>
+                    <input type="text" class="form-control" placeholder="First Name<" value="{{ auth()->user()->first_name }}">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Last Name</label>
+                    <input type="text" class="form-control" placeholder="Last Name" value="{{ auth()->user()->last_name }}">
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Email</label>
-                    <input type="email" class="form-control" placeholder="Email" value="email@example.com">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Nomor HP</label>
-                    <input type="text" class="form-control" placeholder="08xxxxxx" value="08123456789">
+                    <input type="email" class="form-control" placeholder="Email" value="{{ auth()->user()->email}}">
                 </div>
                 <div class="text-end">
-                    <button class="btn btn-primary px-4">Simpan Perubahan</button>
+                    <button class="btn btn-primary px-4">Save</button>
                 </div>
             </form>
         </div>
