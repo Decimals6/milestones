@@ -185,17 +185,158 @@
             background-color: #ff6b6b;
             color: #000;
         }
+
+        .email-text {
+            transition: color 0.3s;
+        }
+
+        body.dark .email-text {
+            color: #ccc !important;
+        }
+
+        .btn-delete-account {
+            background-color: transparent;
+            border: 1px solid #dc3545;
+            color: #dc3545;
+            font-weight: 500;
+            border-radius: 0.75rem;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 0 0 transparent;
+            font-size: 0.95rem;
+            height: 42px;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .btn-delete-account:hover {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: #999696;
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+            transform: scale(1.03);
+        }
+
+        body.dark .btn-delete-account:hover {
+            background-color: rgba(220, 53, 69, 0.2);
+            color: #ffffff;
+        }
+
+        .btn-delete-account {
+            margin-left: 1.5rem;
+        }
+
+        @media (min-width: 769px) {
+            .btn-delete-account .bi {
+                margin-right: 0.5rem;
+            }
+        }
+
+        /* edit button versi mobile */
+        @media (max-width: 768px) {
+            .btn-delete-account {
+                position: absolute;
+                top: 50%;
+                right: 1rem;
+                transform: translateY(-50%);
+                font-size: 1.5rem;
+                color: #dc3545;
+                border: none;
+                background: transparent;
+                padding: 0;
+                z-index: 1;
+            }
+
+            .btn-delete-account span {
+                display: none;
+            }
+
+            .btn-delete-account .bi {
+                margin: 0;
+            }
+
+            .card.position-relative {
+                position: relative;
+            }
+        }
+
+        /* Modal edit mobile */
+        @media (max-width: 768px) {
+            .modal.profile-modal .modal-dialog {
+                position: fixed;
+                bottom: 0;
+                margin: 0;
+                width: 100%;
+                left: 0;
+                right: 0;
+                transform: translateY(100%);
+                transition: transform 0.3s ease-in-out;
+            }
+
+            .modal.profile-modal.show .modal-dialog {
+                transform: translateY(0);
+            }
+
+            .modal.profile-modal .modal-content {
+                border-radius: 1rem 1rem 0 0;
+                padding: 1.5rem;
+            }
+        }
     </style>
 
     <div class="container-profile">
 
         {{-- Static Account Section --}}
-        <div class="text-center">
-            <img src="https://picsum.photos/100" alt="User Avatar" class="avatar-profile mb-2 shadow"
-                onclick="showProfileModal()">
-            <h5 class="fw-bold mb-0">{{ auth()->user()->first_name }} {{ auth()->user()->last_name }}</h5>
-            <small class="text-muted">{{ auth()->user()->email }}</small>
+        <div class="card border-0 shadow-sm bg-light-subtle dark:bg-dark mb-4 rounded-4 overflow-hidden position-relative">
+            <div class="row g-0 align-items-center px-4 py-3">
+                {{-- Avatar --}}
+                <div class="col-auto">
+                    <img src="https://picsum.photos/100" alt="User Avatar"
+                        class="rounded-circle border border-3 border-danger-subtle shadow-sm me-3"
+                        style="width: 72px; height: 72px; object-fit: cover; cursor: pointer;" onclick="showProfileModal()">
+                </div>
+
+                {{-- Info Utama --}}
+                <div class="col">
+                    <h6 class="mb-0 fw-semibold">{{ auth()->user()->first_name }} {{ auth()->user()->last_name }}</h6>
+                    <small class="text-muted d-block email-text">{{ auth()->user()->email }}</small>
+                </div>
+
+                {{-- Info Detail --}}
+                <div class="col-auto d-none d-md-flex align-items-center gap-4 text-center ms-auto">
+                    <div>
+                        <div class="fw-bold">{{ auth()->user()->loyalty_point ?? 0 }}</div>
+                        <small class="text-muted">Loyalty Point</small>
+                    </div>
+                    <div class="vr text-danger opacity-25"></div>
+                    <div>
+                        <div class="fw-bold">${{ number_format(auth()->user()->wallet_balance ?? 0, 2) }}</div>
+                        <small class="text-muted">Wallet Balance</small>
+                    </div>
+                    <div class="vr text-danger opacity-25"></div>
+                    <div>
+                        <div class="fw-bold">{{ auth()->user()->orders_count ?? 0 }}</div>
+                        <small class="text-muted">Total Order</small>
+                    </div>
+                    <div class="vr text-danger opacity-25"></div>
+                    <div>
+                        <div class="fw-bold">{{ auth()->user()->favorites_count ?? 0 }}</div>
+                        <small class="text-muted">Favourite</small>
+                    </div>
+                </div>
+
+                {{-- Delete Action --}}
+                <div class="col-md-auto ms-auto">
+                    <form id="deleteAccountForm" method="POST" action="{{ route('customer.delete-account') }}">
+                        @csrf
+                        @method('DELETE')
+                        <button type="button" class="btn btn-delete-account" onclick="confirmDelete()">
+                            <i class="bi bi-trash3"></i> <span>Delete Account</span>
+                        </button>
+                    </form>
+                </div>
+
+            </div>
         </div>
+
 
         {{-- Grid Menu --}}
         <div class="menu-grid">
@@ -235,8 +376,8 @@
                     <span class="mt-2 small">Logout</span>
                 </button>
             </form>
-
         </div>
+
     </div>
 
     {{-- Modal Edit Profile --}}
@@ -295,5 +436,111 @@
                 img.src = URL.createObjectURL(file);
             }
         });
+
+        function confirmDelete() {
+            const isDark = document.body.classList.contains('dark');
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Deleting your account is irreversible.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Continue',
+                cancelButtonText: 'Cancel',
+                background: isDark ? '#1e1e1e' : '#fff',
+                color: isDark ? '#f8f9fa' : '#212529',
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                reverseButtons: true,
+                customClass: {
+                    popup: 'rounded-4 shadow-lg',
+                    confirmButton: 'btn btn-danger px-4 rounded-pill',
+                    cancelButton: 'btn btn-secondary px-4 rounded-pill'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    askPinAndDelete(isDark);
+                }
+            });
+        }
+
+        function askPinAndDelete(isDark) {
+            let timerInterval;
+            let timeLeft = 30; // seconds
+
+            Swal.fire({
+                title: 'PIN Confirmation',
+                html: `
+                <p class="mb-2">Please enter your 6-digit security PIN to delete your account.</p>
+                <input type="password" id="pinInput" class="swal2-input rounded-pill text-center" maxlength="6" placeholder="Enter PIN">
+                <p class="text-danger small mt-2" id="countdown">Expires in <span id="pin-timer">${timeLeft}</span>s</p>
+            `,
+                focusConfirm: false,
+                showCancelButton: true,
+                confirmButtonText: 'Verify & Delete',
+                cancelButtonText: 'Cancel',
+                background: isDark ? '#1e1e1e' : '#fff',
+                color: isDark ? '#f8f9fa' : '#212529',
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                customClass: {
+                    popup: 'rounded-4 shadow-lg',
+                    confirmButton: 'btn btn-danger px-4 rounded-pill',
+                    cancelButton: 'btn btn-secondary px-4 rounded-pill'
+                },
+                didOpen: () => {
+                    const pinInput = Swal.getPopup().querySelector('#pinInput');
+                    pinInput.focus();
+
+                    timerInterval = setInterval(() => {
+                        timeLeft--;
+                        const el = document.getElementById('pin-timer');
+                        if (el) el.innerText = timeLeft;
+                        if (timeLeft <= 0) {
+                            clearInterval(timerInterval);
+                            Swal.close();
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Timed Out',
+                                text: 'PIN entry timed out. Please try again.',
+                                timer: 2500,
+                                showConfirmButton: false,
+                                background: isDark ? '#1e1e1e' : '#fff',
+                                color: isDark ? '#f8f9fa' : '#212529',
+                                customClass: {
+                                    popup: 'rounded-4 shadow'
+                                }
+                            });
+                        }
+                    }, 1000);
+                },
+                preConfirm: () => {
+                    const pin = document.getElementById('pinInput').value;
+                    if (!pin || pin.length < 4) {
+                        Swal.showValidationMessage('PIN must be at least 4 digits');
+                        return false;
+                    }
+                    clearInterval(timerInterval);
+                    return pin;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Account Deleted',
+                        text: 'Your account has been deleted successfully.',
+                        timer: 2500,
+                        showConfirmButton: false,
+                        background: isDark ? '#1e1e1e' : '#fff',
+                        color: isDark ? '#f8f9fa' : '#212529',
+                        customClass: {
+                            popup: 'rounded-4 shadow-lg'
+                        }
+                    }).then(() => {
+                        document.getElementById('deleteAccountForm').submit();
+                    });
+                }
+            });
+        }
     </script>
 @endsection

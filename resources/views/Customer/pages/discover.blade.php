@@ -103,21 +103,60 @@
             max-width: 800px;
         }
 
-        .card {
+
+        /* card custom choose */
+        .card.custom-meal {
             border: none;
-            border-radius: var(--card-radius);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border-radius: 1rem;
+            background: linear-gradient(to bottom right, #ffffff, #f8f9fa);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
-        .card-header {
+        .card.custom-meal:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+        }
+
+        .card.custom-meal .card-header {
             background: transparent;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-            font-weight: bold;
+            border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
+            font-weight: 600;
+            font-size: 1rem;
+            color: #333;
         }
 
-        .card-body {
-            padding: 1rem;
+        .card.custom-meal .card-body {
+            padding: 1rem 1.25rem;
+            font-size: 0.95rem;
+            color: #555;
         }
+
+        .card.custom-meal .btn-modern {
+            font-size: 0.8rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 50rem;
+            transition: all 0.25s ease;
+        }
+
+        .card.custom-meal .btn-modern:hover {
+            background-color: #0d6efd;
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(13, 110, 253, 0.3);
+            border-color: transparent;
+        }
+
+        body.dark .card.custom-meal {
+            background: linear-gradient(to bottom right, #2c2c2c, #1e1e1e);
+            box-shadow: 0 6px 18px rgba(255, 255, 255, 0.03);
+        }
+
+        body.dark .card.custom-meal .card-header,
+        body.dark .card.custom-meal .card-body {
+            color: #eee;
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
 
         .selected-item {
             transition: transform 0.3s ease;
@@ -302,7 +341,7 @@
         <h2 class="text-center fw-bold mb-4 mt-5 pt-2">Customize Your Meal</h2>
 
         @foreach (['Base', 'Size', 'Toppings', 'Sides', 'Drinks', 'Add-ons'] as $category)
-            <div class="card mb-4">
+            <div class="card mb-4 custom-meal">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <span>{{ $category }}</span>
                     <button class="btn btn-sm btn-modern btn-outline-primary"
@@ -313,6 +352,7 @@
                 </div>
             </div>
         @endforeach
+
 
         <div class="card summary-card mt-5 p-4">
             <div class="card-body">

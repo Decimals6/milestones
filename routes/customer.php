@@ -64,4 +64,9 @@ Route::middleware(['auth'])->prefix('customer')->group(function () {
     Route::get('/menu', function () {
         return view('Customer.pages.menu');
     })->name('menu');
+
+    Route::delete('/customer/delete-account', function () {
+        // Dummy response
+        return back()->with('status', 'Dummy: Account deleted (simulasi).');
+    })->name('customer.delete-account');
 });

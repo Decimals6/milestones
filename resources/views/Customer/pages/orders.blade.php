@@ -210,6 +210,87 @@
         body.dark .text-muted {
             color: #ccc !important;
         }
+
+
+        /* style modal reviews */
+        .modal {
+            z-index: 3090;
+        }
+
+        .review-modal-content {
+            border-radius: 1.25rem;
+            padding: 1.5rem 1.5rem 2rem;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease-in-out;
+        }
+
+        .rating-stars .star {
+            color: #ccc;
+            cursor: pointer;
+            transition: transform 0.2s, color 0.2s;
+        }
+
+        .rating-stars .star:hover,
+        .rating-stars .star.hovered,
+        .rating-stars .star.selected {
+            color: #ffc107;
+            transform: scale(1.2);
+        }
+
+        body.dark .review-modal-content {
+            background-color: #1e1e1e;
+            color: #f1f1f1;
+        }
+
+        body.dark .form-control {
+            background: #2a2a2a;
+            color: #fff;
+            border-color: #444;
+        }
+
+        body.dark .btn-close {
+            filter: invert(1);
+        }
+
+        body.dark .star {
+            color: #555;
+        }
+
+        body.dark .star.selected {
+            color: #f8c300;
+        }
+
+        @media (max-width: 768px) {
+            .modal.modal-review {
+                padding: 0 !important;
+            }
+
+            .modal.modal-review .modal-dialog {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                margin: 0;
+                width: 100%;
+                max-width: none;
+                transform: translateY(100%);
+                transition: transform 0.35s ease-in-out;
+                z-index: 3080;
+            }
+
+            .modal.modal-review.show .modal-dialog {
+                transform: translateY(0%);
+            }
+
+            .modal.modal-review .modal-content {
+                border-radius: 1.25rem 1.25rem 0 0;
+                border: none;
+                margin-bottom: env(safe-area-inset-bottom, 0);
+            }
+
+            body.modal-open {
+                overflow: hidden;
+            }
     </style>
 
     <div class="container-custom">
@@ -275,12 +356,49 @@
                                 <div class="text-success mt-2">Rp{{ number_format($total, 0, ',', '.') }}</div>
                             </div>
                         </div>
-                        <div class="d-flex justify-content-end mt-3">
+                        <div class="d-flex justify-content-end mt-3 gap-2">
                             <button class="btn btn-outline-secondary btn-sm rounded-pill"
                                 onclick="showDetail('{{ $id }}', '{{ $status }}')">Lihat Detail</button>
+
+                            <button class="btn btn-outline-primary btn-sm rounded-pill"
+                                onclick="showReviewModal('{{ $id }}')">Beri Ulasan</button>
                         </div>
+
                     </div>
                 @endforeach
+            </div>
+        </div>
+    </div>
+
+    {{-- modal reviews --}}
+    <div class="modal fade modal-review" id="reviewModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content review-modal-content">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="modal-title fw-semibold">📝 Beri Ulasan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="reviewForm">
+                    <input type="hidden" id="reviewOrderId">
+
+                    <div class="mb-4 text-center">
+                        <div class="rating-stars fs-3 d-flex justify-content-center gap-2">
+                            @for ($i = 1; $i <= 5; $i++)
+                                <i class="bi bi-star-fill star" data-value="{{ $i }}"></i>
+                            @endfor
+                        </div>
+                        <small id="ratingHint" class="text-muted mt-2 d-block">Pilih rating sesuai pengalamanmu</small>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <textarea class="form-control" id="reviewComment" placeholder="Komentar..." style="height: 100px"></textarea>
+                        <label for="reviewComment">Tulis komentarmu...</label>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary rounded-pill py-2 shadow-sm">Kirim Ulasan</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -340,7 +458,7 @@
                     popup: 'swal2-popup'
                 },
                 didClose: () => {
-                    removeSwalBackdrop(); // Fallback
+                    removeSwalBackdrop();
                 }
             });
         }
@@ -349,7 +467,7 @@
             const swalContainer = document.querySelector('.swal2-container');
             if (swalContainer) swalContainer.remove();
             document.body.classList.remove('swal2-shown');
-            document.body.style.overflow = ''; // pastikan scroll bisa
+            document.body.style.overflow = '';
         }
 
         function cancelOrder(id) {
@@ -377,5 +495,85 @@
                 }
             });
         }
+
+        // modal script reviews
+        let selectedRating = 0;
+
+        function showReviewModal(orderId) {
+            document.getElementById('reviewOrderId').value = orderId;
+            document.getElementById('reviewComment').value = '';
+            selectedRating = 0;
+
+            document.querySelectorAll('.star').forEach(star => {
+                star.classList.remove('selected');
+            });
+
+            const modal = new bootstrap.Modal(document.getElementById('reviewModal'));
+            modal.show();
+        }
+
+        // Rating selection
+        document.querySelectorAll('.star').forEach(star => {
+            star.addEventListener('mouseenter', function() {
+                const value = parseInt(this.dataset.value);
+                highlightStars(value);
+            });
+
+            star.addEventListener('mouseleave', function() {
+                highlightStars(selectedRating);
+            });
+
+            star.addEventListener('click', function() {
+                selectedRating = parseInt(this.dataset.value);
+                highlightStars(selectedRating);
+            });
+        });
+
+        function highlightStars(value) {
+            document.querySelectorAll('.star').forEach(star => {
+                const v = parseInt(star.dataset.value);
+                star.classList.toggle('selected', v <= value);
+            });
+        }
+
+        // Submit review
+        document.getElementById('reviewForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const orderId = document.getElementById('reviewOrderId').value;
+            const comment = document.getElementById('reviewComment').value;
+
+            if (!selectedRating) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Rating belum dipilih!',
+                    text: 'Silakan beri bintang sebelum mengirim.',
+                    background: document.body.classList.contains('dark') ? '#1e1e1e' : '#fff',
+                    color: document.body.classList.contains('dark') ? '#f1f1f1' : '#000',
+                    customClass: {
+                        popup: 'rounded-4 shadow'
+                    }
+                });
+                return;
+            }
+
+            bootstrap.Modal.getInstance(document.getElementById('reviewModal')).hide();
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Ulasan Dikirim!',
+                text: 'Terima kasih atas ulasanmu.',
+                timer: 2500,
+                showConfirmButton: false,
+                background: document.body.classList.contains('dark') ? '#1e1e1e' : '#fff',
+                color: document.body.classList.contains('dark') ? '#f1f1f1' : '#000',
+                customClass: {
+                    popup: 'rounded-4 shadow'
+                }
+            });
+
+            // submit ke server
+            // console.log({ orderId, selectedRating, comment });
+        });
     </script>
 @endsection
