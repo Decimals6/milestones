@@ -76,7 +76,7 @@
 
                                         <!-- Edit Modal -->
                                         <div class="modal fade" id="editItemModal{{ $item->id }}" tabindex="-1">
-                                            <div class="modal-dialog">
+                                            <div class="modal-dialog modal-dialog-centered">
                                                 <form class="edit-item-form" data-id="{{ $item->id }}">
                                                     @csrf
                                                     <div class="modal-content">
@@ -137,25 +137,27 @@
     </div>
 
     <!-- Create Modal -->
-    <div class="modal fade" id="createItemModal" tabindex="-1">
-        <div class="modal-dialog">
-            <form id="createFoodItemForm">
-                @csrf
-                <div class="modal-content">
+    <div class="modal fade" id="createItemModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-md">
+            <div class="modal-content">
+                <form id="createFoodItemForm">
+                    @csrf
                     <div class="modal-header">
                         <h5 class="modal-title">Create Food Item</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
+
                     <div class="modal-body">
                         <div class="mb-3">
                             <label class="form-label">Name</label>
                             <input type="text" name="name" class="form-control" required>
                         </div>
+
                         <div class="mb-3">
                             <label class="form-label">Extra Price</label>
-                            <input type="number" step="1" name="extra_price" class="form-control" value="0"
-                                required>
+                            <input type="number" step="1" name="extra_price" class="form-control" value="0" required>
                         </div>
+
                         <div class="mb-3">
                             <label class="form-label">Category</label>
                             <select name="category_item_id" class="form-select" required>
@@ -165,20 +167,24 @@
                                 @endforeach
                             </select>
                         </div>
+
                         <div class="form-check mb-3">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox" name="is_active" value="1"
-                                    checked>Active</label>
+                            <input class="form-check-input" type="checkbox" name="is_active" value="1" id="isActiveCheck" checked>
+                            <label class="form-check-label" for="isActiveCheck">
+                                Active
+                            </label>
                         </div>
                     </div>
+
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">Create</button>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     </div>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
+
 @endsection
 
 

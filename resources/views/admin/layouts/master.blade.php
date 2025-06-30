@@ -22,8 +22,192 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
     @include('admin.layouts.css')
     @yield('style')
+    <style>
+        #basic-1 {
+            width: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease-in-out;
+        }
+
+        #basic-1 th,
+        #basic-1 td {
+            padding: 14px 16px !important;
+            vertical-align: middle;
+        }
+
+        #basic-1 thead th {
+            font-weight: 600;
+            font-size: 0.95rem;
+            border-bottom: 1px solid transparent;
+            background-color: #f5f5f5;
+            color: #212529;
+            transition: all 0.2s;
+        }
+
+        #basic-1 tbody tr {
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        #basic-1 tbody tr:hover {
+            background-color: rgba(0, 0, 0, 0.03);
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .table-responsive::-webkit-scrollbar {
+            display: none;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            background: none !important;
+            border: none !important;
+            box-shadow: none !important;
+            padding: 6px 12px;
+            margin: 0 3px;
+            border-radius: 6px;
+            color: inherit;
+            font-weight: 500;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            background-color: #6366f1 !important;
+            color: white !important;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover:not(.current) {
+            background-color: rgba(0, 0, 0, 0.05) !important;
+            color: #000 !important;
+        }
+
+        body.dark-only .dataTables_wrapper .dataTables_paginate .paginate_button {
+            color: #ccc !important;
+        }
+
+        body.dark-only .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            background-color: #7c3aed !important;
+            color: white !important;
+        }
+
+        body.dark-only .dataTables_wrapper .dataTables_paginate .paginate_button:hover:not(.current) {
+            background-color: rgba(255, 255, 255, 0.08) !important;
+            color: white !important;
+        }
+
+
+        body.dark-only #basic-1 thead th {
+            background-color: #2a2e39;
+            color: #f1f1f1;
+        }
+
+        body.dark-only #basic-1 tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        table.dataTable {
+            border-collapse: separate !important;
+            border-spacing: 0;
+        }
+
+        table.dataTable.no-footer {
+            border-bottom: none !important;
+        }
+
+        table.dataTable thead th,
+        table.dataTable thead td {
+            border-bottom: none !important;
+        }
+
+        #basic-1 tbody tr {
+            animation: fadein 0.3s ease-in-out;
+        }
+
+        @keyframes fadein {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        table.dataTable {
+            border-collapse: separate !important;
+            border-spacing: 0 8px !important;
+        }
+
+        /* Header Table*/
+        /* table.dataTable thead th {
+            white-space: normal !important;
+            vertical-align: middle !important;
+            text-align: center !important;
+            padding: 12px 8px !important;
+            font-weight: 600;
+            word-break: break-word;
+            line-height: 1.3;
+            max-width: 140px;
+        } */
+
+
+        body.dark-only table.dataTable tbody td {
+            background-color: #2a2e37 !important;
+            color: #fff;
+        }
+
+        body.dark-only table.dataTable tbody tr:hover td {
+            background-color: #3b4049 !important;
+        }
+
+        body.dark-only table.dataTable thead th {
+            color: #e0e0e0 !important;
+        }
+
+        table.dataTable thead th.sorting::before,
+        table.dataTable thead th.sorting_asc::before,
+        table.dataTable thead th.sorting_desc::before {
+            display: none !important;
+            content: none !important;
+        }
+
+        table.dataTable thead th {
+            position: relative;
+            vertical-align: middle;
+            white-space: nowrap;
+            padding-right: 20px;
+        }
+
+        table.dataTable thead th.sorting_asc::after {
+            content: "\2191";
+        }
+
+        table.dataTable thead th.sorting_desc::after {
+            content: "\2193";
+        }
+
+        table.dataTable thead th.sorting::after,
+        table.dataTable thead th.sorting_asc::after,
+        table.dataTable thead th.sorting_desc::after {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+            color: #999;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+    </style>
 </head>
 {{-- @dd(Route::current()->getName()); --}}
 
