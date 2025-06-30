@@ -261,6 +261,22 @@
         body.modal-open {
             overflow: hidden !important;
         }
+
+
+        /* hide all scrollbar */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
+        body {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        html,
+        body {
+            overflow-y: scroll;
+        }
     </style>
 </head>
 {{-- @dd(Route::current()->getName()); --}}
