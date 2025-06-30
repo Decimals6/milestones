@@ -13,6 +13,8 @@
 
         Route::resource('foods', FoodController::class);
         Route::patch('/foods/{food}/delete-image', [FoodController::class, 'deleteImage'])->name('foods.delete_image');
+        Route::post('/admin/foods/default-items', [FoodController::class, 'storeDefaultItem'])->name('foods.default-items.store');
+        Route::delete('/admin/foods/default-items/{id}', [FoodController::class, 'destroyDefaultItem'])->name('foods.default-items.destroy');
 
         Route::resource('categories', CategoryItemController::class);
 

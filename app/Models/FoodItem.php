@@ -17,12 +17,13 @@ class FoodItem extends Model
         'name',
         'extra_price',
         'is_active',
-        'is_default',
     ];
-    public function defaultOfFoods()
+
+    public function defaultForFoods()
     {
-        return $this->belongsToMany(Food::class, 'default_foods_item');
+        return $this->hasMany(DefaultFoodsItem::class, 'food_item_id');
     }
+
 
     public function categoryItem()
     {

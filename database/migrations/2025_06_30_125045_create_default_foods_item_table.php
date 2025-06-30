@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('default_foods_item', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('food_id')->constrained('foods')->onDelete('cascade');
-            $table->foreignId('food_item_id')->constrained('foods_items')->onDelete('cascade');
+            $table->foreignId('food_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('food_item_id')->constrained('foods_items')->cascadeOnDelete();
             $table->timestamps();
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-         Schema::dropIfExists('default_foods_item');
+        Schema::dropIfExists('default_foods_item');
     }
 };

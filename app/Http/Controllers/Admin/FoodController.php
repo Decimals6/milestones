@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\CategoryFood;
 use App\Models\Food;
+use App\Models\DefaultFoodsItem;
 use App\Models\CategoryItem;
+use App\Models\FoodItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -15,11 +18,21 @@ class FoodController extends Controller
 
     public function index()
     {
-        $foods = Food::with('categoriesItem')->get();
         $categoriesItem = CategoryItem::all();
+        $categoriesFood = CategoryFood::all();
 
-        return view('admin.food.index', compact('foods', 'categoriesItem'));
+        // Ambil semua food + relasinya
+        $foods = Food::with([
+            'categoriesItem',
+            'defaultItems.item.categoryItem',
+        ])->get();
+
+        // Ambil semua items + kategori (kalau mau pakai global fallback)
+        $allItems = FoodItem::with('categoryItem')->get();
+
+        return view('admin.food.index', compact('foods', 'categoriesItem', 'categoriesFood', 'allItems'));
     }
+
 
     public function store(Request $request)
     {
@@ -28,12 +41,14 @@ class FoodController extends Controller
             'base_price' => 'required|numeric',
             'description' => 'nullable|string',
             'nutrition_info' => 'nullable|string',
+            'category_food_id' => 'required|exists:categories_food,id',
             'category_ids' => 'nullable|array',
             'images' => 'nullable|image|mimes:jpg,jpeg,png|max:5000',
             'is_active' => 'nullable|boolean'
         ]);
 
         $food = Food::create([
+            'category_food_id' => $request->category_food_id,
             'name' => $validated['name'],
             'base_price' => $validated['base_price'],
             'description' => $validated['description'] ?? null,
@@ -58,26 +73,19 @@ class FoodController extends Controller
 
     public function update(Request $request, Food $food)
     {
-        if ($request->has('delete_image')) {
-            if ($food->image_path && Storage::disk('public')->exists($food->image_path)) {
-                Storage::disk('public')->delete($food->image_path);
-                $food->update(['image_path' => null]);
-            }
-
-            return response()->json(['message' => 'Image deleted successfully.']);
-        }
-
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'base_price' => 'required|numeric',
             'description' => 'nullable|string',
             'nutrition_info' => 'nullable|string',
+            'category_food_id' => 'required|exists:categories_food,id',
             'category_ids' => 'nullable|array',
             'images' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'is_active' => 'nullable|boolean'
         ]);
 
         $food->update([
+            'category_food_id' => $request->category_food_id,
             'name' => $validated['name'],
             'base_price' => $validated['base_price'],
             'description' => $validated['description'] ?? null,
@@ -143,5 +151,34 @@ class FoodController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function storeDefaultItem(Request $request)
+    {
+        $request->validate([
+            'food_id' => 'required|exists:foods,id',
+            'food_item_id' => 'required|exists:foods_items,id',
+        ]);
+
+        $exists = DefaultFoodsItem::where('food_id', $request->food_id)
+            ->where('food_item_id', $request->food_item_id)
+            ->exists();
+
+        if (!$exists) {
+            DefaultFoodsItem::create([
+                'food_id' => $request->food_id,
+                'food_item_id' => $request->food_item_id,
+            ]);
+        }
+
+        return back()->with('foods_success', 'Default item ditambahkan');
+    }
+
+    public function destroyDefaultItem($id)
+    {
+        $defaultItem = DefaultFoodsItem::findOrFail($id);
+        $defaultItem->delete();
+
+        return back()->with('foods_success', 'Default item berhasil dihapus.');
     }
 }

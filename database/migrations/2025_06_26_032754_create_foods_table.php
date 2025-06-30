@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('foods', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('category_food_id')->constrained('categories_food')->onDelete('cascade');
             $table->string('name');
             $table->text('description')->nullable();
             $table->decimal('base_price', 10, 2);

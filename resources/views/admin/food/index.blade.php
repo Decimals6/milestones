@@ -54,8 +54,10 @@
                                         <th>Description</th>
                                         <th>Nutrition Info</th>
                                         <th>Active</th>
-                                        <th>Categories</th>
+                                        <th>Categories Food</th>
+                                        <th>Categories Item</th>
                                         <th>Image</th>
+                                        <th>Default Food Items</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -74,6 +76,10 @@
                                                 @endif
                                             </td>
                                             <td>
+                                                <span
+                                                    class="badge badge-light-primary">{{ $food->categoryFood->name ?? 'N/A' }}</span>
+                                            </td>
+                                            <td>
                                                 <a href="#" class="text-info show-categories-btn"
                                                     data-bs-toggle="modal" data-bs-target="#showCategoriesModal"
                                                     data-json='@json($food->categoriesItem->pluck('name'))'>
@@ -88,12 +94,22 @@
                                                     <i class="icon-image"></i>
                                                 </a>
                                             </td>
+
+                                            <td>
+                                                <a href="javascript:void(0)" class="text-primary manage-default-btn"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#defaultItemModal{{ $food->id }}">
+                                                    <i class="icon-settings"></i>
+                                                </a>
+                                            </td>
                                             <td>
                                                 <ul class="action">
                                                     <li class="edit">
                                                         <a href="javascript:void(0)" class="text-success edit-food-btn"
                                                             data-bs-toggle="modal"
                                                             data-bs-target="#editFoodModal{{ $food->id }}"
+                                                            data-food='@json($food)'
+                                                            data-category-items='@json($food->categoriesItem->pluck('id')->toArray())'
                                                             data-id="{{ $food->id }}">
                                                             <i class="icon-pencil-alt"></i>
                                                         </a>
@@ -142,6 +158,20 @@
                                                                 <textarea name="nutrition_info" class="form-control">{{ $food->nutrition_info }}</textarea>
                                                             </div>
                                                             <div class="mb-3">
+                                                                <label class="form-label">Category Food</label>
+                                                                <select name="category_food_id"
+                                                                    class="form-select category-select  " required>
+                                                                    <option value="">-- Select Category Food--
+                                                                    </option>
+                                                                    @foreach ($categoriesFood as $category)
+                                                                        <option value="{{ $category->id }}"
+                                                                            {{ $food->category_food_id == $category->id ? 'selected' : '' }}>
+                                                                            {{ $category->name }}
+                                                                        </option>
+                                                                    @endforeach
+                                                                </select>
+                                                            </div>
+                                                            <div class="mb-3">
                                                                 <label for="edit-cat-{{ $food->id }}">Categories
                                                                     Item</label>
                                                                 <select name="category_ids[]"
@@ -186,6 +216,82 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="defaultItemModal{{ $food->id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <form class="add-default-item-form" data-food-id="{{ $food->id }}">
+                @csrf
+                <input type="hidden" name="food_id" value="{{ $food->id }}">
+
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Default Items for
+                            "{{ $food->name }}"</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+
+                        <label for="food_item_id_{{ $food->id }}">Tambah
+                            Default Item:</label>
+
+                        @php
+                            $foodCategoryIds = $food->categoriesItem->pluck('id')->toArray();
+                            $defaultItemIds = $food->defaultItems->pluck('food_item_id')->toArray();
+
+                            $filteredItems = $allItems
+                                ->filter(function ($item) use ($foodCategoryIds, $defaultItemIds) {
+                                    return in_array($item->category_item_id, $foodCategoryIds) &&
+                                        !in_array($item->id, $defaultItemIds);
+                                })
+                                ->values();
+                        @endphp
+
+                        @if ($filteredItems->isEmpty())
+                            <div class="alert alert-warning">
+                                Food ini belum punya kategori item. Harap atur
+                                kategori dulu.
+                            </div>
+                        @else
+                            <select name="food_item_id" class="form-control default-item-select" required>
+                                @foreach ($filteredItems as $item)
+                                    <option value="{{ $item->id }}">
+                                        {{ $item->name }}
+                                        ({{ $item->categoryItem->name ?? 'N/A' }})
+                                    </option>
+                                @endforeach
+                            </select>
+                        @endif
+
+                        <hr>
+                        <strong>Default Items Sekarang:</strong>
+                        <ul class="mt-2">
+                            @forelse ($food->defaultItems as $def)
+                                <li>
+                                    {{ $def->item->name }} -
+                                    <em>{{ $def->item->categoryItem->name ?? 'N/A' }}</em>
+
+                                    <a href="javascript:void(0)" class="text-danger delete-default-item"
+                                        data-id="{{ $def->id }}">
+                                        <i class="icon-trash"></i>
+                                    </a>
+                                </li>
+                            @empty
+                                <li><em>Belum ada default item.</em></li>
+                            @endforelse
+                        </ul>
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Tambah</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -239,8 +345,16 @@
                             <textarea name="nutrition_info" class="form-control"></textarea>
                         </div>
                         <div class="mb-3">
-                            <label>Categories</label>
-                            {{-- PERUBAHAN: Tambahkan class 'category-select' agar sama dengan modal edit --}}
+                            <label class="form-label">Category Food</label>
+                            <select name="category_food_id" class="form-select" required>
+                                <option value="">-- Select Category Food --</option>
+                                @foreach ($categoriesFood as $category)
+                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label>Categories Item</label>
                             <select name="category_ids[]" multiple="multiple" id="create-category-select"
                                 class="form-control category-select" style="width: 100%;">
                                 @foreach ($categoriesItem as $category)
@@ -300,37 +414,94 @@
                 });
             });
 
+            //select2 modal nambah default item
+            $(document).on('shown.bs.modal', function(e) {
+                const $modal = $(e.target);
+                $modal.find('.default-item-select').each(function() {
+                    if (!$(this).hasClass("select2-hidden-accessible")) {
+                        $(this).select2({
+                            dropdownParent: $modal,
+                            width: '100%',
+                            theme: 'bootstrap4',
+                            placeholder: "Pilih item"
+                        });
+                    }
+                });
+            });
+
+
+            // reset create modal
+            $('#createFoodModal').on('hidden.bs.modal', function() {
+                const form = $(this).find('form')[0];
+                form.reset();
+                $(form).find('select[name="category_ids[]"]').val(null).trigger('change');
+            });
+
             // Event listener saat tombol edit diklik
             $(document).on('click', '.edit-food-btn', function() {
-                const data = $(this).data('json');
-                const modal = $('#editFoodModal' + data.id);
+                const foodId = $(this).data('id');
+                const foodData = $(this).data('food');
+                const categoryItems = $(this).data('category-items');
+
+                const modal = $('#editFoodModal' + foodId);
 
                 // Isi form dengan data
                 modal.find('input[name="name"]').val(data.name);
                 modal.find('input[name="base_price"]').val(data.base_price);
                 modal.find('textarea[name="description"]').val(data.description);
                 modal.find('textarea[name="nutrition_info"]').val(data.nutrition_info);
+                modal.find('select[name="category_food_id"]').val(data.category_food_id);
                 modal.find('input[name="is_active"]').prop('checked', data.is_active);
-                modal.find('.category-select').val(data.categoriesItem).trigger('change');
+
+                modal.find('select[name="category_ids[]"]').val(categoryItems).trigger('change');
+                modal.data('original-form-state', modal.find('form').serialize());
             });
 
-            // Reset modal CREATE saat ditutup
-            $('.modal').on('hidden.bs.modal', function() {
-                const form = $(this).find('form');
+            let originalCategoryValues = [];
 
-                if (form.length > 0) {
-                    // Reset form ke kondisi awal saat halaman pertama kali dimuat oleh server.
-                    // Ini akan mengembalikan nilai <input> dan status <option selected> ke aslinya.
-                    form[0].reset();
+            $(document).on('click', '.edit-food-btn', function() {
+                const data = $(this).data('json');
+                originalCategoryValues = data.categoriesItem;
+            });
 
-                    // Khusus untuk modal CREATE, kita juga perlu membersihkan Select2 secara manual.
-                    // Untuk modal EDIT, Select2 akan diisi ulang saat tombol edit diklik lagi.
-                    if ($(this).attr('id') === 'createFoodModal') {
-                        $(this).find('.category-select').val(null).trigger('change');
-                    }
+            $('.edit-food-form').closest('.modal').on('hidden.bs.modal', function() {
+                const modal = $(this);
+                const originalState = modal.data('original-form-state');
+                const form = modal.find('form');
+
+                // Cek apakah ada state awal yang tersimpan
+                if (originalState) {
+                    // Pecah string state menjadi array of objects
+                    const data = originalState.split('&').reduce((acc, curr) => {
+                        const [key, value] = curr.split('=').map(decodeURIComponent);
+                        if (key.endsWith('[]')) {
+                            const cleanKey = key.slice(0, -2);
+                            if (!acc[cleanKey]) acc[cleanKey] = [];
+                            acc[cleanKey].push(value);
+                        } else {
+                            acc[key] = value;
+                        }
+                        return acc;
+                    }, {});
+
+                    // Kembalikan nilai setiap field
+                    form.find('input[name="name"]').val(data.name || '');
+                    form.find('input[name="base_price"]').val(data.base_price || '');
+                    form.find('textarea[name="description"]').val(data.description || '');
+                    form.find('textarea[name="nutrition_info"]').val(data.nutrition_info || '');
+                    form.find('select[name="category_food_id"]').val(data.category_food_id || '');
+                    form.find('input[name="is_active"]').prop('checked', !!data.is_active);
+                    form.find('select[name="category_ids[]"]').val(data.category_ids || null).trigger(
+                        'change');
                 }
             });
-
+            $('.modal').on('hidden.bs.modal', function() {
+                const $modal = $(this);
+                const selectElement = $modal.find('.category-select');
+                if (selectElement.length) {
+                    selectElement.val(originalCategoryValues).trigger('change');
+                }
+            });
 
             // Script untuk Show Categories Modal
             $(document).on('click', '.show-categories-btn', function() {
@@ -484,19 +655,92 @@
             });
 
 
-            // Tampilkan alert sukses setelah reload dari sessionStorage
-            const successMessage = sessionStorage.getItem('foods_success');
-            if (successMessage) {
+
+            // Delete default item
+            $(document).on('click', '.delete-default-item', function() {
+                const id = $(this).data('id');
+
                 Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: successMessage,
-                    timer: 2000,
-                    showConfirmButton: false
+                    title: 'Yakin hapus default item?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc3545',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Ya, hapus!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "{{ route('foods.default-items.destroy', '__id__') }}"
+                                .replace('__id__', id),
+                            type: 'POST',
+                            data: {
+                                _token: '{{ csrf_token() }}',
+                                _method: 'DELETE'
+                            },
+                            success: function() {
+                                location
+                                    .reload();
+                            },
+                            error: function() {
+                                Swal.fire('Gagal', 'Tidak bisa menghapus item.',
+                                    'error');
+                            }
+                        });
+                    }
                 });
-                sessionStorage.removeItem('foods_success');
-            }
+            });
+
         });
+
+        // Tambah default item pakai AJAX
+        $(document).on('submit', '.add-default-item-form', function(e) {
+            e.preventDefault();
+
+            const $form = $(this);
+            const foodId = $form.data('food-id');
+            const itemId = $form.find('.default-item-select').val();
+            console.log('Selected Item ID:', itemId);
+
+            console.log('Form:', $form[0]);
+            console.log('Select Value:', itemId);
+
+            if (!itemId) {
+                Swal.fire('Gagal', 'Pilih item terlebih dahulu.', 'warning');
+                return;
+            }
+
+            $.ajax({
+                url: "{{ route('foods.default-items.store') }}",
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    food_id: foodId,
+                    food_item_id: itemId
+                },
+                success: function() {
+                    sessionStorage.setItem('foods_success',
+                        'Default item berhasil ditambahkan.');
+                    location.reload();
+                },
+                error: function() {
+                    Swal.fire('Gagal', 'Gagal menambahkan item.', 'error');
+                }
+            });
+        });
+
+
+        // Tampilkan alert sukses setelah reload dari sessionStorage
+        const successMessage = sessionStorage.getItem('foods_success');
+        if (successMessage) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: successMessage,
+                timer: 2000,
+                showConfirmButton: false
+            });
+            sessionStorage.removeItem('foods_success');
+        }
     </script>
 
 @endsection

@@ -32,7 +32,7 @@
                                     <tr>
                                         <th>Name</th>
                                         <th>Price Addon</th>
-                                        <th>Category</th>
+                                        <th>Category Item</th>
                                         <th>Active</th>
                                         <th>Action</th>
                                     </tr>
@@ -59,7 +59,7 @@
                                                         <a href="javascript:void(0)" class="text-success edit-item-btn"
                                                             data-bs-toggle="modal"
                                                             data-bs-target="#editItemModal{{ $item->id }}"
-                                                            data-id="{{ $item->id }}" {{-- PERUBAHAN: Pastikan data-json berisi category_item_id --}}
+                                                            data-id="{{ $item->id }}"
                                                             data-json='@json($item)'>
                                                             <i class="icon-pencil-alt"></i>
                                                         </a>
@@ -97,7 +97,6 @@
                                                                     class="form-control" value="{{ $item->extra_price }}"
                                                                     required>
                                                             </div>
-                                                            {{-- PERUBAHAN: Ganti dropdown dari Foods ke CategoryItem --}}
                                                             <div class="mb-3">
                                                                 <label class="form-label">Category</label>
                                                                 <select name="category_item_id" class="form-select"
@@ -157,7 +156,6 @@
                             <input type="number" step="1" name="extra_price" class="form-control" value="0"
                                 required>
                         </div>
-                        {{-- PERUBAHAN: Ganti dropdown dari Foods ke CategoryItem --}}
                         <div class="mb-3">
                             <label class="form-label">Category</label>
                             <select name="category_item_id" class="form-select" required>

@@ -22,6 +22,7 @@ class FoodSeeder extends Seeder
             // 1. MENU JADI (dengan resep default & aturan)
             // =================================================================
             [
+                'category_food_id' => 1,
                 'name' => 'Classic Beef Burger',
                 'description' => 'Burger sapi klasik dengan roti brioche empuk, daging giling premium, dan saus BBQ andalan kami. Bisa dikustomisasi sesuai seleramu.',
                 'base_price' => 55000,
@@ -30,6 +31,7 @@ class FoodSeeder extends Seeder
                 'is_active' => true,
             ],
             [
+                'category_food_id' => 1,
                 'name' => 'Grilled Chicken Salad',
                 'description' => 'Salad sehat dengan potongan dada ayam panggang, sayuran segar, dan disiram dengan Caesar dressing. Pilihan ringan yang mengenyangkan.',
                 'base_price' => 48000,
@@ -38,6 +40,7 @@ class FoodSeeder extends Seeder
                 'is_active' => true,
             ],
             [
+                'category_food_id' => 1,
                 'name' => 'Spicy Salmon Bowl',
                 'description' => 'Potongan salmon panggang pedas di atas nasi hangat, disajikan dengan alpukat, jagung, dan sayuran segar lainnya. Pilihan favorit!',
                 'base_price' => 65000,
@@ -50,6 +53,7 @@ class FoodSeeder extends Seeder
             // 2. MENU CUSTOM (kanvas kosong)
             // =================================================================
             [
+                'category_food_id' => 1,
                 'name' => 'Build Your Own Bowl',
                 'description' => 'Rakit sendiri mangkuk sehatmu! Pilih karbohidrat, protein, sayuran, topping, dan saus favoritmu dari nol.',
                 'base_price' => 0, // Harga dihitung murni dari item yang dipilih
@@ -58,6 +62,7 @@ class FoodSeeder extends Seeder
                 'is_active' => true,
             ],
             [
+                'category_food_id' => 1,
                 'name' => 'Create Your Own Sandwich',
                 'description' => 'Jadi koki untuk sandwich-mu sendiri. Pilih roti, isian utama, sayuran, dan saus untuk menciptakan kombinasi sempurna.',
                 'base_price' => 15000, // Harga dasar termasuk roti standar

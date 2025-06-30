@@ -12,6 +12,7 @@ class Food extends Model
     protected $table = 'foods';
 
     protected $fillable = [
+        'category_food_id',
         'name',
         'description',
         'base_price',
@@ -30,13 +31,20 @@ class Food extends Model
         return $this->hasMany(FoodItem::class);
     }
 
-    public function defaultFoodItems()
+    public function defaultItems()
     {
-        return $this->belongsToMany(FoodItem::class, 'default_foods_item');
+        return $this->hasMany(DefaultFoodsItem::class, 'food_id');
     }
+
+
 
     public function orderDetails()
     {
         return $this->hasMany(OrderDetail::class);
+    }
+
+    public function categoryFood()
+    {
+        return $this->belongsTo(CategoryFood::class);
     }
 }
