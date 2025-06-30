@@ -184,186 +184,190 @@
                                                 </ul>
                                             </td>
                                         </tr>
-
-                                        <!-- Modal Edit -->
-                                        <div class="modal fade" id="editFoodModal{{ $food->id }}" tabindex="-1"
-                                            aria-labelledby="editModalLabel{{ $food->id }}" aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered">
-                                                <form class="edit-food-form" data-id="{{ $food->id }}">
-                                                    @csrf
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title" id="editModalLabel{{ $food->id }}">
-                                                                Edit Food</h5>
-                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                                aria-label="Close"></button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <div class="mb-3">
-                                                                <label>Name</label>
-                                                                <input type="text" name="name" class="form-control"
-                                                                    value="{{ $food->name }}" required>
-                                                            </div>
-                                                            <div class="mb-3">
-                                                                <label>Base Price</label>
-                                                                <input type="number" step="0.01" name="base_price"
-                                                                    class="form-control" value="{{ $food->base_price }}"
-                                                                    required>
-                                                            </div>
-                                                            <div class="mb-3">
-                                                                <label>Description</label>
-                                                                <textarea name="description" class="form-control">{{ $food->description }}</textarea>
-                                                            </div>
-                                                            <div class="mb-3">
-                                                                <label>Nutrition Info</label>
-                                                                <textarea name="nutrition_info" class="form-control">{{ $food->nutrition_info }}</textarea>
-                                                            </div>
-                                                            <div class="mb-3">
-                                                                <label class="form-label">Category Food</label>
-                                                                <select name="category_food_id"
-                                                                    class="form-select category-select  " required>
-                                                                    <option value="">-- Select Category Food--
-                                                                    </option>
-                                                                    @foreach ($categoriesFood as $category)
-                                                                        <option value="{{ $category->id }}"
-                                                                            {{ $food->category_food_id == $category->id ? 'selected' : '' }}>
-                                                                            {{ $category->name }}
-                                                                        </option>
-                                                                    @endforeach
-                                                                </select>
-                                                            </div>
-                                                            <div class="mb-3">
-                                                                <label for="edit-cat-{{ $food->id }}">Categories
-                                                                    Item</label>
-                                                                <select name="category_ids[]"
-                                                                    id="edit-cat-{{ $food->id }}"
-                                                                    class="form-control category-select"
-                                                                    multiple="multiple">
-                                                                    @foreach ($categoriesItem as $category)
-                                                                        <option value="{{ $category->id }}"
-                                                                            {{ $food->categoriesItem->contains($category->id) ? 'selected' : '' }}>
-                                                                            {{ $category->name }}
-                                                                        </option>
-                                                                    @endforeach
-
-                                                                </select>
-                                                            </div>
-                                                            <div class="mb-3">
-                                                                <label>Image</label>
-                                                                <input type="file" name="image" class="form-control"
-                                                                    accept="image/*">
-                                                            </div>
-                                                            <div class="form-check mb-3">
-                                                                <label class="form-check-label">
-                                                                    <input class="form-check-input" type="checkbox"
-                                                                        name="is_active" value="1"
-                                                                        {{ $food->is_active ? 'checked' : '' }}>Active</label>
-                                                            </div>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="submit" class="btn btn-success">Update</button>
-                                                            <button type="button" class="btn btn-secondary"
-                                                                data-bs-dismiss="modal">Cancel</button>
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-
-
-
-
-                                        <div class="modal fade" id="defaultItemModal{{ $food->id }}" tabindex="-1"
-                                            aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered">
-                                                <form class="add-default-item-form" data-food-id="{{ $food->id }}">
-                                                    @csrf
-                                                    <input type="hidden" name="food_id" value="{{ $food->id }}">
-
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title">Default Items for
-                                                                "{{ $food->name }}"</h5>
-                                                            <button type="button" class="btn-close"
-                                                                data-bs-dismiss="modal"></button>
-                                                        </div>
-
-                                                        <div class="modal-body">
-
-                                                            <label for="food_item_id_{{ $food->id }}">Tambah
-                                                                Default Item:</label>
-
-                                                            @php
-                                                                $foodCategoryIds = $food->categoriesItem
-                                                                    ->pluck('id')
-                                                                    ->toArray();
-                                                                $defaultItemIds = $food->defaultItems
-                                                                    ->pluck('food_item_id')
-                                                                    ->toArray();
-
-                                                                $filteredItems = $allItems
-                                                                    ->filter(function ($item) use (
-                                                                        $foodCategoryIds,
-                                                                        $defaultItemIds,
-                                                                    ) {
-                                                                        return in_array(
-                                                                            $item->category_item_id,
-                                                                            $foodCategoryIds,
-                                                                        ) && !in_array($item->id, $defaultItemIds);
-                                                                    })
-                                                                    ->values();
-                                                            @endphp
-
-                                                            @if ($filteredItems->isEmpty())
-                                                                <div class="alert alert-warning">
-                                                                    Food ini belum punya kategori item. Harap atur
-                                                                    kategori dulu.
-                                                                </div>
-                                                            @else
-                                                                <select name="food_item_id"
-                                                                    class="form-control default-item-select" required>
-                                                                    @foreach ($filteredItems as $item)
-                                                                        <option value="{{ $item->id }}">
-                                                                            {{ $item->name }}
-                                                                            ({{ $item->categoryItem->name ?? 'N/A' }})
-                                                                        </option>
-                                                                    @endforeach
-                                                                </select>
-                                                            @endif
-
-                                                            <hr>
-                                                            <strong>Default Items Sekarang:</strong>
-                                                            <ul class="mt-2">
-                                                                @forelse ($food->defaultItems as $def)
-                                                                    <li>
-                                                                        {{ $def->item->name }} -
-                                                                        <em>{{ $def->item->categoryItem->name ?? 'N/A' }}</em>
-
-                                                                        <a href="javascript:void(0)"
-                                                                            class="text-danger delete-default-item"
-                                                                            data-id="{{ $def->id }}">
-                                                                            <i class="icon-trash"></i>
-                                                                        </a>
-                                                                    </li>
-                                                                @empty
-                                                                    <li><em>Belum ada default item.</em></li>
-                                                                @endforelse
-                                                            </ul>
-
-                                                        </div>
-
-                                                        <div class="modal-footer">
-                                                            <button type="submit" class="btn btn-primary">Tambah</button>
-                                                            <button type="button" class="btn btn-secondary"
-                                                                data-bs-dismiss="modal">Tutup</button>
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
                                     @endforeach
                                 </tbody>
                             </table>
+
+
+
+                            @foreach ($foods as $food)
+                                <!-- Modal Edit -->
+                                <div class="modal fade" id="editFoodModal{{ $food->id }}" tabindex="-1"
+                                    aria-labelledby="editModalLabel{{ $food->id }}" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <form class="edit-food-form" data-id="{{ $food->id }}">
+                                            @csrf
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="editModalLabel{{ $food->id }}">
+                                                        Edit Food</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="mb-3">
+                                                        <label>Name</label>
+                                                        <input type="text" name="name" class="form-control"
+                                                            value="{{ $food->name }}" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label>Base Price</label>
+                                                        <input type="number" step="0.01" name="base_price"
+                                                            class="form-control" value="{{ $food->base_price }}" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label>Description</label>
+                                                        <textarea name="description" class="form-control">{{ $food->description }}</textarea>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label>Nutrition Info</label>
+                                                        <textarea name="nutrition_info" class="form-control">{{ $food->nutrition_info }}</textarea>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Category Food</label>
+                                                        <select name="category_food_id"
+                                                            class="form-select category-select  " required>
+                                                            <option value="">-- Select Category Food--
+                                                            </option>
+                                                            @foreach ($categoriesFood as $category)
+                                                                <option value="{{ $category->id }}"
+                                                                    {{ $food->category_food_id == $category->id ? 'selected' : '' }}>
+                                                                    {{ $category->name }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="edit-cat-{{ $food->id }}">Categories
+                                                            Item</label>
+                                                        <select name="category_ids[]" id="edit-cat-{{ $food->id }}"
+                                                            class="form-control category-select" multiple="multiple">
+                                                            @foreach ($categoriesItem as $category)
+                                                                <option value="{{ $category->id }}"
+                                                                    {{ $food->categoriesItem->contains($category->id) ? 'selected' : '' }}>
+                                                                    {{ $category->name }}
+                                                                </option>
+                                                            @endforeach
+
+                                                        </select>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label>Image</label>
+                                                        <input type="file" name="image" class="form-control"
+                                                            accept="image/*">
+                                                    </div>
+                                                    <div class="form-check mb-3">
+                                                        <label class="form-check-label">
+                                                            <input class="form-check-input" type="checkbox"
+                                                                name="is_active" value="1"
+                                                                {{ $food->is_active ? 'checked' : '' }}>Active</label>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-success">Update</button>
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Cancel</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+
+                                {{-- modal Default Items  --}}
+                                <div class="modal fade" id="defaultItemModal{{ $food->id }}" tabindex="-1"
+                                    aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <form class="add-default-item-form" data-food-id="{{ $food->id }}">
+                                            @csrf
+                                            <input type="hidden" name="food_id" value="{{ $food->id }}">
+
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Default Items for
+                                                        "{{ $food->name }}"</h5>
+                                                    <button type="button" class="btn-close"
+                                                        data-bs-dismiss="modal"></button>
+                                                </div>
+
+                                                <div class="modal-body">
+
+                                                    <label for="food_item_id_{{ $food->id }}">Tambah
+                                                        Default Item:</label>
+
+                                                    @php
+                                                        $foodCategoryIds = $food->categoriesItem
+                                                            ->pluck('id')
+                                                            ->toArray();
+                                                        $defaultItemIds = $food->defaultItems
+                                                            ->pluck('food_item_id')
+                                                            ->toArray();
+
+                                                        $filteredItems = $allItems
+                                                            ->filter(function ($item) use (
+                                                                $foodCategoryIds,
+                                                                $defaultItemIds,
+                                                            ) {
+                                                                return in_array(
+                                                                    $item->category_item_id,
+                                                                    $foodCategoryIds,
+                                                                ) && !in_array($item->id, $defaultItemIds);
+                                                            })
+                                                            ->values();
+                                                    @endphp
+
+                                                    @if ($filteredItems->isEmpty())
+                                                        <div class="alert alert-warning">
+                                                            Food ini belum punya kategori item. Harap atur
+                                                            kategori dulu.
+                                                        </div>
+                                                    @else
+                                                        <select name="food_item_id"
+                                                            class="form-control default-item-select" required>
+                                                            @foreach ($filteredItems as $item)
+                                                                <option value="{{ $item->id }}">
+                                                                    {{ $item->name }}
+                                                                    ({{ $item->categoryItem->name ?? 'N/A' }})
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                    @endif
+
+                                                    <hr>
+                                                    <strong>Default Items Sekarang:</strong>
+                                                    <ul class="mt-2">
+                                                        @forelse ($food->defaultItems as $def)
+                                                            <li>
+                                                                {{ $def->item->name }} -
+                                                                <em>{{ $def->item->categoryItem->name ?? 'N/A' }}</em>
+
+                                                                <a href="javascript:void(0)"
+                                                                    class="text-danger delete-default-item"
+                                                                    data-id="{{ $def->id }}">
+                                                                    <i class="icon-trash"></i>
+                                                                </a>
+                                                            </li>
+                                                        @empty
+                                                            <li><em>Belum ada default item.</em></li>
+                                                        @endforelse
+                                                    </ul>
+
+                                                </div>
+
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-primary">Tambah</button>
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Tutup</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            @endforeach
+
+
+
+
+
                         </div>
                     </div>
                 </div>

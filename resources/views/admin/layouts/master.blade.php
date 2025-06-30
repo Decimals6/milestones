@@ -207,6 +207,60 @@
             opacity: 0.6;
             pointer-events: none;
         }
+
+
+        /* Global SweetAlert2 override */
+        body.dark-only .swal2-popup {
+            background: #2a2e37 !important;
+            color: #fff !important;
+        }
+
+        body.dark-only .swal2-title {
+            color: #fff !important;
+        }
+
+        body.dark-only .swal2-content {
+            color: #ddd !important;
+        }
+
+        body.dark-only .swal2-confirm {
+            background-color: #7c3aed !important;
+            color: #fff !important;
+        }
+
+        body.dark-only .swal2-cancel {
+            background-color: #444 !important;
+            color: #fff !important;
+        }
+
+        body:not(.dark-only) .swal2-popup {
+            background: #fff !important;
+            color: #000 !important;
+        }
+
+        body:not(.dark-only) .swal2-title,
+        body:not(.dark-only) .swal2-content {
+            color: #212529 !important;
+        }
+
+        body:not(.dark-only) .swal2-confirm {
+            background-color: #6366f1 !important;
+            color: #fff !important;
+        }
+
+        body:not(.dark-only) .swal2-cancel {
+            background-color: #e0e0e0 !important;
+            color: #000 !important;
+        }
+
+        .modal-backdrop.show {
+            opacity: 0.4;
+            z-index: 1040;
+        }
+
+        body.modal-open {
+            overflow: hidden !important;
+        }
     </style>
 </head>
 {{-- @dd(Route::current()->getName()); --}}
