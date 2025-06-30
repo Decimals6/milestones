@@ -20,7 +20,7 @@
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header pb-0 card-no-border">
-                        <h3>Food Items</h3>
+                        <h3>All Food Items</h3>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -32,9 +32,8 @@
                                     <tr>
                                         <th>Name</th>
                                         <th>Price Addon</th>
-                                        <th>Default</th>
+                                        <th>Category</th>
                                         <th>Active</th>
-                                        <th>Food</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -42,18 +41,25 @@
                                     @foreach ($foodItems as $item)
                                         <tr id="item-row-{{ $item->id }}">
                                             <td>{{ $item->name }}</td>
-                                            <td>$ {{ number_format($item->extra_price, 2, ',', '.') }}</td>
-                                            <td>{{ $item->food && $item->food->defaultFoodItems->contains($item->id) ? 'Yes' : 'No' }}
+                                            <td>Rp {{ number_format($item->extra_price, 0, ',', '.') }}</td>
+                                            <td>
+                                                <span
+                                                    class="badge badge-light-primary">{{ $item->categoryItem->name ?? 'N/A' }}</span>
                                             </td>
-                                            <td>{{ $item->is_active ? 'Yes' : 'No' }}</td>
-                                            <td>{{ $item->food->name ?? '-' }}</td>
+                                            <td>
+                                                @if ($item->is_active)
+                                                    <span class="badge badge-light-success">Yes</span>
+                                                @else
+                                                    <span class="badge badge-light-danger">No</span>
+                                                @endif
+                                            </td>
                                             <td>
                                                 <ul class="action">
                                                     <li class="edit">
                                                         <a href="javascript:void(0)" class="text-success edit-item-btn"
                                                             data-bs-toggle="modal"
                                                             data-bs-target="#editItemModal{{ $item->id }}"
-                                                            data-id="{{ $item->id }}"
+                                                            data-id="{{ $item->id }}" {{-- PERUBAHAN: Pastikan data-json berisi category_item_id --}}
                                                             data-json='@json($item)'>
                                                             <i class="icon-pencil-alt"></i>
                                                         </a>
@@ -75,38 +81,35 @@
                                                     @csrf
                                                     <div class="modal-content">
                                                         <div class="modal-header">
-                                                            <h5 class="modal-title">Edit Item</h5>
+                                                            <h5 class="modal-title">Edit Item: {{ $item->name }}</h5>
                                                             <button type="button" class="btn-close"
                                                                 data-bs-dismiss="modal"></button>
                                                         </div>
                                                         <div class="modal-body">
                                                             <div class="mb-3">
-                                                                <label>Name</label>
+                                                                <label class="form-label">Name</label>
                                                                 <input type="text" name="name" class="form-control"
                                                                     value="{{ $item->name }}" required>
                                                             </div>
                                                             <div class="mb-3">
-                                                                <label>Price Addon</label>
-                                                                <input type="number" step="0.01" name="extra_price"
+                                                                <label class="form-label">Extra Price</label>
+                                                                <input type="number" step="1" name="extra_price"
                                                                     class="form-control" value="{{ $item->extra_price }}"
                                                                     required>
                                                             </div>
+                                                            {{-- PERUBAHAN: Ganti dropdown dari Foods ke CategoryItem --}}
                                                             <div class="mb-3">
-                                                                <label>Food</label>
-                                                                <select name="food_id" class="form-control" required>
-                                                                    @foreach ($foods as $food)
-                                                                        <option value="{{ $food->id }}"
-                                                                            {{ $item->food_id == $food->id ? 'selected' : '' }}>
-                                                                            {{ $food->name }}</option>
+                                                                <label class="form-label">Category</label>
+                                                                <select name="category_item_id" class="form-select"
+                                                                    required>
+                                                                    <option value="">-- Select Category --</option>
+                                                                    @foreach ($categoriesItem as $category)
+                                                                        <option value="{{ $category->id }}"
+                                                                            {{ $item->category_item_id == $category->id ? 'selected' : '' }}>
+                                                                            {{ $category->name }}
+                                                                        </option>
                                                                     @endforeach
                                                                 </select>
-                                                            </div>
-                                                            <div class="form-check mb-3">
-                                                                <label class="form-check-label">
-                                                                    <input class="form-check-input" type="checkbox"
-                                                                        name="is_default" value="1"
-                                                                        {{ $item->food && $item->food->defaultFoodItems->contains($item->id) ? 'checked' : '' }}>
-                                                                    Default</label>
                                                             </div>
                                                             <div class="form-check mb-3">
                                                                 <label class="form-check-label">
@@ -134,7 +137,7 @@
         </div>
     </div>
 
-    <!-- Modal Create -->
+    <!-- Create Modal -->
     <div class="modal fade" id="createItemModal" tabindex="-1">
         <div class="modal-dialog">
             <form id="createFoodItemForm">
@@ -146,30 +149,28 @@
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label>Name</label>
+                            <label class="form-label">Name</label>
                             <input type="text" name="name" class="form-control" required>
                         </div>
                         <div class="mb-3">
-                            <label>Extra Price</label>
-                            <input type="number" step="0.01" name="extra_price" class="form-control" required>
+                            <label class="form-label">Extra Price</label>
+                            <input type="number" step="1" name="extra_price" class="form-control" value="0"
+                                required>
                         </div>
+                        {{-- PERUBAHAN: Ganti dropdown dari Foods ke CategoryItem --}}
                         <div class="mb-3">
-                            <label>Food</label>
-                            <select name="food_id" class="form-control" required>
-                                @foreach ($foods as $food)
-                                    <option value="{{ $food->id }}">{{ $food->name }}</option>
+                            <label class="form-label">Category</label>
+                            <select name="category_item_id" class="form-select" required>
+                                <option value="">-- Select Category --</option>
+                                @foreach ($categoriesItem as $category)
+                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="form-check mb-3">
                             <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox" name="is_default"
-                                    value="1">Default</label>
-                        </div>
-                        <div class="form-check mb-3">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox" name="is_active"
-                                    value="1">Active</label>
+                                <input class="form-check-input" type="checkbox" name="is_active" value="1"
+                                    checked>Active</label>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -187,27 +188,7 @@
     <script src="{{ asset('assets/js/datatable/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('assets/js/datatable/datatables/datatable.custom.js') }}"></script>
 
-    @if (session('success'))
-        <script>
-            Swal.fire({
-                icon: 'success',
-                title: 'Success!',
-                text: '{{ session('success') }}',
-                timer: 2500,
-                showConfirmButton: false
-            });
-        </script>
-    @endif
-
-    @if (session('error'))
-        <script>
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: '{{ session('error') }}',
-            });
-        </script>
-    @endif
+    {{-- SweetAlert2 script tidak perlu diubah --}}
 
     <script>
         $(document).ready(function() {
@@ -215,7 +196,7 @@
             const updateUrl = "{{ route('food-items.update', ':id') }}";
             const deleteUrl = "{{ route('food-items.destroy', ':id') }}";
 
-            // create
+            // Create
             $('#createFoodItemForm').on('submit', function(e) {
                 e.preventDefault();
                 $.post(storeUrl, $(this).serialize())
@@ -223,39 +204,32 @@
                         sessionStorage.setItem('food_items_success', res.message);
                         location.reload();
                     })
-                    .fail(() => {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Failed',
-                            text: 'Create failed'
-                        });
+                    .fail((err) => {
+                        let errorMsg = 'Create failed. Please check your input.';
+                        if (err.responseJSON && err.responseJSON.message) {
+                            errorMsg = err.responseJSON.message;
+                        }
+                        Swal.fire('Failed', errorMsg, 'error');
                     });
             });
 
+            // Reset modal create saat ditutup
             $('#createItemModal').on('hidden.bs.modal', function() {
-                const form = $(this).find('form')[0];
-                form.reset();
-                $(form).find('input[type=checkbox]').prop('checked', false);
+                $(this).find('form')[0].reset();
             });
 
-            // edit form
+            // Edit form - Mengisi data saat modal dibuka
             $(document).on('click', '.edit-item-btn', function() {
                 const data = $(this).data('json');
-                const id = $(this).data('id');
-                const modal = $('#editItemModal' + id);
-
-                modal.find('form')[0].reset();
-                modal.find('input[type=checkbox]').prop('checked', false);
+                const modal = $('#editItemModal' + data.id);
 
                 modal.find('input[name="name"]').val(data.name);
                 modal.find('input[name="extra_price"]').val(data.extra_price);
-                modal.find('select[name="food_id"]').val(data.food_id);
-                modal.find('input[name="is_default"]').prop('checked',
-                    data.food && data.food.default_food_items?.some(item => item.id === data.id)
-                );
+                modal.find('select[name="category_item_id"]').val(data.category_item_id);
+                modal.find('input[name="is_active"]').prop('checked', data.is_active);
             });
 
-            // update
+            // Update
             $(document).on('submit', '.edit-item-form', function(e) {
                 e.preventDefault();
                 const id = $(this).data('id');
@@ -268,26 +242,25 @@
                         sessionStorage.setItem('food_items_success', res.message);
                         location.reload();
                     },
-                    error: function() {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Failed',
-                            text: 'Update failed'
-                        });
+                    error: function(err) {
+                        let errorMsg = 'Update failed. Please check your input.';
+                        if (err.responseJSON && err.responseJSON.message) {
+                            errorMsg = err.responseJSON.message;
+                        }
+                        Swal.fire('Failed', errorMsg, 'error');
                     }
                 });
             });
 
-            // delete
+            // Delete
             $(document).on('click', '.delete-item', function() {
                 const id = $(this).data('id');
                 Swal.fire({
                     title: 'Are you sure?',
-                    text: "This cannot be undone.",
+                    text: "This action cannot be undone!",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#dc3545',
-                    cancelButtonColor: '#6c757d',
                     confirmButtonText: 'Yes, delete it!'
                 }).then((result) => {
                     if (result.isConfirmed) {
@@ -298,16 +271,13 @@
                             sessionStorage.setItem('food_items_success', res.message);
                             location.reload();
                         }).fail(() => {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Failed',
-                                text: 'Delete failed'
-                            });
+                            Swal.fire('Failed', 'Delete failed', 'error');
                         });
                     }
                 });
             });
 
+            // Menampilkan notifikasi sukses dari sessionStorage
             const msg = sessionStorage.getItem('food_items_success');
             if (msg) {
                 Swal.fire({
@@ -321,5 +291,4 @@
             }
         });
     </script>
-
 @endsection

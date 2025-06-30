@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Category extends Model
+class CategoryItem extends Model
 {
     use HasFactory;
 
@@ -19,5 +19,10 @@ class Category extends Model
     public function foods()
     {
         return $this->belongsToMany(Food::class, 'foods_categories_list');
+    }
+
+    public function foodItems()
+    {
+        return $this->hasMany(FoodItem::class, 'category_item_id');
     }
 }

@@ -3,7 +3,6 @@
 
 @section('style')
     <link rel="stylesheet" href="{{ asset('assets/css/vendors/datatables.css') }}">
-
     <style>
         .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
             font-size: 0;
@@ -67,11 +66,17 @@
                                             <td>$ {{ number_format($food->base_price, 2, ',', '.') }}</td>
                                             <td>{{ $food->description }}</td>
                                             <td>{{ $food->nutrition_info }}</td>
-                                            <td>{{ $food->is_active ? 'Yes' : 'No' }}</td>
+                                            <td>
+                                                @if ($food->is_active)
+                                                    <span class="badge badge-light-success">Yes</span>
+                                                @else
+                                                    <span class="badge badge-light-danger">No</span>
+                                                @endif
+                                            </td>
                                             <td>
                                                 <a href="#" class="text-info show-categories-btn"
                                                     data-bs-toggle="modal" data-bs-target="#showCategoriesModal"
-                                                    data-json='@json($food->categories->pluck('name'))'>
+                                                    data-json='@json($food->categoriesItem->pluck('name'))'>
                                                     <i class="icon-list"></i>
                                                 </a>
                                             </td>
@@ -137,15 +142,15 @@
                                                                 <textarea name="nutrition_info" class="form-control">{{ $food->nutrition_info }}</textarea>
                                                             </div>
                                                             <div class="mb-3">
-                                                                <label
-                                                                    for="edit-cat-{{ $food->id }}">Categories</label>
+                                                                <label for="edit-cat-{{ $food->id }}">Categories
+                                                                    Item</label>
                                                                 <select name="category_ids[]"
                                                                     id="edit-cat-{{ $food->id }}"
                                                                     class="form-control category-select"
                                                                     multiple="multiple">
-                                                                    @foreach ($categories as $category)
+                                                                    @foreach ($categoriesItem as $category)
                                                                         <option value="{{ $category->id }}"
-                                                                            {{ $food->categories->contains($category->id) ? 'selected' : '' }}>
+                                                                            {{ $food->categoriesItem->contains($category->id) ? 'selected' : '' }}>
                                                                             {{ $category->name }}
                                                                         </option>
                                                                     @endforeach
@@ -184,17 +189,16 @@
         </div>
     </div>
 
-    <!-- Modal View Image -->
     <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content bg-dark text-white">
                 <div class="modal-header">
                     <h5 class="modal-title">Food Image</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body text-center">
                     <div id="imageWrapper">
-                        <img id="imagePreview" class="img-fluid d-none mb-3" alt="Food Image">
+                        <img id="imagePreview" class="img-fluid rounded d-none mb-3" alt="Food Image">
                         <p id="noImageText" class="text-white">No image available</p>
 
                         <button type="button" id="deleteImageBtn" class="btn btn-danger d-none" data-id="">
@@ -224,7 +228,7 @@
                         </div>
                         <div class="mb-3">
                             <label>Base Price</label>
-                            <input type="number" step="0.01" name="base_price" class="form-control" required>
+                            <input type="number" step="1" name="base_price" class="form-control" required>
                         </div>
                         <div class="mb-3">
                             <label>Description</label>
@@ -236,9 +240,10 @@
                         </div>
                         <div class="mb-3">
                             <label>Categories</label>
-                            <select name="category_ids[]" multiple="multiple" id="category-select"
-                                class="form-control select2">
-                                @foreach ($categories as $category)
+                            {{-- PERUBAHAN: Tambahkan class 'category-select' agar sama dengan modal edit --}}
+                            <select name="category_ids[]" multiple="multiple" id="create-category-select"
+                                class="form-control category-select" style="width: 100%;">
+                                @foreach ($categoriesItem as $category)
                                     <option value="{{ $category->id }}">{{ $category->name }}</option>
                                 @endforeach
                             </select>
@@ -249,8 +254,8 @@
                         </div>
                         <div class="form-check mb-3">
                             <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox" name="is_active"
-                                    value="1">Active</label>
+                                <input class="form-check-input" type="checkbox" name="is_active" value="1"
+                                    checked>Active</label>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -285,91 +290,130 @@
 
     <script>
         $(document).ready(function() {
-            $('#category-select').select2({
-                placeholder: "Select categories",
-                allowClear: true
-            });
+            // Inisialisasi Select2 untuk modal CREATE EDIT
             $('.category-select').each(function() {
                 $(this).select2({
-                    dropdownParent: $(this).closest('.modal'),
-                    placeholder: "Select categories",
-                    width: '100%'
+                    placeholder: "Select one or more categories",
+                    allowClear: true,
+                    dropdownParent: $(this).closest(
+                        '.modal')
                 });
             });
 
-        });
-        $(document).on('click', '.view-image-btn', function() {
-            const hasImage = $(this).data('has-image') == 1;
-            const imageUrl = $(this).data('image');
-            const foodId = $(this).closest('tr').attr('id').replace('food-row-', '');
+            // Event listener saat tombol edit diklik
+            $(document).on('click', '.edit-food-btn', function() {
+                const data = $(this).data('json');
+                const modal = $('#editFoodModal' + data.id);
 
-            if (hasImage) {
-                $('#imagePreview').attr('src', imageUrl).removeClass('d-none');
-                $('#noImageText').addClass('d-none');
-                $('#deleteImageBtn').removeClass('d-none').attr('data-id', foodId);
-            } else {
-                $('#imagePreview').addClass('d-none').attr('src', '');
-                $('#noImageText').removeClass('d-none');
-                $('#deleteImageBtn').addClass('d-none').attr('data-id', '');
-            }
-        });
-    </script>
-
-    <script id="food-json-{{ $food->id }}" type="application/json">
-        {!! json_encode([
-            'id' => $food->id,
-            'name' => $food->name,
-            'base_price' => $food->base_price,
-            'description' => $food->description,
-            'nutrition_info' => $food->nutrition_info,
-            'is_active' => $food->is_active,
-            'categories' => $food->categories->pluck('id')->toArray(),
-        ]) !!}
-    </script>
-
-
-    @if (session('success'))
-        <script>
-            Swal.fire({
-                icon: 'success',
-                title: 'Success!',
-                text: '{{ session('success') }}',
-                timer: 2500,
-                showConfirmButton: false
+                // Isi form dengan data
+                modal.find('input[name="name"]').val(data.name);
+                modal.find('input[name="base_price"]').val(data.base_price);
+                modal.find('textarea[name="description"]').val(data.description);
+                modal.find('textarea[name="nutrition_info"]').val(data.nutrition_info);
+                modal.find('input[name="is_active"]').prop('checked', data.is_active);
+                modal.find('.category-select').val(data.categoriesItem).trigger('change');
             });
-        </script>
-    @endif
 
-    @if (session('error'))
-        <script>
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: '{{ session('error') }}',
+            // Reset modal CREATE saat ditutup
+            $('.modal').on('hidden.bs.modal', function() {
+                const form = $(this).find('form');
+
+                if (form.length > 0) {
+                    // Reset form ke kondisi awal saat halaman pertama kali dimuat oleh server.
+                    // Ini akan mengembalikan nilai <input> dan status <option selected> ke aslinya.
+                    form[0].reset();
+
+                    // Khusus untuk modal CREATE, kita juga perlu membersihkan Select2 secara manual.
+                    // Untuk modal EDIT, Select2 akan diisi ulang saat tombol edit diklik lagi.
+                    if ($(this).attr('id') === 'createFoodModal') {
+                        $(this).find('.category-select').val(null).trigger('change');
+                    }
+                }
             });
-        </script>
-    @endif
 
-    <script>
-        // Tampilkan alert sukses setelah reload
-        $(document).ready(function() {
-            const successMessage = sessionStorage.getItem('foods_success');
-            if (successMessage) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: successMessage,
-                    timer: 2000,
-                    showConfirmButton: false
+
+            // Script untuk Show Categories Modal
+            $(document).on('click', '.show-categories-btn', function() {
+                const categories = $(this).data('json');
+                const $list = $('#categoriesList');
+                $list.empty(); // Kosongkan list sebelumnya
+
+                if (categories && categories.length > 0) {
+                    categories.forEach(cat => {
+                        $list.append(`<li class="list-group-item">${cat}</li>`);
+                    });
+                } else {
+                    $list.append('<li class="list-group-item"><em>No categories assigned.</em></li>');
+                }
+            });
+
+            // Script untuk View Image Modal
+            $(document).on('click', '.view-image-btn', function() {
+                const hasImage = $(this).data('has-image') == 1;
+                const imageUrl = $(this).data('image');
+                const foodId = $(this).closest('tr').find('.delete-food').data('id');
+
+                if (hasImage) {
+                    $('#imagePreview').attr('src', imageUrl).removeClass('d-none');
+                    $('#noImageText').addClass('d-none');
+                    $('#deleteImageBtn').removeClass('d-none').attr('data-id', foodId);
+                } else {
+                    $('#imagePreview').addClass('d-none').attr('src', '');
+                    $('#noImageText').removeClass('d-none');
+                    $('#deleteImageBtn').addClass('d-none').attr('data-id', '');
+                }
+            });
+
+            // --- AJAX UNTUK CREATE, UPDATE, DELETE ---
+
+            // Create
+            $('#createFoodForm').on('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+
+                $.ajax({
+                    url: "{{ route('foods.store') }}",
+                    method: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        sessionStorage.setItem('foods_success', response.message ||
+                            'Food created successfully');
+                        location.reload();
+                    },
+                    error: function() {
+                        Swal.fire('Failed', 'Create failed, please try again.', 'error');
+                    }
                 });
-                sessionStorage.removeItem('foods_success');
-            }
-        });
+            });
 
-        // Delete food
-        $(document).ready(function() {
-            const deleteUrl = "{{ route('foods.destroy', ':id') }}";
+            // Edit (Update)
+            $(document).on('submit', '.edit-food-form', function(e) {
+                e.preventDefault();
+                const form = this;
+                const foodId = $(form).data('id');
+                const formData = new FormData(form);
+                formData.append('_method', 'PUT');
 
+                $.ajax({
+                    url: "{{ route('foods.update', '') }}/" + foodId,
+                    method: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        sessionStorage.setItem('foods_success', response.message ||
+                            'Food updated successfully');
+                        location.reload();
+                    },
+                    error: function() {
+                        Swal.fire('Failed', 'Update failed, please try again.', 'error');
+                    }
+                });
+            });
+
+            // Delete Food
             $(document).on('click', '.delete-food', function() {
                 const foodId = $(this).data('id');
                 Swal.fire({
@@ -383,7 +427,7 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: deleteUrl.replace(':id', foodId),
+                            url: "{{ route('foods.destroy', '') }}/" + foodId,
                             type: 'POST',
                             data: {
                                 _method: 'DELETE',
@@ -395,162 +439,63 @@
                                 location.reload();
                             },
                             error: function() {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Failed!',
-                                    text: 'Failed to delete food item.'
-                                });
+                                Swal.fire('Failed!', 'Failed to delete food item.',
+                                    'error');
                             }
                         });
                     }
                 });
             });
-        });
 
-        // Edit
-        $(document).ready(function() {
-            const updateUrl = "{{ route('foods.update', ':id') }}";
-
-            $(document).on('click', '.edit-food-btn', function() {
+            // Delete Image
+            $(document).on('click', '#deleteImageBtn', function() {
                 const foodId = $(this).data('id');
-                const modal = $('#editFoodModal' + foodId);
-                const data = JSON.parse(document.getElementById('food-json-' + foodId).textContent);
 
-                modal.find('input[name="name"]').val(data.name);
-                modal.find('input[name="base_price"]').val(data.base_price);
-                modal.find('textarea[name="description"]').val(data.description);
-                modal.find('textarea[name="nutrition_info"]').val(data.nutrition_info);
-                modal.find('input[name="is_active"]').prop('checked', data.is_active);
+                let url = "{{ route('foods.delete_image', ['food' => ':id']) }}";
+                url = url.replace(':id', foodId);
 
-                $('#editModal-{{ $food->id }}').on('shown.bs.modal', function() {
-                    $(this).find('.category-select').select2({
-                        dropdownParent: $(this)
-                    });
-                });
-
-            });
-
-            $('.modal').on('hidden.bs.modal', function() {
-                $(this).find('.category-select').val(null).trigger('change');
-            });
-
-            $(document).on('submit', '.edit-food-form', function(e) {
-                e.preventDefault();
-                const form = this;
-                const foodId = $(form).data('id');
-                const formData = new FormData(form);
-                formData.append('_method', 'PUT');
-
-                $.ajax({
-                    url: updateUrl.replace(':id', foodId),
-                    method: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(response) {
-                        sessionStorage.setItem('foods_success', response.message ||
-                            'Food updated successfully');
-                        location.reload();
-                    },
-                    error: function() {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Failed',
-                            text: 'Update failed, please try again.'
+                Swal.fire({
+                    title: 'Delete image?',
+                    text: 'This action cannot be undone.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc3545',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: url,
+                            method: 'POST',
+                            data: {
+                                _method: 'PATCH',
+                                _token: '{{ csrf_token() }}',
+                            },
+                            success: function(res) {
+                                sessionStorage.setItem('foods_success', res.message ||
+                                    'Image deleted successfully');
+                                location.reload();
+                            },
+                            error: function() {
+                                Swal.fire('Failed', 'Failed to delete image.', 'error');
+                            }
                         });
                     }
                 });
             });
-        });
-
-        // Create
-        $('#createFoodForm').on('submit', function(e) {
-            e.preventDefault();
-            const form = this;
-            const formData = new FormData(form);
-
-            $.ajax({
-                url: "{{ route('foods.store') }}",
-                method: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function(response) {
-                    sessionStorage.setItem('foods_success', response.message ||
-                        'Food created successfully');
-                    location.reload();
-                },
-                error: function() {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Failed',
-                        text: 'Create failed, please try again.'
-                    });
-                }
-            });
-        });
-
-        $('#createFoodModal').on('hidden.bs.modal', function() {
-            const form = $(this).find('form')[0];
-            form.reset();
-            $(form).find('select[name="category_ids[]"]').val(null).trigger('change');
-        });
 
 
-        // Show categories list
-        $(document).on('click', '.show-categories-btn', function() {
-            const categories = $(this).data('json');
-            const $list = $('#categoriesList');
-            $list.empty();
-
-            $list.append(`<li><strong>Total Categories:</strong> ${categories.length}</li>`);
-
-            if (categories.length === 0) {
-                $list.append('<li><em>No categories assigned.</em></li>');
-            } else {
-                categories.forEach(cat => {
-                    $list.append(`<li>${cat}</li>`);
+            // Tampilkan alert sukses setelah reload dari sessionStorage
+            const successMessage = sessionStorage.getItem('foods_success');
+            if (successMessage) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: successMessage,
+                    timer: 2000,
+                    showConfirmButton: false
                 });
+                sessionStorage.removeItem('foods_success');
             }
-        });
-
-        // delete image
-        $(document).on('click', '#deleteImageBtn', function() {
-            const foodId = $(this).data('id');
-
-            Swal.fire({
-                title: 'Delete image?',
-                text: 'This action cannot be undone.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#dc3545',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Yes, delete it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: "{{ route('foods.update', ':id') }}".replace(':id', foodId),
-                        method: 'POST',
-                        data: {
-                            _method: 'PATCH',
-                            _token: '{{ csrf_token() }}',
-                            delete_image: true
-                        },
-                        success: function(res) {
-                            sessionStorage.setItem('foods_success', res.message ||
-                                'Image deleted successfully');
-                            location.reload();
-                        },
-                        error: function() {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Failed',
-                                text: 'Failed to delete image.'
-                            });
-                        }
-                    });
-                }
-            });
         });
     </script>
 

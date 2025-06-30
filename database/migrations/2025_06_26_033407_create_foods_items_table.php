@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('foods_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('food_id')->constrained('foods')->onDelete('cascade');
+            $table->foreignId('category_item_id')->constrained('categories_item')->onDelete('cascade');
             $table->string('name');
             $table->decimal('extra_price', 10, 2)->default(0);
             $table->boolean('is_active')->default(true);
+            $table->boolean('is_default')->default(false);
             $table->timestamps();
         });
     }

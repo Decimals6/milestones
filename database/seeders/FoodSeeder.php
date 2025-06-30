@@ -3,19 +3,78 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Food;
-use App\Models\Category;
+use Illuminate\Support\Facades\DB;
 
 class FoodSeeder extends Seeder
 {
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
     public function run(): void
     {
-        $categories = Category::all();
+        // Hapus data lama untuk mencegah duplikasi
+        DB::table('foods')->delete();
 
-        Food::factory()->count(10)->create()->each(function ($food) use ($categories) {
-            $food->categories()->attach(
-                $categories->random(rand(1, $categories->count()))->pluck('id')->toArray()
-            );
-        });
+        $foods = [
+            // =================================================================
+            // 1. MENU JADI (dengan resep default & aturan)
+            // =================================================================
+            [
+                'name' => 'Classic Beef Burger',
+                'description' => 'Burger sapi klasik dengan roti brioche empuk, daging giling premium, dan saus BBQ andalan kami. Bisa dikustomisasi sesuai seleramu.',
+                'base_price' => 55000,
+                'image_path' => 'images/foods/classic-beef-burger.jpg',
+                'nutrition_info' => 'Kalori: 650 kcal, Protein: 30g, Lemak: 35g, Karbohidrat: 50g',
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Grilled Chicken Salad',
+                'description' => 'Salad sehat dengan potongan dada ayam panggang, sayuran segar, dan disiram dengan Caesar dressing. Pilihan ringan yang mengenyangkan.',
+                'base_price' => 48000,
+                'image_path' => 'images/foods/grilled-chicken-salad.jpg',
+                'nutrition_info' => 'Kalori: 450 kcal, Protein: 40g, Lemak: 20g, Karbohidrat: 15g',
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Spicy Salmon Bowl',
+                'description' => 'Potongan salmon panggang pedas di atas nasi hangat, disajikan dengan alpukat, jagung, dan sayuran segar lainnya. Pilihan favorit!',
+                'base_price' => 65000,
+                'image_path' => 'images/foods/spicy-salmon-bowl.jpg',
+                'nutrition_info' => 'Kalori: 700 kcal, Protein: 35g, Lemak: 30g, Karbohidrat: 70g',
+                'is_active' => true,
+            ],
+
+            // =================================================================
+            // 2. MENU CUSTOM (kanvas kosong)
+            // =================================================================
+            [
+                'name' => 'Build Your Own Bowl',
+                'description' => 'Rakit sendiri mangkuk sehatmu! Pilih karbohidrat, protein, sayuran, topping, dan saus favoritmu dari nol.',
+                'base_price' => 0, // Harga dihitung murni dari item yang dipilih
+                'image_path' => 'images/foods/build-your-own-bowl.jpg',
+                'nutrition_info' => 'Informasi nutrisi bervariasi tergantung pilihan Anda.',
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Create Your Own Sandwich',
+                'description' => 'Jadi koki untuk sandwich-mu sendiri. Pilih roti, isian utama, sayuran, dan saus untuk menciptakan kombinasi sempurna.',
+                'base_price' => 15000, // Harga dasar termasuk roti standar
+                'image_path' => 'images/foods/create-your-own-sandwich.jpg',
+                'nutrition_info' => 'Informasi nutrisi bervariasi tergantung pilihan Anda.',
+                'is_active' => true,
+            ],
+        ];
+
+        // Tambahkan timestamp untuk setiap item sebelum insert
+        $timestamp = now();
+        foreach ($foods as &$food) {
+            $food['created_at'] = $timestamp;
+            $food['updated_at'] = $timestamp;
+        }
+
+        // Insert data ke database
+        DB::table('foods')->insert($foods);
     }
 }

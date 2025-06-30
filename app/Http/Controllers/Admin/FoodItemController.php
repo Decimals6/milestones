@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\CategoryItem;
 use Illuminate\Http\Request;
 use App\Models\Food;
 use App\Models\FoodItem;
@@ -11,10 +12,10 @@ class FoodItemController extends Controller
 {
     public function index()
     {
-        $foods = Food::all();
-        $foodItems = FoodItem::with('defaultOfFoods')->get();
+        $categoriesItem = CategoryItem::all();
+        $foodItems = FoodItem::with('categoryItem')->latest()->get();
 
-        return view('admin.food_items.index', compact('foods', 'foodItems'));
+        return view('admin.food_items.index', compact('categoriesItem', 'foodItems'));
     }
 
     public function store(Request $request)
@@ -22,22 +23,21 @@ class FoodItemController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'extra_price' => 'required|numeric',
-            'food_id' => 'required|exists:foods,id',
-            'is_default' => 'nullable|boolean',
+            'category_item_id' => 'required|exists:categories_item,id',
             'is_active' => 'nullable|boolean',
         ]);
 
         $foodItem = FoodItem::create([
             'name' => $request->name,
             'extra_price' => $request->extra_price,
-            'food_id' => $request->food_id,
+            'category_item_id' => $request->category_item_id,
             'is_active' => $request->has('is_active'),
         ]);
 
-        if ($request->has('is_default')) {
-            $food = Food::find($request->food_id);
-            $food->defaultFoodItems()->syncWithoutDetaching([$foodItem->id]);
-        }
+        // if ($request->has('is_default')) {
+        //     $food = Food::find($request->food_id);
+        //     $food->defaultFoodItems()->syncWithoutDetaching([$foodItem->id]);
+        // }
 
         return response()->json(['message' => 'Food item created successfully']);
     }
@@ -47,25 +47,24 @@ class FoodItemController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'extra_price' => 'required|numeric',
-            'food_id' => 'required|exists:foods,id',
-            'is_default' => 'nullable|boolean',
+            'category_item_id' => 'required|exists:categories_item,id',
             'is_active' => 'nullable|boolean',
         ]);
 
         $foodItem->update([
             'name' => $request->name,
             'extra_price' => $request->extra_price,
-            'food_id' => $request->food_id,
+            'category_item_id' => $request->category_item_id,
             'is_active' => $request->has('is_active'),
         ]);
 
-        if ($request->has('is_default')) {
-            $food = Food::find($request->food_id);
-            $food->defaultFoodItems()->syncWithoutDetaching([$foodItem->id]);
-        } else {
-            $food = Food::find($request->food_id);
-            $food->defaultFoodItems()->detach($foodItem->id);
-        }
+        // if ($request->has('is_default')) {
+        //     $food = Food::find($request->food_id);
+        //     $food->defaultFoodItems()->syncWithoutDetaching([$foodItem->id]);
+        // } else {
+        //     $food = Food::find($request->food_id);
+        //     $food->defaultFoodItems()->detach($foodItem->id);
+        // }
 
         return response()->json(['message' => 'Food item updated successfully']);
     }

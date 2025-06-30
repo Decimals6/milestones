@@ -20,9 +20,9 @@ class Food extends Model
         'is_active',
     ];
 
-    public function categories()
+    public function categoriesItem()
     {
-        return $this->belongsToMany(Category::class, 'foods_categories_list');
+        return $this->belongsToMany(CategoryItem::class, 'foods_categories_list');
     }
 
     public function items()

@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Food;
-use App\Models\Category;
+use App\Models\CategoryItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -15,10 +15,10 @@ class FoodController extends Controller
 
     public function index()
     {
-        $foods = Food::with('categories')->get();
-        $categories = Category::all();
+        $foods = Food::with('categoriesItem')->get();
+        $categoriesItem = CategoryItem::all();
 
-        return view('admin.food.index', compact('foods', 'categories'));
+        return view('admin.food.index', compact('foods', 'categoriesItem'));
     }
 
     public function store(Request $request)
@@ -41,7 +41,7 @@ class FoodController extends Controller
             'is_active' => $request->has('is_active'),
         ]);
 
-        $food->categories()->sync($request->input('category_ids', []));
+        $food->categoriesItem()->sync($request->input('category_ids', []));
 
         if ($request->hasFile('image')) {
             $file = $request->file('image');
@@ -66,7 +66,7 @@ class FoodController extends Controller
 
             return response()->json(['message' => 'Image deleted successfully.']);
         }
-        
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'base_price' => 'required|numeric',
@@ -85,7 +85,7 @@ class FoodController extends Controller
             'is_active' => $request->has('is_active'),
         ]);
 
-        $food->categories()->sync($request->input('category_ids', []));
+        $food->categoriesItem()->sync($request->input('category_ids', []));
 
         if ($request->hasFile('image')) {
             if ($food->image_path && Storage::disk('public')->exists($food->image_path)) {
@@ -110,9 +110,38 @@ class FoodController extends Controller
             Storage::disk('public')->delete($food->image_path);
         }
 
-        $food->categories()->detach();
+        $food->categoriesItem()->detach();
         $food->delete();
 
         return response()->json(['message' => 'Food deleted successfully']);
+    }
+
+    public function deleteImage(Food $food)
+    {
+        if (!$food->image_path) {
+            return response()->json([
+                'message' => 'Food does not have an image to delete.'
+            ], 404);
+        }
+
+        try {
+            // Hapus file dari storage
+            if (Storage::disk('public')->exists($food->image_path)) {
+                Storage::disk('public')->delete($food->image_path);
+            }
+
+            // Update kolom di database menjadi null
+            $food->image_path = null;
+            $food->save();
+
+            return response()->json([
+                'message' => 'Image has been successfully deleted.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to delete the image.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }

@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Category;
+use App\Models\CategoryItem;
 use Illuminate\Http\Request;
 
-class CategoryController extends Controller
+class CategoryItemController extends Controller
 {
     public function index()
     {
-        $categories = Category::withCount('foods')->get();
+        $categories = CategoryItem::withCount('foods')->get();
         return view('admin.category.index', compact('categories'));
     }
 
@@ -21,7 +21,7 @@ class CategoryController extends Controller
             'description' => 'nullable|string',
         ]);
 
-        $category = Category::create($validated);
+        $category = CategoryItem::create($validated);
 
         return response()->json([
             'message' => 'Category created successfully.',
@@ -29,7 +29,7 @@ class CategoryController extends Controller
         ]);
     }
 
-    public function update(Request $request, Category $category)
+    public function update(Request $request, CategoryItem $category)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -44,7 +44,7 @@ class CategoryController extends Controller
         ]);
     }
 
-    public function destroy(Category $category)
+    public function destroy(CategoryItem $category)
     {
         $category->delete();
 
