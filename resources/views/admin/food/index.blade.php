@@ -19,6 +19,32 @@
             position: relative;
             overflow: hidden;
         }
+
+        .dark-only .select2-container--default .select2-selection--multiple {
+            background-color: #2a2e37;
+            border-color: #444c57;
+            color: #fff;
+        }
+
+        .dark-only .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            background-color: #6f42c1;
+            color: white;
+            border: none;
+        }
+
+        .dark-only .select2-container--default .select2-selection--multiple .select2-selection__rendered {
+            color: white;
+        }
+
+        .dark-only .select2-container--default .select2-results__option--highlighted {
+            background-color: #6f42c1;
+            color: white;
+        }
+
+        .dark-only .select2-container--default .select2-results__option {
+            background-color: #2a2e37;
+            color: white;
+        }
     </style>
 
 @endsection
@@ -440,21 +466,22 @@
             // Event listener saat tombol edit diklik
             $(document).on('click', '.edit-food-btn', function() {
                 const foodId = $(this).data('id');
-                const foodData = $(this).data('food');
+                const food = $(this).data('food');
                 const categoryItems = $(this).data('category-items');
 
                 const modal = $('#editFoodModal' + foodId);
 
-                // Isi form dengan data
-                modal.find('input[name="name"]').val(data.name);
-                modal.find('input[name="base_price"]').val(data.base_price);
-                modal.find('textarea[name="description"]').val(data.description);
-                modal.find('textarea[name="nutrition_info"]').val(data.nutrition_info);
-                modal.find('select[name="category_food_id"]').val(data.category_food_id);
-                modal.find('input[name="is_active"]').prop('checked', data.is_active);
-
+                modal.find('input[name="name"]').val(food.name);
+                modal.find('input[name="base_price"]').val(food.base_price);
+                modal.find('textarea[name="description"]').val(food.description);
+                modal.find('textarea[name="nutrition_info"]').val(food.nutrition_info);
+                modal.find('select[name="category_food_id"]').val(food.category_food_id).trigger('change');
+                modal.find('input[name="is_active"]').prop('checked', food.is_active);
                 modal.find('select[name="category_ids[]"]').val(categoryItems).trigger('change');
-                modal.data('original-form-state', modal.find('form').serialize());
+
+                // Simpan data awal ke modal
+                modal.data('original-food', food);
+                modal.data('original-category-items', categoryItems);
             });
 
             let originalCategoryValues = [];
@@ -466,35 +493,22 @@
 
             $('.edit-food-form').closest('.modal').on('hidden.bs.modal', function() {
                 const modal = $(this);
-                const originalState = modal.data('original-form-state');
-                const form = modal.find('form');
+                const food = modal.data('original-food');
+                const categoryItems = modal.data('original-category-items');
 
-                // Cek apakah ada state awal yang tersimpan
-                if (originalState) {
-                    // Pecah string state menjadi array of objects
-                    const data = originalState.split('&').reduce((acc, curr) => {
-                        const [key, value] = curr.split('=').map(decodeURIComponent);
-                        if (key.endsWith('[]')) {
-                            const cleanKey = key.slice(0, -2);
-                            if (!acc[cleanKey]) acc[cleanKey] = [];
-                            acc[cleanKey].push(value);
-                        } else {
-                            acc[key] = value;
-                        }
-                        return acc;
-                    }, {});
-
-                    // Kembalikan nilai setiap field
-                    form.find('input[name="name"]').val(data.name || '');
-                    form.find('input[name="base_price"]').val(data.base_price || '');
-                    form.find('textarea[name="description"]').val(data.description || '');
-                    form.find('textarea[name="nutrition_info"]').val(data.nutrition_info || '');
-                    form.find('select[name="category_food_id"]').val(data.category_food_id || '');
-                    form.find('input[name="is_active"]').prop('checked', !!data.is_active);
-                    form.find('select[name="category_ids[]"]').val(data.category_ids || null).trigger(
+                if (food) {
+                    modal.find('input[name="name"]').val(food.name);
+                    modal.find('input[name="base_price"]').val(food.base_price);
+                    modal.find('textarea[name="description"]').val(food.description);
+                    modal.find('textarea[name="nutrition_info"]').val(food.nutrition_info);
+                    modal.find('select[name="category_food_id"]').val(food.category_food_id).trigger(
                         'change');
+                    modal.find('input[name="is_active"]').prop('checked', food.is_active);
+                    modal.find('select[name="category_ids[]"]').val(categoryItems).trigger('change');
                 }
             });
+
+
             $('.modal').on('hidden.bs.modal', function() {
                 const $modal = $(this);
                 const selectElement = $modal.find('.category-select');
