@@ -454,6 +454,13 @@
             background-color: #2a2a2a;
             color: #fff;
         }
+
+
+        @media (max-width: 576px) {
+            .wallet-transactions {
+                padding-bottom: calc(10rem + env(safe-area-inset-bottom));
+            }
+        }
     </style>
 
     <div class="container py-4">
