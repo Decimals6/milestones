@@ -27,28 +27,28 @@ class FoodItemSeeder extends Seeder
                 'category_item_id' => 1,
                 'extra_price' => 0,
                 'is_active' => true,
-                'is_default' => true,
+
             ],
             [
                 'name' => 'Nasi Merah',
                 'category_item_id' => 1,
                 'extra_price' => 3000,
                 'is_active' => true,
-                'is_default' => false,
+                
             ],
             [
                 'name' => 'Quinoa',
                 'category_item_id' => 1,
                 'extra_price' => 8000,
                 'is_active' => true,
-                'is_default' => false,
+
             ],
             [
                 'name' => 'Kentang Panggang',
                 'category_item_id' => 1,
                 'extra_price' => 5000,
                 'is_active' => true,
-                'is_default' => false,
+
             ],
 
             // =================================================================
@@ -59,21 +59,21 @@ class FoodItemSeeder extends Seeder
                 'category_item_id' => 2,
                 'extra_price' => 0,
                 'is_active' => true,
-                'is_default' => true,
+
             ],
             [
                 'name' => 'Roti Gandum Utuh',
                 'category_item_id' => 2,
                 'extra_price' => 2000,
                 'is_active' => true,
-                'is_default' => false,
+
             ],
             [
                 'name' => 'Roti Ciabatta',
                 'category_item_id' => 2,
                 'extra_price' => 3000,
                 'is_active' => true,
-                'is_default' => false,
+
             ],
 
             // =================================================================
@@ -84,42 +84,42 @@ class FoodItemSeeder extends Seeder
                 'category_item_id' => 3,
                 'extra_price' => 15000,
                 'is_active' => true,
-                'is_default' => true,
+
             ],
             [
                 'name' => 'Dada Ayam Panggang',
                 'category_item_id' => 3,
                 'extra_price' => 12000,
                 'is_active' => true,
-                'is_default' => false,
+
             ],
             [
                 'name' => 'Ikan Salmon Panggang',
                 'category_item_id' => 3,
                 'extra_price' => 25000,
                 'is_active' => true,
-                'is_default' => false,
+
             ],
             [
                 'name' => 'Tahu Goreng',
                 'category_item_id' => 3,
                 'extra_price' => 5000,
                 'is_active' => true,
-                'is_default' => false,
+
             ],
             [
                 'name' => 'Tempe Bakar',
                 'category_item_id' => 3,
                 'extra_price' => 5000,
                 'is_active' => true,
-                'is_default' => false,
+
             ],
             [
                 'name' => 'Telur Rebus',
                 'category_item_id' => 3,
                 'extra_price' => 4000,
                 'is_active' => true,
-                'is_default' => false,
+
             ],
 
             // =================================================================
@@ -130,35 +130,35 @@ class FoodItemSeeder extends Seeder
                 'category_item_id' => 4,
                 'extra_price' => 3000,
                 'is_active' => true,
-                'is_default' => true,
+
             ],
             [
                 'name' => 'Tomat Ceri',
                 'category_item_id' => 4,
                 'extra_price' => 2500,
                 'is_active' => true,
-                'is_default' => false,
+
             ],
             [
                 'name' => 'Irisan Timun',
                 'category_item_id' => 4,
                 'extra_price' => 1500,
                 'is_active' => true,
-                'is_default' => false,
+
             ],
             [
                 'name' => 'Bawang Bombay Merah',
                 'category_item_id' => 4,
                 'extra_price' => 2000,
                 'is_active' => true,
-                'is_default' => false,
+
             ],
             [
                 'name' => 'Paprika Mix',
                 'category_item_id' => 4,
                 'extra_price' => 4000,
                 'is_active' => true,
-                'is_default' => false,
+
             ],
 
             // =================================================================
@@ -169,35 +169,35 @@ class FoodItemSeeder extends Seeder
                 'category_item_id' => 5,
                 'extra_price' => 5000,
                 'is_active' => true,
-                'is_default' => false,
+
             ],
             [
                 'name' => 'Alpukat',
                 'category_item_id' => 5,
                 'extra_price' => 8000,
                 'is_active' => true,
-                'is_default' => false,
+
             ],
             [
                 'name' => 'Jagung Pipil Manis',
                 'category_item_id' => 5,
                 'extra_price' => 3000,
                 'is_active' => true,
-                'is_default' => false,
+
             ],
             [
                 'name' => 'Jamur Champignon Tumis',
                 'category_item_id' => 5,
                 'extra_price' => 6000,
                 'is_active' => true,
-                'is_default' => false,
+
             ],
             [
                 'name' => 'Croutons (Roti Kering)',
                 'category_item_id' => 5,
                 'extra_price' => 2500,
                 'is_active' => true,
-                'is_default' => false,
+
             ],
 
             // =================================================================
@@ -208,35 +208,35 @@ class FoodItemSeeder extends Seeder
                 'category_item_id' => 6,
                 'extra_price' => 3000,
                 'is_active' => true,
-                'is_default' => true,
+
             ],
             [
                 'name' => 'Mayones',
                 'category_item_id' => 6,
                 'extra_price' => 2000,
                 'is_active' => true,
-                'is_default' => false,
+
             ],
             [
                 'name' => 'Caesar Dressing',
                 'category_item_id' => 6,
                 'extra_price' => 5000,
                 'is_active' => true,
-                'is_default' => false,
+
             ],
             [
                 'name' => 'Saus Sambal',
                 'category_item_id' => 6,
                 'extra_price' => 1000,
                 'is_active' => true,
-                'is_default' => false,
+
             ],
             [
                 'name' => 'Japanese Sesame Dressing',
                 'category_item_id' => 6,
                 'extra_price' => 6000,
                 'is_active' => true,
-                'is_default' => false,
+
             ],
         ];
 
