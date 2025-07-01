@@ -746,7 +746,7 @@
                     document.querySelectorAll('.modal.show').forEach(m => bootstrap.Modal.getInstance(m).hide());
 
                     // Tampilkan konfirmasi
-                    Swal.fire('Order Berhasil!', '', 'success').then(() => location.href = "{{ route('orders') }}");
+                    Swal.fire('Order Berhasil!', '', 'success').then(() => location.href = "{{ route('myorders.index') }}");
                 })
                 .catch(err => {
                     Swal.fire('Oops!', 'Terjadi kesalahan server.', 'error');

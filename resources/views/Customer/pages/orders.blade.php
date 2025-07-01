@@ -309,62 +309,70 @@
 
         <div class="tab-content">
             <div class="tab-pane fade show active" id="proses">
-                @foreach ([['INV0001', 'Menunggu Konfirmasi', '1 menit lalu', 2, 54000], ['INV0002', 'Dikirim', '10 menit lalu', 1, 38000]] as [$id, $status, $time, $items, $total])
+                @foreach ($proses as $order)
                     <div class="order-card p-3 mb-3">
                         <div class="d-flex justify-content-between">
                             <div>
-                                <h6 class="mb-1 fw-bold">Order ID: {{ $id }}</h6>
-                                <small class="text-muted">{{ $time }} &bull; {{ $items }} item</small>
+                                <h6 class="mb-1 fw-bold">Order ID: {{ $order->order_number }}</h6>
+                                <small class="text-muted">{{ $order->created_at->diffForHumans() }} &bull;
+                                    {{ $order->details->sum('quantity') }} item</small>
+
+                                {{-- Progress Bar --}}
                                 <div class="order-progress mt-2 align-items-center">
                                     <div
-                                        class="dot {{ in_array($status, ['Menunggu Konfirmasi', 'Dikirim', 'Selesai']) ? 'active' : '' }}">
+                                        class="dot {{ in_array($order->status, ['pending', 'diproses', 'dikirim', 'selesai']) ? 'active' : '' }}">
                                     </div>
                                     <div class="bar flex-grow-1 bg-secondary" style="height: 2px;"></div>
-                                    <div class="dot {{ in_array($status, ['Dikirim', 'Selesai']) ? 'active' : '' }}"></div>
+                                    <div
+                                        class="dot {{ in_array($order->status, ['diproses', 'dikirim', 'selesai']) ? 'active' : '' }}">
+                                    </div>
                                     <div class="bar flex-grow-1 bg-secondary" style="height: 2px;"></div>
-                                    <div class="dot {{ $status === 'Selesai' ? 'active' : '' }}"></div>
+                                    <div class="dot {{ in_array($order->status, ['dikirim', 'selesai']) ? 'active' : '' }}">
+                                    </div>
                                 </div>
                                 <div class="order-status-bar">
                                     <span>Konfirmasi</span><span>Diproses</span><span>Selesai</span>
                                 </div>
                             </div>
                             <div class="text-end">
-                                <span class="badge bg-primary rounded-pill">{{ $status }}</span><br>
-                                <div class="text-danger mt-2">Rp{{ number_format($total, 0, ',', '.') }}</div>
+                                <span class="badge bg-primary rounded-pill text-capitalize">{{ $order->status }}</span><br>
+                                <div class="text-danger mt-2">Rp{{ number_format($order->total_amount) }}</div>
                             </div>
                         </div>
                         <div class="d-flex justify-content-end gap-2 mt-3">
                             <button class="btn btn-outline-secondary btn-sm rounded-pill"
-                                onclick="showDetail('{{ $id }}', '{{ $status }}')">Lihat Detail</button>
+                                onclick="showDetail('{{ $order->order_number }}', '{{ $order->status }}')">Lihat
+                                Detail</button>
                             <button class="btn btn-danger btn-sm rounded-pill"
-                                onclick="cancelOrder('{{ $id }}')">Batalkan</button>
+                                onclick="cancelOrder('{{ $order->order_number }}')">Batalkan</button>
                         </div>
                     </div>
                 @endforeach
             </div>
 
             <div class="tab-pane fade" id="selesai">
-                @foreach ([['INV9991', 'Selesai', 'Kemarin', 3, 76000], ['INV9990', 'Selesai', '2 hari lalu', 1, 25000]] as [$id, $status, $time, $items, $total])
+                @foreach ($selesai as $order)
                     <div class="order-card p-3 mb-3">
                         <div class="d-flex justify-content-between">
                             <div>
-                                <h6 class="mb-1 fw-bold">Order ID: {{ $id }}</h6>
-                                <small class="text-muted">{{ $time }} &bull; {{ $items }} item</small>
+                                <h6 class="mb-1 fw-bold">Order ID: {{ $order->order_number }}</h6>
+                                <small class="text-muted">{{ $order->created_at->diffForHumans() }} &bull;
+                                    {{ $order->details->sum('quantity') }} item</small>
                                 <div class="mt-2 text-success fw-semibold">Pesanan Telah Selesai</div>
                             </div>
                             <div class="text-end">
-                                <span class="badge bg-success rounded-pill">{{ $status }}</span><br>
-                                <div class="text-success mt-2">Rp{{ number_format($total, 0, ',', '.') }}</div>
+                                <span class="badge bg-success rounded-pill">{{ ucfirst($order->status) }}</span><br>
+                                <div class="text-success mt-2">Rp{{ number_format($order->total_amount) }}</div>
                             </div>
                         </div>
                         <div class="d-flex justify-content-end mt-3 gap-2">
                             <button class="btn btn-outline-secondary btn-sm rounded-pill"
-                                onclick="showDetail('{{ $id }}', '{{ $status }}')">Lihat Detail</button>
+                                onclick="showDetail('{{ $order->order_number }}', '{{ $order->status }}')">Lihat
+                                Detail</button>
 
                             <button class="btn btn-outline-primary btn-sm rounded-pill"
-                                onclick="showReviewModal('{{ $id }}')">Beri Ulasan</button>
+                                onclick="showReviewModal('{{ $order->order_number }}')">Beri Ulasan</button>
                         </div>
-
                     </div>
                 @endforeach
             </div>
@@ -405,63 +413,47 @@
     </div>
 
     <script>
-        function showDetail(id, status) {
-            const steps = [{
-                    label: 'Konfirmasi'
-                },
-                {
-                    label: 'Diproses'
-                },
-                {
-                    label: 'Dikirim'
-                },
-                {
-                    label: 'Selesai'
-                },
-            ];
+        function showDetail(orderNumber, status) {
+            fetch(`{{ route('myorders.show', ':id') }}`.replace(':id', orderNumber))
+                .then(res => res.json())
+                .then(data => {
+                    const steps = ['Konfirmasi', 'Diproses', 'Dikirim', 'Selesai'];
+                    const currentIndex = steps.findIndex(s => s.toLowerCase() === status.toLowerCase());
 
-            const completedIndex = {
-                'Menunggu Konfirmasi': 0,
-                'Diproses': 1,
-                'Dikirim': 2,
-                'Selesai': 3,
-            } [status] ?? 0;
+                    const progressHTML = steps.map((step, index) => `
+                <div class="step-item ${index <= currentIndex ? 'step-complete' : ''}">
+                    <div class="step-circle">${index <= currentIndex ? '✔' : ''}</div>
+                    <div class="step-label">${step}</div>
+                </div>
+            `).join('');
 
-            const progressHTML = steps.map((step, index) => `
-        <div class="step-item ${index <= completedIndex ? 'step-complete' : ''}">
-            <div class="step-circle">${index <= completedIndex ? '✔' : ''}</div>
-            <div class="step-label">${step.label}</div>
-        </div>
-    `).join('');
+                    const html = `
+                <div class="modal-header-custom">
+                    <span>Detail Pesanan</span>
+                    <span class="modal-close-btn" onclick="Swal.close(); removeSwalBackdrop();">&times;</span>
+                </div>
+                <div class="progress-steps">${progressHTML}</div>
+                <div class="receipt-box">
+                    <p><strong>ID:</strong> ${data.id}</p>
+                    <p><strong>Waktu:</strong> ${data.created_at}</p>
+                    <p><strong>Metode Bayar:</strong> ${data.payment}</p>
+                    <p><strong>Item:</strong><br> ${data.items.map(i => '🍽️ ' + i).join('<br>')}</p>
+                    <p><strong>Catatan:</strong> ${data.note}</p>
+                    <p><strong>Total:</strong> Rp${data.total}</p>
+                    <p><strong>Status:</strong> <span class="badge bg-${status.toLowerCase() === 'selesai' ? 'success' : 'info'}">${statusLabel(data.status)}</span></p>
+                </div>`;
 
-            const html = `
-    <div class="modal-header-custom">
-        <span>Detail Pesanan</span>
-        <span class="modal-close-btn" onclick="Swal.close(); removeSwalBackdrop();">&times;</span>
-    </div>
-    <div class="progress-steps">${progressHTML}</div>
-    <div class="receipt-box">
-        <p><strong>ID:</strong> ${id}</p>
-        <p><strong>Waktu:</strong> 12 Juni 2025, 12:30 WIB</p>
-        <p><strong>Metode Bayar:</strong> Tunai</p>
-        <p><strong>Item:</strong><br> 🍚 Nasi Goreng x1<br> 🍗 Ayam Bakar x1</p>
-        <p><strong>Catatan:</strong> Pedas sedang, tanpa kacang</p>
-        <p><strong>Total:</strong> Rp54.000</p>
-        <p><strong>Status:</strong> <span class="badge bg-${status === 'Selesai' ? 'success' : 'info'}">${status}</span></p>
-    </div>`;
-
-            Swal.fire({
-                html: html,
-                showConfirmButton: false,
-                showCloseButton: false,
-                backdrop: true,
-                customClass: {
-                    popup: 'swal2-popup'
-                },
-                didClose: () => {
-                    removeSwalBackdrop();
-                }
-            });
+                    Swal.fire({
+                        html: html,
+                        showConfirmButton: false,
+                        showCloseButton: false,
+                        backdrop: true,
+                        customClass: {
+                            popup: 'swal2-popup'
+                        },
+                        didClose: removeSwalBackdrop
+                    });
+                });
         }
 
         function removeSwalBackdrop() {
@@ -576,5 +568,16 @@
             // submit ke server
             // console.log({ orderId, selectedRating, comment });
         });
+
+        const statusLabelMap = {
+            pending: 'Menunggu',
+            processing: 'Diproses',
+            completed: 'Selesai',
+            cancelled: 'Dibatalkan'
+        };
+
+        function statusLabel(status) {
+            return statusLabelMap[status] ?? status.charAt(0).toUpperCase() + status.slice(1);
+        }
     </script>
 @endsection
