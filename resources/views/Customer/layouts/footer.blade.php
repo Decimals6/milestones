@@ -181,7 +181,7 @@
     </div>
 
     {{-- Floating Chat Button --}}
-    <a href="https://wa.me/628123456789" target="_blank" class="fab-chat">
+    <a href="https://wa.me/6282199358366?text=Hai%20saya%20mau%20order" target="_blank" class="fab-chat">
         <!-- WhatsApp Icon SVG -->
         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="white" viewBox="0 0 24 24">
             <path
