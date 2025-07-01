@@ -6,7 +6,7 @@
 @endsection
 
 @section('breadcrumb-items')
-    <li class="breadcrumb-item"><a href="{{ route('myorders.index') }}">Orders</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('orders.index') }}">Orders</a></li>
     <li class="breadcrumb-item active">Detail</li>
 @endsection
 

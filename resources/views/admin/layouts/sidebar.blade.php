@@ -79,7 +79,7 @@
                             <svg class="fill-icon">
                                 <use href="{{ asset('assets/svg/icon-sprite.svg#fill-ui-kits') }}"></use>
                             </svg><span>Food Items</span></a></li>
-                    <li class="sidebar-list"><a class="sidebar-link sidebar-title" href="{{ route('myorders.index') }}">
+                    <li class="sidebar-list"><a class="sidebar-link sidebar-title" href="{{ route('orders.index') }}">
                             <svg class="stroke-icon">
                                 <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-task') }}"></use>
                             </svg>

@@ -6,6 +6,7 @@ use App\Http\Controllers\Customer\CheckoutController;
 use App\Http\Controllers\Customer\FoodController;
 use App\Http\Controllers\Customer\HomeController;
 use App\Http\Controllers\Customer\MenuController;
+use App\Http\Controllers\Customer\OrderController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -31,7 +32,7 @@ Route::middleware(['auth'])->prefix('customer')->group(function () {
 
     Route::resource('/checkout', CheckoutController::class);
 
-    Route::resource('/myorders', CheckoutController::class);
+    Route::resource('/myorders', OrderController::class);
 
     Route::get('/profile', function () {
         return view('Customer.pages.profile');
