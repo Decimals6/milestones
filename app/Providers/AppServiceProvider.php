@@ -2,9 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\CategoryFood;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Blade;
-use App\Models\CategoryItem;
 use Illuminate\Support\Facades\View;
 
 class AppServiceProvider extends ServiceProvider
@@ -26,7 +26,7 @@ class AppServiceProvider extends ServiceProvider
         Blade::component('Customer.components.product-card-2', 'product-card-2');
 
         View::composer('Customer.layouts.navbar', function ($view) {
-            $view->with('categories', CategoryItem::all());
+            $view->with('categories', CategoryFood::all());
         });
     }
 }

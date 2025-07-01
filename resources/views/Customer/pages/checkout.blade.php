@@ -399,7 +399,7 @@
 
     <div class="container">
         <div class="d-flex align-items-center mb-4">
-            <button class="btn-back me-3" onclick="location.href='{{ route('cart') }}'"><i
+            <button class="btn-back me-3" onclick="location.href='{{ route('cart.index') }}'"><i
                     class="bi bi-arrow-left"></i></button>
             <h4 class="fw-bold mb-0">Checkout</h4>
         </div>

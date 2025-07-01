@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
     <style>
         .dark {
             background-color: #1f1f1f !important;
@@ -349,6 +350,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
@@ -435,11 +437,43 @@
         }
 
         function addToCart() {
-            cart[prod.id] = {
-                ...prod
-            }
-            updateCard(prod.id)
-            modal.hide()
+            $.ajax({
+                url: "{{ route('cart.store') }}",
+                type: "POST",
+                data: {
+                    food_id: prod.id,
+                    qty: prod.qty,
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    cart[prod.id] = {
+                        ...prod,
+                        qty: (cart[prod.id]?.qty || 0) + prod.qty
+                    };
+                    updateCard(prod.id);
+                    modal.hide();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil',
+                        text: response.message,
+                        toast: true,
+                        timer: 2000,
+                        showConfirmButton: false,
+                        position: 'top-end'
+                    });
+                },
+                error: function(xhr) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal',
+                        text: 'Tidak bisa menambahkan ke cart.',
+                        toast: true,
+                        timer: 2000,
+                        showConfirmButton: false,
+                        position: 'top-end'
+                    });
+                }
+            });
         }
 
         function toggleLike(id, fromModal = false) {

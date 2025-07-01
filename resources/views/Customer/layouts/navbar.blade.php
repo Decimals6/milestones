@@ -234,7 +234,7 @@
                     <span
                         id="badge-like"class="badge bg-danger position-absolute top-0 start-100 translate-middle">0</span>
                 </a>
-                <a href="{{ route('cart') }}" class="nav-icon {{ request()->routeIs('cart') ? 'nav-active' : '' }}">
+                <a href="{{ route('cart.index') }}" class="nav-icon {{ request()->routeIs('cart') ? 'nav-active' : '' }}">
                     <i class="bi bi-cart fs-5"></i>
                     <span id="badge-cart"
                         class="badge bg-danger position-absolute top-0 start-100 translate-middle">0</span>

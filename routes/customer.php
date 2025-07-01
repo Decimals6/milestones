@@ -1,13 +1,23 @@
 <?php
 
+use App\Http\Controllers\Customer\CartController;
 use App\Http\Controllers\Customer\CategoryController;
 use App\Http\Controllers\Customer\HomeController;
 use Illuminate\Support\Facades\Route;
+
+
 
 Route::middleware(['auth'])->prefix('customer')->group(function () {
     Route::resource('/home', HomeController::class);
 
     Route::resource('/category', CategoryController::class);
+
+    Route::resource('/cart', CartController::class)->only(['index', 'store']);
+    Route::controller(CartController::class)->group(function () {
+        Route::post('cart/update', 'update')->name('cart.update');
+        Route::delete('cart/remove', 'remove')->name('cart.remove');
+        Route::delete('cart/clear', 'clear')->name('cart.clear');
+    });
 
     Route::get('/profile', function () {
         return view('Customer.pages.profile');
@@ -16,10 +26,6 @@ Route::middleware(['auth'])->prefix('customer')->group(function () {
     Route::get('/like', function () {
         return view('Customer.pages.like');
     })->name('like');
-
-    Route::get('/cart', function () {
-        return view('Customer.pages.cart');
-    })->name('cart');
 
     Route::get('/wallet', function () {
         return view('Customer.pages.wallet');

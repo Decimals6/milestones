@@ -3,33 +3,12 @@
 
 @section('content')
     @php
-        $items = [
-            [
-                'title' => 'Spicy Chicken Burger',
-                'img' => 'https://picsum.photos/seed/spicyBurgerCart/400/300',
-                'price' => 28000,
-                'qty' => 2,
-                'cal' => 600,
-                'toppings' => ['Cheese', 'Lettuce'],
-                'side' => 'Fries',
-                'drink' => 'Iced Tea',
-            ],
-            [
-                'title' => 'Beef Bowl Large',
-                'img' => 'https://picsum.photos/seed/beefBowl/400/300',
-                'price' => 39000,
-                'qty' => 1,
-                'cal' => 550,
-                'toppings' => ['Onion', 'Sauce'],
-                'side' => null,
-                'drink' => null,
-            ],
-        ];
-        $baseTotal = collect($items)->sum(fn($i) => $i['price'] * $i['qty']);
+        $baseTotal = collect($cart)->sum(fn($i) => $i['price'] * $i['quantity']);
         $tax = $baseTotal * 0.1;
         $fee = 5000;
-        $totalCal = collect($items)->sum(fn($i) => $i['cal'] * $i['qty']);
+        $totalCal = 0; // nanti kalau mau kalkulasi kalori beneran
     @endphp
+
 
     <style>
         :root {
@@ -271,35 +250,42 @@
             </div>
         </div>
 
-        @foreach ($items as $item)
-            <div class="card-box">
-                <div class="cart-item">
-                    <img src="{{ $item['img'] }}" class="cart-img">
-                    <div class="cart-info">
-                        <h6>{{ $item['title'] }} ×{{ $item['qty'] }}</h6>
-                        <div class="detail">Rp{{ number_format($item['price'], 0, ',', '.') }} · {{ $item['cal'] }} cal</div>
-                        @if ($item['toppings'])
-                            <div class="detail">Toppings: {{ implode(', ', $item['toppings']) }}</div>
-                        @endif
-                        @if ($item['side'])
-                            <div class="detail">Side: {{ $item['side'] }}</div>
-                        @endif
-                        @if ($item['drink'])
-                            <div class="detail">Drink: {{ $item['drink'] }}</div>
-                        @endif
-                        <div class="total">Rp{{ number_format($item['price'] * $item['qty'], 0, ',', '.') }}</div>
-                    </div>
-                    <div class="cart-action">
-                        <i class="bi bi-heart"></i>
-                        <a href="#" class="small text-danger">Remove</a>
+        @if (count($cart))
+            @foreach ($cart as $item)
+                <div class="card-box">
+                    <div class="cart-item">
+                        <img src="{{ $item['image'] ?? 'https://picsum.photos/seed/' . $item['food_id'] . '/90/90' }}"
+                            class="cart-img">
+                        <div class="cart-info">
+                            <h6>{{ $item['name'] }} ×{{ $item['quantity'] }}</h6>
+                            <div class="detail">Rp{{ number_format($item['price'], 0, ',', '.') }}</div>
+                            <div class="total">Rp{{ number_format($item['price'] * $item['quantity'], 0, ',', '.') }}</div>
+                        </div>
+                        <div class="cart-action d-flex flex-column align-items-end">
+                            <div class="btn-group mb-2" role="group">
+                                <button onclick="changeQty({{ $item['food_id'] }}, 'decrement')"
+                                    class="btn btn-sm btn-outline-secondary">−</button>
+                                <button onclick="changeQty({{ $item['food_id'] }}, 'increment')"
+                                    class="btn btn-sm btn-outline-secondary">+</button>
+                            </div>
+                            <button onclick="removeItem({{ $item['food_id'] }})"
+                                class="btn btn-sm text-danger p-0">Remove</button>
+                        </div>
                     </div>
                 </div>
+            @endforeach
+        @else
+            <div class="card-box">
+                <div class="text-center py-5">
+                    <h6 class="mb-3">Cart kosong. Silakan tambahkan makanan dulu.</h6>
+                </div>
             </div>
-        @endforeach
+        @endif
 
         <div class="card-box">
             <h6 class="mb-1">Estimated time to prepare</h6>
-            <p class="small" style="color: var(--text-secondary-light)" class="text-muted dark:text-secondary-dark">~15 minutes</p>
+            <p class="small" style="color: var(--text-secondary-light)" class="text-muted dark:text-secondary-dark">~15
+                minutes</p>
         </div>
 
         <div class="card-box">
@@ -324,10 +310,6 @@
             <div class="summary-line">
                 <div>Service Fee</div>
                 <div>Rp{{ number_format($fee, 0, ',', '.') }}</div>
-            </div>
-            <div class="summary-line">
-                <div>Calories</div>
-                <div>{{ $totalCal }} cal</div>
             </div>
             <div class="summary-line summary-total">
                 <div>Total</div>
@@ -365,5 +347,45 @@
         }
 
         togglePlace();
+
+        function changeQty(foodId, action) {
+            $.ajax({
+                url: "{{ route('cart.update') }}",
+                method: 'POST',
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    food_id: foodId,
+                    action: action
+                },
+                success: function(res) {
+                    location.reload();
+                }
+            });
+        }
+
+        function removeItem(foodId) {
+            console.log(foodId)
+            $.ajax({
+                url: "{{ route('cart.remove') }}",
+                method: 'DELETE',
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    food_id: foodId
+                },
+                success: function() {
+                    location.reload();
+                }
+            });
+        }
+
+        document.querySelector('.btn-outline-danger')?.addEventListener('click', function(e) {
+            e.preventDefault();
+            fetch("{{ route('cart.clear') }}", {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                }
+            }).then(() => location.reload());
+        });
     </script>
 @endsection

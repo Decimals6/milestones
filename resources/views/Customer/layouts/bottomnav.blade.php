@@ -81,7 +81,7 @@
 
         {{-- FAB dibungkus div agar tidak mengganggu layout link --}}
         <div style="flex: 0 0 56px;" class="text-center">
-            <a href="{{ route('cart') }}" class="fab-btn position-relative {{ request()->routeIs('cart') ? 'nav-active' : '' }}">
+            <a href="{{ route('cart.index') }}" class="fab-btn position-relative {{ request()->routeIs('cart') ? 'nav-active' : '' }}">
                 <i class="bi bi-cart"></i>
                 <span class="badge">2</span>
             </a>

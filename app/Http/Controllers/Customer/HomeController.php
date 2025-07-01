@@ -8,19 +8,24 @@ use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $categoriesTop = CategoryFood::with(['foods' => function ($query) {
-            $query->where('is_active', 1)->inRandomOrder();
+        $categoriesTop = CategoryFood::with([
+            'foods' => function ($query) {
+                $query->where('is_active', 1)->inRandomOrder();
+            }
+        ])
+        ->withCount(['foods as foods_active_count' => function ($query) {
+            $query->where('is_active', 1);
         }])
-            ->withCount('foods')
-            ->orderByDesc('foods_count')
-            ->take(2)
-            ->get()
-            ->map(function ($category) {
-                $category->foods = $category->foods->take(3);
-                return $category;
-            });
+        ->orderByDesc('foods_active_count')
+        ->take(2)
+        ->get()
+        ->map(function ($category) {
+            // Ambil 3 teratas dari yang udah di-random
+            $category->foods = $category->foods->take(3);
+            return $category;
+        });
 
         return view('customer.pages.home', compact('categoriesTop'));
     }

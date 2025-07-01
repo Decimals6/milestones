@@ -299,32 +299,32 @@
             <section class="mb-5">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <h5 class="section-title">{{ $category->name }}</h5>
-                    <a href="{{ route('categories.index', ['name' => $category->name]) }}"
+                    <a href="{{ route('category.index', ['name' => $category->name]) }}"
                         class="small fw-semibold text-primary text-decoration-none">
                         Discover All
                     </a>
                 </div>
+
                 <div class="scroll-x">
                     @foreach ($category->foods as $food)
-                        @if ((int) $index === 0)
-                            <div class="card-wrapper">
+                        <div class="{{ $index === 0 ? 'card-wrapper' : 'card2-wrapper' }}">
+                            @if ($index === 0)
                                 <x-product-card :image="$food->image_path
                                     ? asset('storage/' . $food->image_path)
-                                    : 'https://picsum.photos/seed/food1/400/300'" :title="$food->name" :price="$food->base_price" :rating="4.5"
-                                    :off="null" :sold-out="false" />
-                            </div>
-                        @else
-                            <div class="card2-wrapper">
+                                    : 'https://picsum.photos/seed/' . $food->id . '/500/350'" :title="$food->name" :price="$food->base_price" :rating="4.5"
+                                    :off="null" :sold-out="false" :id="$food->id" />
+                            @else
                                 <x-product-card-2 :image="$food->image_path
                                     ? asset('storage/' . $food->image_path)
-                                    : 'https://picsum.photos/seed/food1/500/350'" :title="$food->name" :price="$food->base_price" :rating="4.5"
-                                    :off="null" :sold-out="false" />
-                            </div>
-                        @endif
+                                    : 'https://picsum.photos/seed/' . $food->id . '/500/350'" :title="$food->name" :price="$food->base_price" :rating="4.5"
+                                    :off="null" :sold-out="false" :id="$food->id" />
+                            @endif
+                        </div>
                     @endforeach
                 </div>
             </section>
         @endforeach
+
 
         <section class="mb-5 position-relative">
             <h5 class="section-title text-center mb-3">Chef's Recommendation <i class="bi bi-emoji-smile"></i></h5>
