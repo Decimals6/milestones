@@ -357,7 +357,7 @@
                 <i class="bi bi-bell"></i> Notification
             </a>
 
-            <a href="{{ route('wallet') }}" class="menu-item">
+            <a href="{{ route('wallet.index') }}" class="menu-item">
                 <i class="bi bi-wallet2"></i> Wallet
             </a>
 
