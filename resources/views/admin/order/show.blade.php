@@ -6,7 +6,7 @@
 @endsection
 
 @section('breadcrumb-items')
-    <li class="breadcrumb-item"><a href="{{ route('orders.index') }}">Orders</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('myorders.index') }}">Orders</a></li>
     <li class="breadcrumb-item active">Detail</li>
 @endsection
 
@@ -83,7 +83,7 @@
                             @endforelse
                         </tbody>
                     </table>
-                    <a href="{{ route('orders.index') }}" class="btn btn-secondary mt-3"><i class="icon-arrow-left"></i> Back to Orders</a>
+                    <a href="{{ route('myorders.index') }}" class="btn btn-secondary mt-3"><i class="icon-arrow-left"></i> Back to Orders</a>
                 </div>
             </div>
 

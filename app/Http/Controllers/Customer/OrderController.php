@@ -25,6 +25,6 @@ class OrderController extends Controller
         $proses = $orders->get('proses', collect());
         $selesai = $orders->get('selesai', collect());
 
-        return view('Customer.orders.index', compact('proses', 'selesai'));
+        return view('Customer.pages.orders', compact('proses', 'selesai'));
     }
 }

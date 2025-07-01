@@ -31,7 +31,7 @@ Route::middleware(['auth'])->prefix('customer')->group(function () {
 
     Route::resource('/checkout', CheckoutController::class);
 
-    Route::resource('/orders', CheckoutController::class);
+    Route::resource('/myorders', CheckoutController::class);
 
     Route::get('/profile', function () {
         return view('Customer.pages.profile');

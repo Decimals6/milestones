@@ -91,7 +91,7 @@
                 <div class="tile-btn"><i class="bi bi-wallet2"></i></div>
                 <small class="d-block mt-2">Wallet</small>
             </a>
-            <a href="{{ route('orders.index') }}" class="text-center text-decoration-none">
+            <a href="{{ route('myorders.index') }}" class="text-center text-decoration-none">
                 <div class="tile-btn"><i class="bi bi-receipt"></i></div>
                 <small class="d-block mt-2">My&nbsp;Order</small>
             </a>

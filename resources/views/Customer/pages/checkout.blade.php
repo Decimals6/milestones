@@ -64,8 +64,8 @@
         }
 
         /* ==========================
-                                                                                                   MODAL & BOTTOMSHEET STYLE
-                                                                                                =========================== */
+                                                                                                       MODAL & BOTTOMSHEET STYLE
+                                                                                                    =========================== */
 
         .modal {
             z-index: 3000;
@@ -139,8 +139,8 @@
         }
 
         /* ==========================
-                                                                                                   BOTTOM SHEET MOBILE STYLE
-                                                                                                =========================== */
+                                                                                                       BOTTOM SHEET MOBILE STYLE
+                                                                                                    =========================== */
         @media (max-width: 768px) {
             .modal.bottomsheet .modal-dialog {
                 margin: 0;
@@ -186,8 +186,8 @@
         }
 
         /* ===============================
-                                                                                       MODAL - BOTTOMSHEET RESPONSIVE
-                                                                                    ================================= */
+                                                                                           MODAL - BOTTOMSHEET RESPONSIVE
+                                                                                        ================================= */
 
         .modal.modal-bottom-sheet {
             z-index: 3000;
@@ -266,8 +266,8 @@
 
 
         /* ==========================
-                                                                                                   UI COMPONENT ENHANCEMENT
-                                                                                                =========================== */
+                                                                                                       UI COMPONENT ENHANCEMENT
+                                                                                                    =========================== */
 
         .card-option {
             cursor: pointer;
@@ -694,6 +694,18 @@
             modal.show();
         }
 
+        function updateCartBadge(totalQty) {
+            const badge = document.getElementById('badge-cart');
+            if (!badge) return;
+
+            badge.textContent = totalQty;
+            badge.classList.add('btn-shake');
+
+            setTimeout(() => {
+                badge.classList.remove('btn-shake');
+            }, 300);
+        }
+
         function finish() {
             resetTimers();
             window.orderFinalized = true;
@@ -734,12 +746,13 @@
                     document.querySelectorAll('.modal.show').forEach(m => bootstrap.Modal.getInstance(m).hide());
 
                     // Tampilkan konfirmasi
-                    Swal.fire('Order Berhasil!', '', 'success').then(() => location.href = "{{ route('orders.index') }}");
+                    Swal.fire('Order Berhasil!', '', 'success').then(() => location.href = "{{ route('orders') }}");
                 })
                 .catch(err => {
                     Swal.fire('Oops!', 'Terjadi kesalahan server.', 'error');
                     console.error(err);
                 });
+
         }
 
         function openPay(method) {
