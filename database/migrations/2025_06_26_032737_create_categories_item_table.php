@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('description')->nullable();
+            $table->enum('selection_type', ['radio', 'checkbox'])->default('checkbox');
+            $table->json('builder_tags')->nullable();
             $table->timestamps();
         });
     }

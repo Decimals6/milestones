@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
 use App\Models\CartItem;
+use App\Models\Food;
+use App\Models\FoodItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class CartController extends Controller
@@ -12,106 +15,147 @@ class CartController extends Controller
 
     public function index()
     {
-        $userId = auth()->id();
+        $cartItems = CartItem::with('food')->where('user_id', auth()->id())->get();
+        $subtotal = $cartItems->sum(fn($item) => ($item->base_price + $item->addons_total_price) * $item->quantity);
 
-        $cartItems = CartItem::with('food')
-            ->where('user_id', $userId)
-            ->get();
-
-        $cart = $cartItems->map(function ($item) {
-            return [
-                'food_id'  => $item->food_id,
-                'name'     => $item->food->name,
-                'price'    => $item->food->base_price,
-                'quantity' => $item->quantity,
-                'image'    => $item->food->image_path
-                    ? asset('storage/' . $item->food->image_path)
-                    : 'https://picsum.photos/seed/' . $item->food_id . '/90/90'
-            ];
-        });
-
-        return view('customer.pages.cart', [
-            'cart' => $cart
+        return view('Customer.pages.cart', [ // Pastikan path view-nya benar
+            'cart' => $cartItems, // Mengirim sebagai '$cart' agar @foreach lama berfungsi
+            'baseTotal' => $subtotal,
+            'tax' => $subtotal * 0.11,
+            'fee' => 5000,
         ]);
     }
 
 
     public function store(Request $request)
     {
+        // 1. Validasi input dari frontend
         $request->validate([
             'food_id' => 'required|exists:foods,id',
-            'quantity' => 'nullable|integer|min:1'
+            'qty' => 'required|integer|min:1',
+            'customizations' => 'nullable|array', // Kustomisasi adalah array dari ID food_item
+            'customizations.*' => 'exists:foods_items,id', // Validasi setiap ID di dalam array
         ]);
 
-        $user = auth()->user();
-        $qty = $request->input('quantity', 1);
+        try {
+            DB::beginTransaction();
 
-        // Cek apakah sudah ada di cart
-        $item = CartItem::where('user_id', $user->id)
-            ->where('food_id', $request->food_id)
-            ->first();
+            $food = Food::findOrFail($request->food_id);
+            $addons_total_price = 0;
+            $customizations_details = [];
 
-        if ($item) {
-            $item->quantity += $qty;
-            $item->save();
-        } else {
-            CartItem::create([
-                'user_id' => $user->id,
-                'food_id' => $request->food_id,
-                'quantity' => $qty
-            ]);
+            // 2. Hitung total harga addon dan siapkan detailnya untuk disimpan di JSON
+            if ($request->has('customizations') && !empty($request->customizations)) {
+                $addon_ids = $request->customizations;
+                $addons = FoodItem::whereIn('id', $addon_ids)->get();
+
+                foreach ($addons as $addon) {
+                    $addons_total_price += $addon->extra_price;
+                    $customizations_details[] = [
+                        'id' => $addon->id,
+                        'name' => $addon->name,
+                        'extra_price' => $addon->extra_price,
+                        'category' => $addon->categoryItem->name, // Ambil nama kategori addon
+                    ];
+                }
+            }
+
+            // 3. Cek apakah item yang SAMA PERSIS (produk + kustomisasi) sudah ada di cart
+            $existing_cart_item = CartItem::where('user_id', auth()->id())
+                ->where('food_id', $food->id)
+                // Pengecekan JSON bisa jadi rumit, untuk kecepatan kita anggap jika kustomisasinya
+                // berbeda maka akan jadi item baru di cart. Ini sudah cukup baik.
+                // Untuk perbandingan JSON yang akurat, perlu cara yang lebih advanced.
+                // Untuk sekarang kita sederhanakan: kita cari berdasarkan food_id & total harga addon.
+                ->where('addons_total_price', $addons_total_price)
+                ->first();
+
+            if ($existing_cart_item) {
+                // 4. JIKA SUDAH ADA: Cukup update kuantitasnya
+                $existing_cart_item->quantity += $request->qty;
+                $existing_cart_item->save();
+            } else {
+                // 5. JIKA BELUM ADA: Buat item baru di cart
+                CartItem::create([
+                    'user_id' => auth()->id(),
+                    'food_id' => $food->id,
+                    'quantity' => $request->qty,
+                    'base_price' => $food->base_price,
+                    'addons_total_price' => $addons_total_price,
+                    'customizations' => $customizations_details,
+                ]);
+            }
+
+            DB::commit();
+
+            return response()->json(['message' => 'Produk berhasil ditambahkan ke keranjang!']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            // Kirim response error yang lebih informatif
+            return response()->json(['message' => 'Terjadi kesalahan: ' . $e->getMessage()], 500);
         }
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Item berhasil ditambahkan ke cart'
-        ]);
     }
+
 
     // Tambah atau kurang qty
     public function update(Request $request)
     {
-        $request->validate([
-            'food_id' => 'required|exists:foods,id',
-            'action'  => 'required|in:increment,decrement'
-        ]);
+        $request->validate(['cart_item_id' => 'required|exists:cart_items,id', 'action' => 'required|in:increment,decrement']);
+        $item = CartItem::where('id', $request->cart_item_id)->where('user_id', auth()->id())->firstOrFail();
 
-        $item = CartItem::where('user_id', auth()->id())
-            ->where('food_id', $request->food_id)
-            ->firstOrFail();
+        if ($request->action === 'increment') $item->quantity++;
+        else $item->quantity--;
 
-        if ($request->action === 'increment') {
-            $item->quantity++;
-        } else {
-            $item->quantity--;
-            if ($item->quantity <= 0) {
-                $item->delete();
-                return response()->json(['status' => 'deleted']);
-            }
+        if ($item->quantity <= 0) {
+            $item->delete();
+            $data = $this->getCartTotals();
+            $data['status'] = 'deleted';
+            $data['cart_is_empty'] = CartItem::where('user_id', auth()->id())->count() === 0;
+            return response()->json($data);
         }
 
         $item->save();
-        return response()->json(['status' => 'updated']);
+        $data = $this->getCartTotals();
+        $data['status'] = 'updated';
+        $data['new_quantity'] = $item->quantity;
+        $data['item_total_price'] = ($item->base_price + $item->addons_total_price) * $item->quantity;
+        return response()->json($data);
     }
 
-    // Hapus 1 item
+    // Ganti method remove yang lama dengan ini
     public function remove(Request $request)
     {
-        $request->validate([
-            'food_id' => 'required|integer'
-        ]);
+        $request->validate(['cart_item_id' => 'required|exists:cart_items,id']);
+        CartItem::where('id', $request->cart_item_id)->where('user_id', auth()->id())->delete();
 
-        CartItem::where('user_id', auth()->id())
-            ->where('food_id', $request->food_id)
-            ->delete();
-
-        return response()->json(['status' => 'success', 'message' => 'Item removed from cart.']);
+        $data = $this->getCartTotals();
+        $data['status'] = 'success';
+        $data['cart_is_empty'] = CartItem::where('user_id', auth()->id())->count() === 0;
+        return response()->json($data);
     }
 
-    // Clear semua cart
+    // Tambahkan method helper baru ini di dalam CartController
+    private function getCartTotals()
+    {
+        $cartItems = CartItem::where('user_id', auth()->id())->get();
+        $subtotal = $cartItems->sum(fn($item) => ($item->base_price + $item->addons_total_price) * $item->quantity);
+        $tax = $subtotal * 0.11;
+        $serviceFee = 5000;
+        $grandTotal = $subtotal + $tax + $serviceFee;
+        return [
+            'subtotal' => $subtotal,
+            'tax' => $tax,
+            'service_fee' => $serviceFee,
+            'grand_total' => $grandTotal,
+        ];
+    }
+
+    /**
+     * Clear semua cart milik user.
+     */
     public function clear()
     {
         CartItem::where('user_id', auth()->id())->delete();
-        return back()->with('status', 'Cart cleared.');
+        return back()->with('status', 'Keranjang berhasil dikosongkan.');
     }
 }

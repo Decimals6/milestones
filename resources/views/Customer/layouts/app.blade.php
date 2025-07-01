@@ -436,13 +436,20 @@
         }
 
         function addToCart() {
+
+            const customizations = [];
+            document.querySelectorAll('#pm-opts input:checked').forEach(el => {
+                customizations.push(el.value); // Kirim ID itemnya saja
+            });
+
             $.ajax({
                 url: "{{ route('cart.store') }}",
                 type: "POST",
                 data: {
                     food_id: prod.id,
                     qty: prod.qty,
-                    _token: $('meta[name="csrf-token"]').attr('content')
+                    _token: $('meta[name="csrf-token"]').attr('content'),
+                    customizations: customizations,
                 },
                 success: function(response) {
                     cart[prod.id] = {

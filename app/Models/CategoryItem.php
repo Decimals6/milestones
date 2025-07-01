@@ -14,8 +14,13 @@ class CategoryItem extends Model
     protected $fillable = [
         'name',
         'description',
+        'selection_type',
+        'builder_tags',
     ];
 
+    protected $casts = [
+        'builder_tags' => 'array',
+    ];
     public function foods()
     {
         return $this->belongsToMany(Food::class, 'foods_categories_list');
