@@ -266,16 +266,18 @@
             <input type="text" class="form-control shadow-sm search-input" placeholder="Are you hungry?"
                 onfocus="showSearchOverlay(this)" onblur="hideSearchOverlayDelayed(this)"
                 oninput="filterSuggestions(this)">
-            <div class="suggestions-box rounded-4">
+            {{-- <div class="suggestions-box rounded-4">
                 @foreach (['Pizza', 'Burger', 'Sandwich', 'Hot Item', 'Set Menu'] as $i => $item)
                     <div class="suggestion-item" style="animation-delay: {{ $i * 80 }}ms">{{ $item }}
                     </div>
                 @endforeach
-            </div>
+            </div> --}}
+            <div class="suggestions-box rounded-4"></div>
         </div>
     </div>
 @endif
 
 <div class="search-overlay" onclick="hideSearchOverlay()"></div>
+
 
 

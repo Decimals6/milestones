@@ -706,6 +706,10 @@
             }
         })
 
+
+
+
+        // search live ajax
         document.addEventListener('DOMContentLoaded', () => {
 
             document.querySelectorAll('.search-input').forEach(input => {
@@ -817,6 +821,38 @@
                     btn.innerHTML = '<i class="bi bi-heart-fill"></i>';
                 }
             });
+        });
+
+
+
+        const fabBtn = document.getElementById('chatFab');
+        const popup = document.getElementById('chatPopup');
+        const closeBtn = document.getElementById('closePopup');
+        const sendBtn = document.getElementById('sendToWhatsApp');
+        const messageInput = document.getElementById('chatMessage');
+
+        // Activate tooltip
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        const tooltipList = tooltipTriggerList.map(el => new bootstrap.Tooltip(el));
+
+        // Toggle popup
+        fabBtn.addEventListener('click', () => {
+            popup.style.display = popup.style.display === 'none' || popup.style.display === '' ? 'block' : 'none';
+        });
+
+        closeBtn.addEventListener('click', () => {
+            popup.style.display = 'none';
+        });
+
+        sendBtn.addEventListener('click', () => {
+            const message = encodeURIComponent(messageInput.value.trim());
+            if (!message) {
+                alert("Tulis pesan dulu ya!");
+                return;
+            }
+            const phone = '6282199358366';
+            const url = `https://wa.me/${phone}?text=${message}`;
+            window.open(url, '_blank');
         });
     </script>
 </body>

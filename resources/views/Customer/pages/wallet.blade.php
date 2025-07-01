@@ -466,10 +466,23 @@
     <div class="container py-4">
 
         @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <strong>Berhasil!</strong> {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    const isDark = document.body.classList.contains('dark');
+                    Swal.fire({
+                        title: 'Berhasil!',
+                        html: '{{ session('success') }}',
+                        icon: 'success',
+                        background: isDark ? '#2a2a2a' : '#fff',
+                        color: isDark ? '#fff' : '#000',
+                        confirmButtonColor: '#0d6efd',
+                        iconColor: '#198754',
+                        customClass: {
+                            popup: 'rounded-4'
+                        }
+                    });
+                });
+            </script>
         @endif
 
         @if (session('error'))
@@ -521,11 +534,31 @@
                         <i class="bi bi-bar-chart-fill text-primary me-1"></i> Overview Bulanan
                     </div>
                     <div class="form-floating" style="max-width: 140px;">
+                        @php
+                            $bulanIndo = [
+                                '01' => 'Januari',
+                                '02' => 'Februari',
+                                '03' => 'Maret',
+                                '04' => 'April',
+                                '05' => 'Mei',
+                                '06' => 'Juni',
+                                '07' => 'Juli',
+                                '08' => 'Agustus',
+                                '09' => 'September',
+                                '10' => 'Oktober',
+                                '11' => 'November',
+                                '12' => 'Desember',
+                            ];
+
+                            $uniqueMonths = collect($monthlyData)->pluck('month')->unique()->sort()->values()->all();
+                        @endphp
+
                         <select class="form-select styled-month-select" id="monthSelect">
                             <option value="all" selected>All</option>
-                            <option value="june">Juni</option>
-                            <option value="may">Mei</option>
-                            <option value="april">April</option>
+                            @foreach ($uniqueMonths as $m)
+                                <option value="{{ $m }}">{{ $bulanIndo[substr($m, 5, 2)] }}
+                                    {{ substr($m, 0, 4) }}</option>
+                            @endforeach
                         </select>
                         <label for="monthSelect">Bulan</label>
                     </div>
@@ -908,6 +941,28 @@
         function isDarkMode() {
             return document.body.classList.contains('dark');
         }
+
+
+
+        const chartData = {
+            all: {
+                labels,
+                income: incomeData,
+                expense: expenseData
+            }
+        };
+
+        // Buat per bulan
+        labels.forEach((label, i) => {
+            chartData[label] = {
+                labels: [label],
+                income: [incomeData[i]],
+                expense: [expenseData[i]]
+            };
+        });
+
+
+
 
         // Update chart when month changes
         document.getElementById('monthSelect').addEventListener('change', function() {

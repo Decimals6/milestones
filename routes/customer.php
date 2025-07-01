@@ -8,6 +8,7 @@ use App\Http\Controllers\Customer\HomeController;
 use App\Http\Controllers\Customer\MenuController;
 use App\Http\Controllers\Customer\OrderController;
 use App\Http\Controllers\Customer\WalletController;
+use App\Http\Controllers\Customer\SearchController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -81,4 +82,6 @@ Route::middleware(['auth'])->prefix('customer')->group(function () {
     })->name('customer.delete-account');
 
     Route::get('/cart/meta/qty', [CartController::class, 'getQty'])->name('cart.meta.qty');
+
+    Route::get('/search/suggestions', [SearchController::class, 'suggestions'])->name('search.suggestions');
 });

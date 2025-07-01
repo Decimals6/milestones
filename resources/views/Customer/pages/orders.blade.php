@@ -127,19 +127,38 @@
             position: relative;
         }
 
-        .step-item::after {
+        .step-item:not(:last-child)::after {
             content: "";
             position: absolute;
             top: 12px;
-            right: -50%;
+            left: 50%;
             width: 100%;
             height: 3px;
             background: #ccc;
+            transform: translateX(0%);
             z-index: 0;
         }
 
-        .step-item:last-child::after {
-            display: none;
+        .step-item.step-complete:not(:last-child)::after {
+            background: #28a745;
+            /* hijau untuk yang sudah selesai */
+        }
+
+        .step-circle {
+            width: 24px;
+            height: 24px;
+            background: #ccc;
+            border-radius: 50%;
+            margin: auto;
+            line-height: 24px;
+            color: white;
+            z-index: 1;
+            position: relative;
+            font-size: 14px;
+        }
+
+        .step-complete .step-circle {
+            background: #28a745;
         }
 
         .step-circle {
@@ -318,24 +337,59 @@
                                     {{ $order->details->sum('quantity') }} item</small>
 
                                 {{-- Progress Bar --}}
+                                @php
+                                    $statusSteps = [
+                                        'pending' => 0,
+                                        'konfirmasi' => 0,
+                                        'processing' => 1,
+                                        'diproses' => 1,
+                                        'dikirim' => 2,
+                                        'completed' => 3,
+                                        'selesai' => 3,
+                                    ];
+
+                                    $currentStep = $statusSteps[strtolower($order->status)] ?? 0;
+                                @endphp
+
                                 <div class="order-progress mt-2 align-items-center">
-                                    <div
-                                        class="dot {{ in_array($order->status, ['pending', 'diproses', 'dikirim', 'selesai']) ? 'active' : '' }}">
-                                    </div>
-                                    <div class="bar flex-grow-1 bg-secondary" style="height: 2px;"></div>
-                                    <div
-                                        class="dot {{ in_array($order->status, ['diproses', 'dikirim', 'selesai']) ? 'active' : '' }}">
-                                    </div>
-                                    <div class="bar flex-grow-1 bg-secondary" style="height: 2px;"></div>
-                                    <div class="dot {{ in_array($order->status, ['dikirim', 'selesai']) ? 'active' : '' }}">
-                                    </div>
+                                    @for ($i = 0; $i <= 2; $i++)
+                                        <div class="dot {{ $i <= $currentStep ? 'active' : '' }}"></div>
+                                        @if ($i < 2)
+                                            <div class="bar flex-grow-1 {{ $i < $currentStep ? 'bg-primary' : 'bg-secondary' }}"
+                                                style="height: 2px;"></div>
+                                        @endif
+                                    @endfor
                                 </div>
+
                                 <div class="order-status-bar">
-                                    <span>Konfirmasi</span><span>Diproses</span><span>Selesai</span>
+                                    <span>Konfirmasi</span>
+                                    <span>Diproses</span>
+                                    <span>Selesai</span>
                                 </div>
                             </div>
                             <div class="text-end">
-                                <span class="badge bg-primary rounded-pill text-capitalize">{{ $order->status }}</span><br>
+                                @php
+                                    $badgeClass = match (strtolower($order->status)) {
+                                        'pending' => 'bg-warning text-dark',
+                                        'processing' => 'bg-primary',
+                                        'completed', 'selesai' => 'bg-success',
+                                        'cancelled', 'dibatalkan' => 'bg-danger',
+                                        default => 'bg-secondary',
+                                    };
+                                @endphp
+                                <span class="badge {{ $badgeClass }} rounded-pill text-capitalize">
+                                    @if ($order->status === 'completed' || $order->status === 'selesai')
+                                        ✅
+                                    @elseif ($order->status === 'cancelled')
+                                        ❌
+                                    @elseif ($order->status === 'processing')
+                                        🔄
+                                    @else
+                                        ⏳
+                                    @endif
+                                    {{ ucfirst($order->status) }}
+                                </span>
+                                <br>
                                 <div class="text-danger mt-2">Rp{{ number_format($order->total_amount) }}</div>
                             </div>
                         </div>
@@ -358,10 +412,49 @@
                                 <h6 class="mb-1 fw-bold">Order ID: {{ $order->order_number }}</h6>
                                 <small class="text-muted">{{ $order->created_at->diffForHumans() }} &bull;
                                     {{ $order->details->sum('quantity') }} item</small>
-                                <div class="mt-2 text-success fw-semibold">Pesanan Telah Selesai</div>
+                                @php
+                                    $status = strtolower($order->status);
+                                    $badgeClass = match ($status) {
+                                        'pending' => 'bg-warning text-dark',
+                                        'processing' => 'bg-primary',
+                                        'completed', 'selesai' => 'bg-success',
+                                        'cancelled', 'dibatalkan' => 'bg-danger',
+                                        default => 'bg-secondary',
+                                    };
+
+                                    $statusLabel = match ($status) {
+                                        'pending' => 'Pesanan Belum Diproses',
+                                        'processing' => 'Pesanan Sedang Diproses',
+                                        'completed', 'selesai' => 'Pesanan Telah Selesai',
+                                        'cancelled', 'dibatalkan' => 'Pesanan Dibatalkan',
+                                        default => 'Status Tidak Dikenal',
+                                    };
+
+                                    $textColor = match ($status) {
+                                        'completed', 'selesai' => 'text-success',
+                                        'cancelled', 'dibatalkan' => 'text-danger',
+                                        'pending' => 'text-warning',
+                                        'processing' => 'text-primary',
+                                        default => 'text-muted',
+                                    };
+                                @endphp
+
+                                <div class="mt-2 fw-semibold {{ $textColor }}">{{ $statusLabel }}</div>
                             </div>
                             <div class="text-end">
-                                <span class="badge bg-success rounded-pill">{{ ucfirst($order->status) }}</span><br>
+                                <span class="badge {{ $badgeClass }} rounded-pill text-capitalize">
+                                    @if ($status === 'completed' || $status === 'selesai')
+                                        ✅
+                                    @elseif ($status === 'cancelled' || $status === 'dibatalkan')
+                                        ❌
+                                    @elseif ($status === 'processing')
+                                        🔄
+                                    @elseif ($status === 'pending')
+                                        ⏳
+                                    @endif
+                                    {{ ucfirst($order->status) }}
+                                </span>
+                                <br>
                                 <div class="text-success mt-2">Rp{{ number_format($order->total_amount) }}</div>
                             </div>
                         </div>
@@ -439,14 +532,31 @@
                 .then(res => res.json())
                 .then(data => {
                     const steps = ['Konfirmasi', 'Diproses', 'Dikirim', 'Selesai'];
-                    const currentIndex = steps.findIndex(s => s.toLowerCase() === status.toLowerCase());
+                    const statusMap = {
+                        pending: 0,
+                        processing: 1,
+                        dikirim: 2,
+                        selesai: 3,
+                        completed: 3,
+                        cancelled: -1
+                    };
 
-                    const progressHTML = steps.map((step, index) => `
-                <div class="step-item ${index <= currentIndex ? 'step-complete' : ''}">
-                    <div class="step-circle">${index <= currentIndex ? '✔' : ''}</div>
-                    <div class="step-label">${step}</div>
-                </div>
-            `).join('');
+                    const currentIndex = statusMap[status.toLowerCase()] ?? -1;
+
+                    let progressHTML = '';
+
+                    if (currentIndex === -1) {
+                        progressHTML = `
+                    <div class="text-danger fw-bold text-center">❌ Pesanan Dibatalkan</div>
+                `;
+                    } else {
+                        progressHTML = steps.map((step, index) => `
+                    <div class="step-item ${index <= currentIndex ? 'step-complete' : ''}">
+                        <div class="step-circle">${index <= currentIndex ? '✔' : ''}</div>
+                        <div class="step-label">${step}</div>
+                    </div>
+                `).join('');
+                    }
 
                     const html = `
                 <div class="modal-header-custom">
@@ -461,7 +571,7 @@
                     <p><strong>Item:</strong><br> ${data.items.map(i => '🍽️ ' + i).join('<br>')}</p>
                     <p><strong>Catatan:</strong> ${data.note}</p>
                     <p><strong>Total:</strong> Rp${data.total}</p>
-                    <p><strong>Status:</strong> <span class="badge bg-${status.toLowerCase() === 'selesai' ? 'success' : 'info'}">${statusLabel(data.status)}</span></p>
+                    <p><strong>Status:</strong> <span class="badge ${badgeColorClass(data.status)}">${statusLabel(data.status)}</span></p>
                 </div>`;
 
                     Swal.fire({
@@ -476,6 +586,7 @@
                     });
                 });
         }
+
 
         function removeSwalBackdrop() {
             const swalContainer = document.querySelector('.swal2-container');
@@ -599,6 +710,15 @@
 
         function statusLabel(status) {
             return statusLabelMap[status] ?? status.charAt(0).toUpperCase() + status.slice(1);
+        }
+
+        function badgeColorClass(status) {
+            const normalized = status.toLowerCase();
+            if (normalized === 'pending') return 'bg-warning text-dark';
+            if (normalized === 'processing') return 'bg-primary';
+            if (normalized === 'completed' || normalized === 'selesai') return 'bg-success';
+            if (normalized === 'cancelled' || normalized === 'dibatalkan') return 'bg-danger';
+            return 'bg-secondary';
         }
     </script>
 @endsection
