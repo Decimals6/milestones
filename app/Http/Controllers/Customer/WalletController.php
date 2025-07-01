@@ -40,7 +40,7 @@ class WalletController extends Controller
             ->orderBy('month')
             ->get();
 
-        $payments = Payment::all();
+        $payments = Payment::all()->where('is_active', 1);
 
         return view('Customer.pages.wallet', compact(
             'wallet',
