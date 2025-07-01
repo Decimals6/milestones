@@ -42,7 +42,7 @@
                                         <tr>
                                             <td>#{{ $order->order_number }}</td>
                                             <td>{{ $order->user->name ?? 'Guest' }}</td>
-                                            <td>{{ $order->payment->name ?? '-' }}</td>
+                                            <td>{{ $order->payment->name ?? 'Wallet' }}</td>
                                             <td><span
                                                     class="badge badge-light-info">{{ ucfirst($order->order_type) }}</span>
                                             </td>

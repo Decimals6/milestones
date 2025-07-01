@@ -26,7 +26,7 @@
                         <dd class="col-sm-9">{{ $order->user->first_name }} {{ $order->user->last_name }}</dd>
 
                         <dt class="col-sm-3">Payment</dt>
-                        <dd class="col-sm-9">{{ $order->payment->name ?? '-' }}</dd>
+                        <dd class="col-sm-9">{{ $order->payment->name ?? 'Wallet' }}</dd>
 
                         <dt class="col-sm-3">Order Type</dt>
                         <dd class="col-sm-9">{{ ucfirst($order->order_type) }}</dd>
