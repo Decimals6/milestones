@@ -413,6 +413,15 @@
     </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedQty = sessionStorage.getItem('cartQtyAfterCheckout');
+            if (savedQty !== null) {
+                updateCartBadge(parseInt(savedQty));
+                sessionStorage.removeItem('cartQtyAfterCheckout');
+            }
+        });
+
+
         function showDetail(orderNumber, status) {
             fetch(`{{ route('myorders.show', ':id') }}`.replace(':id', orderNumber))
                 .then(res => res.json())
