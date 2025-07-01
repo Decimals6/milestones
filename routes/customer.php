@@ -34,6 +34,8 @@ Route::middleware(['auth'])->prefix('customer')->group(function () {
 
     Route::resource('/myorders', OrderController::class);
 
+    Route::resource('/menu', MenuController::class);
+
     Route::get('/profile', function () {
         return view('Customer.pages.profile');
     })->name('customer.profile');
@@ -73,10 +75,6 @@ Route::middleware(['auth'])->prefix('customer')->group(function () {
     Route::get('/discover', function () {
         return view('Customer.pages.discover');
     })->name('discover');
-
-    Route::get('/menu', function () {
-        return view('Customer.pages.menu');
-    })->name('menu');
 
     Route::delete('/customer/delete-account', function () {
         return back()->with('status', 'Dummy: Account deleted (simulasi).');

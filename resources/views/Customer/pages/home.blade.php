@@ -325,28 +325,32 @@
             </section>
         @endforeach
 
-
-        <section class="mb-5 position-relative">
-            <h5 class="section-title text-center mb-3">Chef's Recommendation <i class="bi bi-emoji-smile"></i></h5>
-            <div class="chef-wrap">
-                <div class="scroll-x" id="chefScroll">
-                    @foreach ([['Beef Biriyani With Spice', 'biriyani', 300, 4.6, 20, true], ['Ice Cream cremmm', 'ice', 270, 4.9, 30, false], ['Special Cold Coffee', 'coffee', 171, 4.4, 5, false], ['Cheese Sandwich', 'sandwich', 110, 4.1, 0, false]] as $item)
-                        <div class="card-wrapper">
-                            <x-product-card :image="'https://picsum.photos/seed/' . $item[1] . '/500/350'" :title="$item[0]" :price="$item[2]" :rating="$item[3]"
-                                :off="$item[4] ?: null" :sold-out="$item[5]" />
-                        </div>
-                    @endforeach
+        {{-- Chef's Recommendation --}}
+        @if ($recommendedFoods->count())
+            <section class="mb-5 position-relative">
+                <h5 class="section-title text-center mb-3">Chef's Recommendation <i class="bi bi-emoji-smile"></i></h5>
+                <div class="chef-wrap">
+                    <div class="scroll-x" id="chefScroll">
+                        @foreach ($recommendedFoods as $food)
+                            <div class="card-wrapper">
+                                <x-product-card :image="$food->image_path
+                                    ? asset('storage/' . $food->image_path)
+                                    : 'https://picsum.photos/seed/' . $food->id . '/500/350'" :title="$food->name" :price="$food->base_price" :rating="4.5"
+                                    :off="null" :sold-out="false" :id="$food->id" />
+                            </div>
+                        @endforeach
+                    </div>
+                    <div class="chef-arrow prev" onclick="chefNavigate(-1)"><i class="bi bi-arrow-left"></i></div>
+                    <div class="chef-arrow next" onclick="chefNavigate(1)"><i class="bi bi-arrow-right"></i></div>
                 </div>
-                <div class="chef-arrow prev" onclick="chefNavigate(-1)"><i class="bi bi-arrow-left"></i></div>
-                <div class="chef-arrow next" onclick="chefNavigate(1)"><i class="bi bi-arrow-right"></i></div>
-            </div>
+            </section>
+        @endif
 
-            {{-- See More Button --}}
-            <div class="text-center mt-5 mb-5">
-                <a href="{{ route('menu') }}" class="see-more-btn">See More</a>
-            </div>
+        {{-- See More Button (Selalu Tampil) --}}
+        <div class="text-center mt-5 mb-5">
+            <a href="{{ route('menu.index') }}" class="see-more-btn">See More</a>
+        </div>
 
-        </section>
     </div>
 @endsection
 

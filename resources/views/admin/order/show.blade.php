@@ -35,7 +35,7 @@
                         <dd class="col-sm-9">{{ ucfirst($order->status) }}</dd>
 
                         <dt class="col-sm-3">Total Amount</dt>
-                        <dd class="col-sm-9">$ {{ number_format($order->total_amount, 2, ',', '.') }}</dd>
+                        <dd class="col-sm-9">Rp. {{ number_format($order->total_amount, 2, ',', '.') }}</dd>
 
                         <dt class="col-sm-3">Placed At</dt>
                         <dd class="col-sm-9">{{ $order->created_at->format('d M Y, H:i') }}</dd>

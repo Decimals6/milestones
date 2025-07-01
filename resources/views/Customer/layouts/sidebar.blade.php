@@ -102,7 +102,7 @@
         </div>
 
         <div class="vstack gap-3">
-            <a href="{{ route('menu') }}" class="menu-link"><i class="bi bi-grid"></i>Menu</a>
+            <a href="{{ route('menu.index') }}" class="menu-link"><i class="bi bi-grid"></i>Menu</a>
             <a href="{{ route('notifications') }}" class="menu-link"><i class="bi bi-bell"></i>Notification</a>
             <a href="{{ route('coupons') }}"       class="menu-link"><i class="bi bi-ticket-perforated"></i>Coupon</a>
             <a href="{{ route('refer') }}"         class="menu-link"><i class="bi bi-people"></i>Refer &amp; Earn</a>

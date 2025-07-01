@@ -87,89 +87,25 @@
         </div>
 
         {{-- Tabs --}}
-        @php
-            $categories = ['All', 'Pizza', 'Burger', 'Rice', 'Hot Deals', 'Drinks'];
-            $active = request('category') ?? 'All';
-        @endphp
-
         <div class="menu-tabs d-flex px-1">
             @foreach ($categories as $cat)
-                <a href="{{ route('menu', ['category' => $cat]) }}" class="tab-btn {{ $cat === $active ? 'active' : '' }}">
+                <a href="{{ route('menu.index', ['category' => $cat]) }}" class="tab-btn {{ $cat === $active ? 'active' : '' }}">
                     {{ $cat }}
                 </a>
             @endforeach
         </div>
 
-        {{-- Dummy Products --}}
-        @php
-            $allProducts = [
-                [
-                    'title' => 'Beef Burger',
-                    'image' => 'https://picsum.photos/seed/burger/600/400',
-                    'price' => 32000,
-                    'rating' => 4.5,
-                    'fav' => false,
-                    'off' => null,
-                    'soldOut' => false,
-                    'category' => 'Burger',
-                ],
-                [
-                    'title' => 'Pepperoni Pizza',
-                    'image' => 'https://picsum.photos/seed/pizza/600/400',
-                    'price' => 48000,
-                    'rating' => 4.7,
-                    'fav' => true,
-                    'off' => '10%',
-                    'soldOut' => false,
-                    'category' => 'Pizza',
-                ],
-                [
-                    'title' => 'Fried Chicken Rice',
-                    'image' => 'https://picsum.photos/seed/rice/600/400',
-                    'price' => 25000,
-                    'rating' => 4.2,
-                    'fav' => false,
-                    'off' => null,
-                    'soldOut' => false,
-                    'category' => 'Rice',
-                ],
-                [
-                    'title' => 'Cola Bottle',
-                    'image' => 'https://picsum.photos/seed/drinks/600/400',
-                    'price' => 9000,
-                    'rating' => 3.8,
-                    'fav' => false,
-                    'off' => null,
-                    'soldOut' => true,
-                    'category' => 'Drinks',
-                ],
-                [
-                    'title' => 'Hot Deal Combo',
-                    'image' => 'https://picsum.photos/seed/deal/600/400',
-                    'price' => 55000,
-                    'rating' => 4.9,
-                    'fav' => true,
-                    'off' => '15%',
-                    'soldOut' => false,
-                    'category' => 'Hot Deals',
-                ],
-            ];
-
-            $filtered =
-                $active === 'All' ? $allProducts : array_filter($allProducts, fn($p) => $p['category'] === $active);
-        @endphp
-
         <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 g-4">
-            @forelse ($filtered as $product)
+            @forelse ($foods as $product)
                 <div class="col">
                     @include('Customer.components.product-card', [
-                        'title' => $product['title'],
-                        'image' => $product['image'],
-                        'price' => $product['price'],
-                        'rating' => $product['rating'],
-                        'fav' => $product['fav'],
-                        'off' => $product['off'],
-                        'soldOut' => $product['soldOut'],
+                        'id' => $product->id,
+                        'title' => $product->name,
+                        'image' => $product->image_url,
+                        'price' => $product->base_price,
+                        'rating' => $product->rating ?? 4.0,
+                        'fav' => false,
+                        'off' => null,
                     ])
                 </div>
             @empty

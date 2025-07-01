@@ -125,7 +125,7 @@
                                     @foreach ($foods as $food)
                                         <tr id="food-row-{{ $food->id }}">
                                             <td>{{ $food->name }}</td>
-                                            <td>$ {{ number_format($food->base_price, 2, ',', '.') }}</td>
+                                            <td>Rp. {{ number_format($food->base_price, 2, ',', '.') }}</td>
                                             <td>{{ $food->description }}</td>
                                             <td>{{ $food->nutrition_info }}</td>
                                             <td>
