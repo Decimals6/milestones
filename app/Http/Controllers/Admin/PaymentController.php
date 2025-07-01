@@ -46,7 +46,7 @@ class PaymentController extends Controller
 
     public function destroy(Payment $payment)
     {
-        if ($payment->orders()->count() > 0) {
+        if ($payment->order()->count() > 0) {
             return response()->json(['message' => 'Cannot delete. This method is used in orders.'], 422);
         }
 
