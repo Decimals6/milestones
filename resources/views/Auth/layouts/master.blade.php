@@ -9,18 +9,47 @@
     <meta name="author" content="pixelstrap">
     <link rel="icon" href="{{asset('assets/images/favicon.png')}}" type="image/x-icon">
     <link rel="shortcut icon" href="{{asset('assets/images/favicon.png')}}" type="image/x-icon">
-     <title>Cuba - Premium Admin Template - @yield('title')</title>
+     <title>AJOFOOD -  @yield('title')</title>
     <!-- Google font-->
     <link href="https://fonts.googleapis.com/css?family=Rubik:400,400i,500,500i,700,700i&amp;display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i,900&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
     @include('auth.layouts.css')
     @yield('style')
+    <style>
+         .animated-logo {
+            transition: all 0.3s ease;
+        }
+
+        .animated-logo:hover {
+            transform: scale(1.05);
+        }
+
+        .logo-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .animated-logo:hover .logo-icon {
+            transform: rotate(-5deg) scale(1.1);
+        }
+
+
+
+    </style>
   </head>
   <body>
     <!-- login page start-->
     @yield('content')
     <!-- latest jquery-->
     @include('auth.layouts.script')
+    <script>
+            const isAuthPage = window.location.pathname.includes('/login') || window.location.pathname.includes('/register');
+    if (isAuthPage) {
+        localStorage.setItem('mode', 'light');
+        document.body.classList.remove('dark-only');
+        document.body.classList.add('light');
+    }
+    </script>
   </body>
 </html>

@@ -15,12 +15,15 @@
                 <div class="login-card">
                     <div>
                         <div>
-                            <a class="logo" href="{{ route('register.form') }}">
-                                <img class="img-fluid for-light" src="{{ asset('assets/images/logo/login.png') }}"
-                                    alt="loginpage">
-                                <img class="img-fluid for-dark" src="{{ asset('assets/images/logo/logo_dark.png') }}"
-                                    alt="loginpage">
-                            </a>
+                            <a class="logo text-start"  href="{{ route('register.form') }}"
+                            class="text-decoration-none sidebar-logo animated-logo">
+
+                            <i class="bi bi-shop fs-4 text-danger logo-icon"></i>
+
+                            <span class="fw-bold fs-5 text-dark for-light m-0">AJOFOOD</span>
+
+                            <span class="fw-bold fs-5 text-light for-dark m-0">AJOFOOD</span>
+                        </a>
                         </div>
 
                         <div class="login-main">

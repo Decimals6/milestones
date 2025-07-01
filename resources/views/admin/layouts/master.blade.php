@@ -12,7 +12,7 @@
     <meta name="author" content="pixelstrap">
     <link rel="icon" href="{{ asset('assets/images/favicon.png') }}" type="image/x-icon">
     <link rel="shortcut icon" href="{{ asset('assets/images/favicon.png') }}" type="image/x-icon">
-    <title>Cuba - Premium Admin Template</title>
+    <title>AJOFOOD - ADMIN</title>
     <!-- Google font-->
     <link href="https://fonts.googleapis.com/css?family=Rubik:400,400i,500,500i,700,700i&amp;display=swap"
         rel="stylesheet">
@@ -22,10 +22,69 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
 
     @include('admin.layouts.css')
     @yield('style')
     <style>
+        .animated-logo {
+            transition: all 0.3s ease;
+        }
+
+        .animated-logo:hover {
+            transform: scale(1.05);
+        }
+
+        .logo-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .animated-logo:hover .logo-icon {
+            transform: rotate(-5deg) scale(1.1);
+        }
+
+
+        .sidebar-link i {
+            transition: transform 0.2s ease;
+        }
+
+        .sidebar-link:hover i {
+            transform: scale(1.1);
+        }
+
+
+        .sidebar-icon {
+            transition: color 0.3s ease, transform 0.3s ease;
+            color: #6c757d;
+        }
+
+        .dark .sidebar-icon {
+            color: #dcdcdc;
+        }
+
+        .sidebar-link:hover .sidebar-icon {
+            transform: scale(1.1);
+            color: #6366f1;
+        }
+
+        .toggle-icon {
+            font-size: 1.4rem;
+            cursor: pointer;
+            transition: transform 0.3s ease, color 0.3s ease;
+            color: #6c757d;
+        }
+
+        .toggle-icon:hover {
+            transform: rotate(90deg);
+            color: #0d6efd;
+        }
+
+        .dark .toggle-icon {
+            color: #ccc;
+        }
+
+
         #basic-1 {
             width: 100%;
             border-radius: 12px;

@@ -1,13 +1,29 @@
 <div class="sidebar-wrapper" sidebar-layout="stroke-svg">
     <div>
-        <div class="logo-wrapper"><a href="{{ route('dashboard.index') }}"><img class="img-fluid for-light"
-                    src="{{ asset('assets/images/logo/logo.png') }}" alt=""><img class="img-fluid for-dark"
-                    src="{{ asset('assets/images/logo/logo_dark.png') }}" alt=""></a>
+        <div class="logo-wrapper">
+            <a href="{{ route('dashboard.index') }}"
+                class="d-flex align-items-center gap-2 text-decoration-none sidebar-logo animated-logo">
+
+                <i class="bi bi-shop fs-4 text-danger logo-icon"></i>
+
+                <span class="fw-bold fs-5 text-dark for-light m-0">AJOFOOD</span>
+
+                <span class="fw-bold fs-5 text-light for-dark m-0">AJOFOOD</span>
+            </a>
+
             <div class="back-btn"><i class="fa fa-angle-left"></i></div>
-            <div class="toggle-sidebar"><i class="status_toggle middle sidebar-toggle" data-feather="grid"> </i></div>
+
+            <div class="toggle-sidebar">
+                <i class="bi bi-layout-sidebar sidebar-toggle toggle-icon"></i>
+            </div>
+
         </div>
-        <div class="logo-icon-wrapper"><a href="{{ route('dashboard.index') }}"><img class="img-fluid"
-                    src="{{ asset('assets/images/logo/logo-icon.png') }}" alt=""></a></div>
+        <div class="logo-icon-wrapper">
+            <a href="{{ route('dashboard.index') }}">
+                <i class="bi bi-shop fs-4 text-danger logo-icon"></i>
+            </a>
+        </div>
+
         <nav class="sidebar-main">
             <div class="left-arrow" id="left-arrow"><i data-feather="arrow-left"></i></div>
             <div id="sidebar-menu">
@@ -41,15 +57,12 @@
                     </li>
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title" href="{{ route('categoriesFoods.index') }}">
-                            <svg class="stroke-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-tag') }}"></use>
-                            </svg>
-                            <svg class="fill-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-tag') }}"></use>
-                            </svg>
+                            <i class="bi bi-grid-fill fs-5 me-2 sidebar-icon"></i>
                             <span>Food Categories</span>
                         </a>
                     </li>
+
+
                     <li class="sidebar-list"><a class="sidebar-link sidebar-title"
                             href="{{ route('categoriesItems.index') }}">
                             <svg class="stroke-icon">

@@ -29,8 +29,8 @@
         $(window).on('scroll', function () {
             if ($(this).scrollTop() < 600) {
                 $(".sidebar-list").removeClass("hoverd");
-            }         
-        });   
+            }
+        });
       }
 
     /*----------------------------------------
@@ -121,7 +121,7 @@
         }
     });
    $(".mode").on("click", function () {
-        const bodyModeDark = $("body").hasClass("dark-only") 
+        const bodyModeDark = $("body").hasClass("dark-only")
 
         if(!bodyModeDark){
             $(".mode").addClass("active")
@@ -143,7 +143,7 @@
 
     // sidebar filter
     $('.md-sidebar .md-sidebar-toggle ').on('click', function(e) {
-        $(".md-sidebar .md-sidebar-aside ").toggleClass("open");   
+        $(".md-sidebar .md-sidebar-aside ").toggleClass("open");
     });
 
 })(jQuery);
