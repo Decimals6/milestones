@@ -5,6 +5,8 @@
     <link rel="stylesheet" href="{{ asset('assets/css/vendors/datatables.css') }}">
 @endsection
 
+
+
 @section('breadcrumb-title')
     <h3>Users</h3>
 @endsection
