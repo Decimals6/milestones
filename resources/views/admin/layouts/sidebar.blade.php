@@ -24,8 +24,7 @@
                             <svg class="fill-icon">
                                 <use href="{{ asset('assets/svg/icon-sprite.svg#fill-home') }}"></use>
                             </svg><span>Dashboard</span></a></li>
-                    <li class="sidebar-list"><a class="sidebar-link sidebar-title"
-                            href="{{ route('users.index') }}">
+                    <li class="sidebar-list"><a class="sidebar-link sidebar-title" href="{{ route('users.index') }}">
                             <svg class="stroke-icon">
                                 <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-user') }}"></use>
                             </svg>
@@ -38,15 +37,27 @@
                             </svg>
                             <svg class="fill-icon">
                                 <use href="{{ asset('assets/svg/icon-sprite.svg#fill-ecommerce') }}"></use>
-                            </svg><span>Foods</span></a></li>
+                            </svg><span>Foods</span></a>
+                    </li>
+                    <li class="sidebar-list">
+                        <a class="sidebar-link sidebar-title" href="{{ route('categoriesFoods.index') }}">
+                            <svg class="stroke-icon">
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-tag') }}"></use>
+                            </svg>
+                            <svg class="fill-icon">
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-tag') }}"></use>
+                            </svg>
+                            <span>Food Categories</span>
+                        </a>
+                    </li>
                     <li class="sidebar-list"><a class="sidebar-link sidebar-title"
-                            href="{{ route('categories.index') }}">
+                            href="{{ route('categoriesItems.index') }}">
                             <svg class="stroke-icon">
                                 <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-board') }}"></use>
                             </svg>
                             <svg class="fill-icon">
                                 <use href="{{ asset('assets/svg/icon-sprite.svg#fill-board') }}"></use>
-                            </svg><span>Categories</span></a></li>
+                            </svg><span>Item Categories</span></a></li>
                     <li class="sidebar-list"><a class="sidebar-link sidebar-title"
                             href="{{ route('food-items.index') }}">
                             <svg class="stroke-icon">
