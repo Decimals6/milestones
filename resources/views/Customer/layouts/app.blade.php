@@ -297,6 +297,35 @@
         body::-webkit-scrollbar {
             display: none;
         }
+
+
+        /* scrollabe modals toppings */
+        .scroll-section {
+            max-height: 320px;
+            overflow-y: auto;
+            padding-right: 5px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .scroll-section::-webkit-scrollbar {
+            display: none;
+        }
+
+        .scroll-section {
+            scroll-behavior: smooth;
+            transition: max-height 0.3s ease;
+        }
+
+        .scroll-section {
+            box-shadow: inset 0 8px 8px -8px rgba(0, 0, 0, 0.1), inset 0 -8px 8px -8px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .scroll-section {
+                max-height: 50vh;
+            }
+        }
     </style>
 </head>
 
@@ -331,7 +360,7 @@
                     </div>
                 </div>
 
-                <div id="pm-opts" class="mb-3">
+                <div class="scroll-section mb-3" id="pm-opts">
                 </div>
                 <div class="d-flex justify-content-between align-items-center total-row mb-3">
                     <span>Total</span><span class="h5 text-danger"><span id="pm-total"></span></span>
