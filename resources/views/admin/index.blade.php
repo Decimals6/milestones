@@ -77,15 +77,7 @@
             transform: scale(1.08);
         }
 
-        canvas#weeklyOrdersChart {
-        background-color: #fff !important;
-        border-radius: 8px;
-    }
 
-    /* If in dark mode, override again */
-    body.dark-only canvas#weeklyOrdersChart {
-        background-color: #f0eded !important;
-    }
     </style>
 @endsection
 
