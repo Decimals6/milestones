@@ -326,6 +326,57 @@
                 max-height: 50vh;
             }
         }
+
+
+        /* aduh styling ulang addon */
+        .addon-qty {
+            display: none;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.875rem;
+            white-space: nowrap;
+        }
+
+        .addon-qty.show {
+            display: flex;
+        }
+
+        .addon-qty .mini {
+            padding: 0.2rem 0.55rem;
+            font-size: 0.9rem;
+            background-color: #e63946;
+            border: none;
+            color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .addon-qty .qty-num {
+            font-weight: 500;
+            min-width: 1.25rem;
+            text-align: center;
+        }
+
+        .dark .addon-qty {
+            color: #f2f2f2;
+        }
+
+        .dark .addon-qty .mini {
+            background-color: #dc3545;
+        }
+
+        @media (max-width: 576px) {
+            .opt-line {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .addon-qty {
+                margin-left: 0;
+                margin-top: 0.25rem;
+            }
+        }
     </style>
 </head>
 
@@ -452,8 +503,20 @@
             // Kalkulasi untuk semua input yang dipilih (radio & checkbox)
             // [FIXED] Logika disatukan dan dibuat lebih andal dengan membaca `data-price`
             optSection.querySelectorAll('input:checked').forEach(input => {
-                total += +input.dataset.price * prod.qty;
+                const line = input.closest('.opt-line');
+                const price = parseInt(input.dataset.price) || 0;
+                const qtyEl = line.querySelector('.qty-num');
+                const qty = qtyEl ? parseInt(qtyEl.textContent) || 1 : 1;
+
+                total += price * qty * prod.qty;
+
+                // Update display price in real-time (ex: +Rp3.000 x2)
+                const priceText = line.querySelector('.price-sm');
+                if (priceText && price > 0) {
+                    priceText.textContent = `+ ${money(price)} x${qty}`;
+                }
             });
+
 
             qs('#pm-total').textContent = money(total);
         }
@@ -579,16 +642,26 @@
                     // [FIXED] Generate radio atau checkbox berdasarkan `inputType`
                     // dan pastikan KEDUANYA memiliki `data-price`
                     line.innerHTML = `
-                        <div class="form-check m-0 flex-grow-1">
-                            <input type="${inputType}"
-                                   class="form-check-input"
-                                   name="opt-${group.category_name.replace(/\s+/g, '-')}"
-                                   data-price="${it.extra_price}"
-                                   value="${it.id}"
-                                   id="item-${it.id}" ${isChecked}>
-                            <label class="form-check-label ms-1" for="item-${it.id}">${it.name}</label>
-                        </div>
-                        <div class="price-sm">${it.extra_price > 0 ? '+ ' + money(it.extra_price) : ''}</div>`;
+<div class="form-check m-0 flex-grow-1 d-flex align-items-center gap-2">
+    <input type="${inputType}" class="form-check-input chk"
+           name="opt-${group.category_name.replace(/\s+/g, '-')}"
+           data-price="${it.extra_price}" value="${it.id}"
+           id="item-${it.id}" ${isChecked}>
+    <label class="form-check-label" for="item-${it.id}">${it.name}</label>
+</div>
+
+<div class="d-flex align-items-center gap-2 ms-auto">
+    <div class="price-sm">
+        ${it.extra_price > 0 ? '+ ' + money(it.extra_price) : ''}
+    </div>
+    <div class="addon-qty ${isChecked ? 'show' : ''}">
+        <button class="mini" data-action="minus">−</button>
+        <span class="qty-num">1</span>
+        <button class="mini" data-action="plus">＋</button>
+    </div>
+</div>`;
+
+
 
                     box.appendChild(line);
                 });
@@ -656,6 +729,59 @@
                 });
             }
 
+            // Handle plus/minus
+            if (e.target.classList.contains('mini')) {
+                const line = e.target.closest('.opt-line');
+                const qtyEl = line.querySelector('.qty-num');
+                let qty = parseInt(qtyEl.textContent) || 1;
+
+                if (e.target.dataset.action === 'plus') qty++;
+                else qty = Math.max(1, qty - 1);
+
+                qtyEl.textContent = qty;
+                calcTotal();
+            }
+
+            // Toggle qty box on checkbox
+            if (e.target.classList.contains('chk')) {
+                const line = e.target.closest('.opt-line');
+                const qtyBox = line.querySelector('.addon-qty');
+                const priceEl = line.querySelector('.price-sm');
+                const price = parseInt(e.target.dataset.price) || 0;
+
+                if (e.target.type === 'checkbox') {
+                    if (e.target.checked) {
+                        qtyBox.classList.add('show');
+                        qtyBox.querySelector('.qty-num').textContent = '1';
+                    } else {
+                        qtyBox.classList.remove('show');
+                        qtyBox.querySelector('.qty-num').textContent = '1';
+                        priceEl.textContent = `+ ${money(price)}`;
+                    }
+                }
+
+                if (e.target.type === 'radio') {
+                    const groupName = e.target.name;
+                    document.querySelectorAll(`input[name="${groupName}"]`).forEach(radio => {
+                        const rLine = radio.closest('.opt-line');
+                        const rQtyBox = rLine.querySelector('.addon-qty');
+                        const rPriceEl = rLine.querySelector('.price-sm');
+                        const rPrice = parseInt(radio.dataset.price) || 0;
+
+                        rQtyBox.classList.remove('show');
+                        rQtyBox.querySelector('.qty-num').textContent = '1';
+                        rPriceEl.textContent = `+ ${money(rPrice)}`;
+                    });
+
+                    qtyBox.classList.add('show');
+                    qtyBox.querySelector('.qty-num').textContent = '1';
+                }
+
+                calcTotal();
+            }
+
+
+
             // Event listener untuk kalkulasi ulang harga (dari kode lama Anda)
             if (e.target.matches('input[type=radio], input[type=checkbox]')) {
                 calcTotal();
@@ -672,20 +798,20 @@
                 calcTotal()
             }
 
-            if (e.target.classList.contains('chk')) {
-                const line = e.target.closest('.opt-line')
-                const showArea = line.querySelector('.addon-qty')
-                const enabled = e.target.checked
-                if (enabled) {
-                    showArea.classList.add('show')
-                    showArea.querySelectorAll('.mini').forEach(b => b.disabled = false)
-                } else {
-                    showArea.classList.remove('show')
-                    showArea.querySelector('.qty').textContent = '0'
-                    showArea.querySelectorAll('.mini').forEach(b => b.disabled = true)
-                }
-                calcTotal()
-            }
+            // if (e.target.classList.contains('chk')) {
+            //     const line = e.target.closest('.opt-line')
+            //     const showArea = line.querySelector('.addon-qty')
+            //     const enabled = e.target.checked
+            //     if (enabled) {
+            //         showArea.classList.add('show')
+            //         showArea.querySelectorAll('.mini').forEach(b => b.disabled = false)
+            //     } else {
+            //         showArea.classList.remove('show')
+            //         showArea.querySelector('.qty').textContent = '0'
+            //         showArea.querySelectorAll('.mini').forEach(b => b.disabled = true)
+            //     }
+            //     calcTotal()
+            // }
 
             const heart = e.target.closest('.like-btn')
             if (heart && heart.closest('.card')) {
