@@ -16,10 +16,14 @@ class CartController extends Controller
     public function index()
     {
         $cartItems = CartItem::with('food')->where('user_id', auth()->id())->get();
-        $subtotal = $cartItems->sum(fn($item) => ($item->base_price + $item->addons_total_price) * $item->quantity);
 
-        return view('Customer.pages.cart', [ // Pastikan path view-nya benar
-            'cart' => $cartItems, // Mengirim sebagai '$cart' agar @foreach lama berfungsi
+        $subtotal = $cartItems->sum(fn($item) => ($item->base_price + $item->addons_total_price) * $item->quantity);
+        $totalQty = $cartItems->sum('quantity'); // Total qty semua item di cart
+
+        session(['cart_total_qty' => $totalQty]); // Simpan ke session
+
+        return view('Customer.pages.cart', [
+            'cart' => $cartItems,
             'baseTotal' => $subtotal,
             'tax' => $subtotal * 0.11,
             'fee' => 5000,
@@ -88,6 +92,10 @@ class CartController extends Controller
 
             DB::commit();
 
+            $totalQty = CartItem::where('user_id', auth()->id())->sum('quantity');
+            session(['cart_total_qty' => $totalQty]);
+
+
             return response()->json(['message' => 'Produk berhasil ditambahkan ke keranjang!']);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -120,6 +128,8 @@ class CartController extends Controller
         $data['new_quantity'] = $item->quantity;
         $data['item_total_price'] = ($item->base_price + $item->addons_total_price) * $item->quantity;
         return response()->json($data);
+
+        session(['cart_total_qty' => $cartItems->sum('quantity')]);
     }
 
     // Ganti method remove yang lama dengan ini
@@ -132,6 +142,9 @@ class CartController extends Controller
         $data['status'] = 'success';
         $data['cart_is_empty'] = CartItem::where('user_id', auth()->id())->count() === 0;
         return response()->json($data);
+
+        $totalQty = CartItem::where('user_id', auth()->id())->sum('quantity');
+        session(['cart_total_qty' => $totalQty]);
     }
 
     // Tambahkan method helper baru ini di dalam CartController

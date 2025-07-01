@@ -18,28 +18,132 @@
             --text-secondary-light: #666;
             --text-secondary-dark: #bbb;
         }
-        body { color: var(--text-main-light); }
-        body.dark { color: var(--text-main-dark); }
-        .cart-container { max-width: 1140px; margin: auto; padding-bottom: 6rem; }
-        .cart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-        .btn-back { display: none; background: transparent; border: none; font-size: 1.3rem; color: var(--text-main-light); }
-        body.dark .btn-back { color: var(--text-main-dark); }
-        @media(max-width:768px) { .btn-back { display: inline-block; } }
-        .card-box { background: var(--bg-box-light); border-radius: 1rem; padding: 1rem; margin-bottom: 1.5rem; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); color: var(--text-main-light); }
-        body.dark .card-box { background: var(--bg-box-dark); color: var(--text-main-dark); }
-        .cart-item { display: flex; gap: 1rem; align-items: center; }
-        .cart-img { width: 90px; height: 90px; object-fit: cover; border-radius: 0.75rem; }
-        .cart-info { flex: 1; }
-        .cart-info h6 { margin: 0; font-weight: 600; color: inherit; }
-        .cart-info .customizations { font-size: 0.85rem; color: var(--text-secondary-light); margin-top: 0.25rem; line-height: 1.4; }
-        body.dark .cart-info .customizations { color: var(--text-secondary-dark); }
-        .cart-info .total { font-weight: 700; color: #d32f2f; margin-top: 0.4rem; }
-        .cart-action { text-align: right; }
-        .summary-line { display: flex; justify-content: space-between; margin-bottom: 0.5rem; color: var(--text-secondary-light); }
-        body.dark .summary-line { color: var(--text-secondary-dark); }
-        .summary-total { font-size: 1.2rem; font-weight: bold; display: flex; justify-content: space-between; color: var(--text-main-light); }
-        body.dark .summary-total { color: var(--text-main-dark); }
-        .btn-checkout { padding: 0.75rem 2rem; border-radius: 2rem; font-size: 1rem; }
+
+        body {
+            color: var(--text-main-light);
+        }
+
+        body.dark {
+            color: var(--text-main-dark);
+        }
+
+        .cart-container {
+            max-width: 1140px;
+            margin: auto;
+            padding-bottom: 6rem;
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .btn-back {
+            display: none;
+            background: transparent;
+            border: none;
+            font-size: 1.3rem;
+            color: var(--text-main-light);
+        }
+
+        body.dark .btn-back {
+            color: var(--text-main-dark);
+        }
+
+        @media(max-width:768px) {
+            .btn-back {
+                display: inline-block;
+            }
+        }
+
+        .card-box {
+            background: var(--bg-box-light);
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            color: var(--text-main-light);
+        }
+
+        body.dark .card-box {
+            background: var(--bg-box-dark);
+            color: var(--text-main-dark);
+        }
+
+        .cart-item {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .cart-img {
+            width: 90px;
+            height: 90px;
+            object-fit: cover;
+            border-radius: 0.75rem;
+        }
+
+        .cart-info {
+            flex: 1;
+        }
+
+        .cart-info h6 {
+            margin: 0;
+            font-weight: 600;
+            color: inherit;
+        }
+
+        .cart-info .customizations {
+            font-size: 0.85rem;
+            color: var(--text-secondary-light);
+            margin-top: 0.25rem;
+            line-height: 1.4;
+        }
+
+        body.dark .cart-info .customizations {
+            color: var(--text-secondary-dark);
+        }
+
+        .cart-info .total {
+            font-weight: 700;
+            color: #d32f2f;
+            margin-top: 0.4rem;
+        }
+
+        .cart-action {
+            text-align: right;
+        }
+
+        .summary-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary-light);
+        }
+
+        body.dark .summary-line {
+            color: var(--text-secondary-dark);
+        }
+
+        .summary-total {
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-main-light);
+        }
+
+        body.dark .summary-total {
+            color: var(--text-main-dark);
+        }
+
+        .btn-checkout {
+            padding: 0.75rem 2rem;
+            border-radius: 2rem;
+            font-size: 1rem;
+        }
     </style>
 
     <div class="container cart-container">
@@ -53,14 +157,35 @@
             @endif
         </div>
 
+        @if (!$cart->isEmpty())
+            <div class="card-box">
+                <h6 class="mb-3">How would you like to order?</h6>
+                <div class="order-mode mb-2">
+                    <label><input type="radio" name="mode" value="dine" checked onchange="togglePlace()"> Dine
+                        In</label>
+                    <label><input type="radio" name="mode" value="takeout" onchange="togglePlace()"> Takeout</label>
+                </div>
+            </div>
+
+            <div class="card-box place-card" id="placeOptions">
+                <h6 class="mb-3">Where would you like to sit?</h6>
+                <div class="order-mode">
+                    <label><input type="radio" name="place" value="indoor" checked> Indoor</label>
+                    <label><input type="radio" name="place" value="outdoor"> Outdoor</label>
+                    <label><input type="radio" name="place" value="bar"> Bar</label>
+                </div>
+            </div>
+        @endif
+
+
         {{-- Loop ini sekarang menggunakan variabel $cart dari controller, yang berisi data dari tabel cart_items --}}
         @if (!$cart->isEmpty())
             @foreach ($cart as $item)
                 <div class="card-box">
                     <div class="cart-item">
                         <img src="{{ asset('storage/' . $item->food->image_path) }}"
-                             onerror="this.onerror=null;this.src='https://placehold.co/90x90/e9ecef/333?text=Img';"
-                             class="cart-img">
+                            onerror="this.onerror=null;this.src='https://placehold.co/90x90/e9ecef/333?text=Img';"
+                            class="cart-img">
                         <div class="cart-info">
                             {{-- Menampilkan nama dan kuantitas --}}
                             <h6>{{ $item->food->name }} ×{{ $item->quantity }}</h6>
@@ -104,29 +229,29 @@
 
         {{-- Bagian ringkasan total, sekarang menggunakan variabel dari controller --}}
         @if (!$cart->isEmpty())
-        <div class="card-box">
-            <div class="summary-line">
-                <div>Subtotal</div>
-                <div>Rp{{ number_format($baseTotal) }}</div>
+            <div class="card-box">
+                <div class="summary-line">
+                    <div>Subtotal</div>
+                    <div>Rp{{ number_format($baseTotal) }}</div>
+                </div>
+                <div class="summary-line">
+                    <div>Pajak (11%)</div>
+                    <div>Rp{{ number_format($tax) }}</div>
+                </div>
+                <div class="summary-line">
+                    <div>Biaya Layanan</div>
+                    <div>Rp{{ number_format($fee) }}</div>
+                </div>
+                <div class="summary-line summary-total">
+                    <div>Total</div>
+                    <div id="totalAmount">Rp{{ number_format($baseTotal + $tax + $fee) }}</div>
+                </div>
             </div>
-            <div class="summary-line">
-                <div>Pajak (11%)</div>
-                <div>Rp{{ number_format($tax) }}</div>
-            </div>
-            <div class="summary-line">
-                <div>Biaya Layanan</div>
-                <div>Rp{{ number_format($fee) }}</div>
-            </div>
-            <div class="summary-line summary-total">
-                <div>Total</div>
-                <div id="totalAmount">Rp{{ number_format($baseTotal + $tax + $fee) }}</div>
-            </div>
-        </div>
 
-        <div class="d-flex justify-content-end mt-4">
-            <button class="btn btn-danger btn-checkout"
-                onclick="window.location.href='{{ route('checkout') }}'">Checkout</button>
-        </div>
+            <div class="d-flex justify-content-end mt-4">
+                <button class="btn btn-danger btn-checkout"
+                    onclick="window.location.href='{{ route('checkout') }}'">Checkout</button>
+            </div>
         @endif
     </div>
 
@@ -187,5 +312,20 @@
             document.body.appendChild(form);
             form.submit();
         });
+
+
+
+        function togglePlace() {
+            let dine = document.querySelector('input[name="mode"]:checked')?.value;
+            let placeCard = document.getElementById('placeOptions');
+
+            if (placeCard && dine === 'dine') {
+                placeCard.style.display = 'block';
+            } else if (placeCard) {
+                placeCard.style.display = 'none';
+            }
+        }
+
+        togglePlace();
     </script>
 @endsection

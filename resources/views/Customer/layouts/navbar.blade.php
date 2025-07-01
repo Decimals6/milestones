@@ -236,8 +236,9 @@
                 </a>
                 <a href="{{ route('cart.index') }}" class="nav-icon {{ request()->routeIs('cart') ? 'nav-active' : '' }}">
                     <i class="bi bi-cart fs-5"></i>
-                    <span id="badge-cart"
-                        class="badge bg-danger position-absolute top-0 start-100 translate-middle">0</span>
+                    <span id="badge-cart" class="badge bg-danger position-absolute top-0 start-100 translate-middle">
+                        {{ session('cart_total_qty', 0) }}
+                    </span>
                 </a>
             </div>
         </div>
@@ -276,4 +277,5 @@
 @endif
 
 <div class="search-overlay" onclick="hideSearchOverlay()"></div>
+
 
