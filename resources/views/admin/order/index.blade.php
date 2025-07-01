@@ -41,7 +41,8 @@
                                     @foreach ($orders as $order)
                                         <tr>
                                             <td>#{{ $order->order_number }}</td>
-                                            <td>{{ $order->user->name ?? 'Guest' }}</td>
+                                            <td>{{ $order->user ? $order->user->first_name . ' ' . $order->user->last_name : 'Guest' }}
+                                            </td>
                                             <td>{{ $order->payment->name ?? 'Wallet' }}</td>
                                             <td><span
                                                     class="badge badge-light-info">{{ ucfirst($order->order_type) }}</span>

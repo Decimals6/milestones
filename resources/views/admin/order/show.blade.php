@@ -23,7 +23,7 @@
                 <div class="card-body">
                     <dl class="row">
                         <dt class="col-sm-3">Customer</dt>
-                        <dd class="col-sm-9">{{ $order->user->first_name }} {{ $order->user->last_name }}</dd>
+                        <dd class="col-sm-9">{{ $order->user ? $order->user->first_name . ' ' . $order->user->last_name : 'Guest' }}</dd>
 
                         <dt class="col-sm-3">Payment</dt>
                         <dd class="col-sm-9">{{ $order->payment->name ?? 'Wallet' }}</dd>
