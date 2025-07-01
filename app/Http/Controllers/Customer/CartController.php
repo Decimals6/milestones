@@ -18,7 +18,7 @@ class CartController extends Controller
         $cartItems = CartItem::with('food')->where('user_id', auth()->id())->get();
 
         $subtotal = $cartItems->sum(fn($item) => ($item->base_price + $item->addons_total_price) * $item->quantity);
-        $totalQty = $cartItems->sum('quantity'); // Total qty semua item di cart
+        $totalQty = $cartItems->count(); // Total qty semua item di cart
 
         session(['cart_total_qty' => $totalQty]); // Simpan ke session
 
@@ -92,11 +92,15 @@ class CartController extends Controller
 
             DB::commit();
 
-            $totalQty = CartItem::where('user_id', auth()->id())->sum('quantity');
+            $totalQty = CartItem::where('user_id', auth()->id())->count();
             session(['cart_total_qty' => $totalQty]);
 
+            return response()->json([
+                'message' => 'Produk berhasil ditambahkan ke keranjang!',
+                'cart_total_qty' => $totalQty
+            ]);
 
-            return response()->json(['message' => 'Produk berhasil ditambahkan ke keranjang!']);
+            // return response()->json(['message' => 'Produk berhasil ditambahkan ke keranjang!']);
         } catch (\Exception $e) {
             DB::rollBack();
             // Kirim response error yang lebih informatif
@@ -127,9 +131,12 @@ class CartController extends Controller
         $data['status'] = 'updated';
         $data['new_quantity'] = $item->quantity;
         $data['item_total_price'] = ($item->base_price + $item->addons_total_price) * $item->quantity;
-        return response()->json($data);
 
-        session(['cart_total_qty' => $cartItems->sum('quantity')]);
+
+        $totalQty = CartItem::where('user_id', auth()->id())->count();
+        session(['cart_total_qty' => $totalQty]);
+        $data['cart_total_qty'] = $totalQty;
+        return response()->json($data);
     }
 
     // Ganti method remove yang lama dengan ini
@@ -141,10 +148,12 @@ class CartController extends Controller
         $data = $this->getCartTotals();
         $data['status'] = 'success';
         $data['cart_is_empty'] = CartItem::where('user_id', auth()->id())->count() === 0;
-        return response()->json($data);
 
-        $totalQty = CartItem::where('user_id', auth()->id())->sum('quantity');
+
+        $totalQty = CartItem::where('user_id', auth()->id())->count();
         session(['cart_total_qty' => $totalQty]);
+        $data['cart_total_qty'] = $totalQty;
+        return response()->json($data);
     }
 
     // Tambahkan method helper baru ini di dalam CartController
@@ -169,6 +178,7 @@ class CartController extends Controller
     public function clear()
     {
         CartItem::where('user_id', auth()->id())->delete();
+        session(['cart_total_qty' => 0]); // Reset badge cart
         return back()->with('status', 'Keranjang berhasil dikosongkan.');
     }
 }

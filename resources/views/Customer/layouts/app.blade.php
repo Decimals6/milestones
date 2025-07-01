@@ -466,14 +466,16 @@
 
 
         // add qty dinamis
-        function updateCartBadge(qty) {
+        function updateCartBadge(totalQty) {
             const badge = document.getElementById('badge-cart');
             if (!badge) return;
 
-            let current = parseInt(badge.textContent) || 0;
-            badge.textContent = current + qty;
+            badge.textContent = totalQty;
             badge.classList.add('btn-shake');
-            setTimeout(() => badge.classList.remove('btn-shake'), 300);
+
+            setTimeout(() => {
+                badge.classList.remove('btn-shake');
+            }, 300);
         }
 
 
@@ -497,7 +499,7 @@
                     customizations: customizations,
                 },
                 success: function(response) {
-                    updateCartBadge(prod.qty);
+                    updateCartBadge(response.cart_total_qty);
                     cart[prod.id] = {
                         ...prod,
                         qty: (cart[prod.id]?.qty || 0) + prod.qty
