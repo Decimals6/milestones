@@ -194,41 +194,42 @@
                                 <!-- Modal Edit -->
                                 <div class="modal fade" id="editFoodModal{{ $food->id }}" tabindex="-1"
                                     aria-labelledby="editModalLabel{{ $food->id }}" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <form class="edit-food-form" data-id="{{ $food->id }}">
+                                    <div class="modal-dialog modal-dialog-centered modal-md">
+                                        <form class="edit-food-form w-100" data-id="{{ $food->id }}" enctype="multipart/form-data">
                                             @csrf
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="editModalLabel{{ $food->id }}">
-                                                        Edit Food</h5>
+                                            <div class="modal-content shadow">
+                                                <div class="modal-header bg-light">
+                                                    <h5 class="modal-title" id="editModalLabel{{ $food->id }}">✏️ Edit Food</h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                         aria-label="Close"></button>
                                                 </div>
+
                                                 <div class="modal-body">
                                                     <div class="mb-3">
-                                                        <label>Name</label>
-                                                        <input type="text" name="name" class="form-control"
-                                                            value="{{ $food->name }}" required>
+                                                        <label class="form-label">Name</label>
+                                                        <input type="text" name="name" class="form-control" value="{{ $food->name }}" required>
                                                     </div>
+
                                                     <div class="mb-3">
-                                                        <label>Base Price</label>
-                                                        <input type="number" step="0.01" name="base_price"
-                                                            class="form-control" value="{{ $food->base_price }}" required>
+                                                        <label class="form-label">Base Price</label>
+                                                        <input type="number" step="0.01" name="base_price" class="form-control"
+                                                            value="{{ $food->base_price }}" required>
                                                     </div>
+
                                                     <div class="mb-3">
-                                                        <label>Description</label>
-                                                        <textarea name="description" class="form-control">{{ $food->description }}</textarea>
+                                                        <label class="form-label">Description</label>
+                                                        <textarea name="description" class="form-control" rows="2">{{ $food->description }}</textarea>
                                                     </div>
+
                                                     <div class="mb-3">
-                                                        <label>Nutrition Info</label>
-                                                        <textarea name="nutrition_info" class="form-control">{{ $food->nutrition_info }}</textarea>
+                                                        <label class="form-label">Nutrition Info</label>
+                                                        <textarea name="nutrition_info" class="form-control" rows="2">{{ $food->nutrition_info }}</textarea>
                                                     </div>
+
                                                     <div class="mb-3">
                                                         <label class="form-label">Category Food</label>
-                                                        <select name="category_food_id"
-                                                            class="form-select category-select  " required>
-                                                            <option value="">-- Select Category Food--
-                                                            </option>
+                                                        <select name="category_food_id" class="form-select" required>
+                                                            <option value="">-- Select Category Food --</option>
                                                             @foreach ($categoriesFood as $category)
                                                                 <option value="{{ $category->id }}"
                                                                     {{ $food->category_food_id == $category->id ? 'selected' : '' }}>
@@ -237,9 +238,9 @@
                                                             @endforeach
                                                         </select>
                                                     </div>
+
                                                     <div class="mb-3">
-                                                        <label for="edit-cat-{{ $food->id }}">Categories
-                                                            Item</label>
+                                                        <label class="form-label">Categories Item</label>
                                                         <select name="category_ids[]" id="edit-cat-{{ $food->id }}"
                                                             class="form-control category-select" multiple="multiple">
                                                             @foreach ($categoriesItem as $category)
@@ -248,30 +249,32 @@
                                                                     {{ $category->name }}
                                                                 </option>
                                                             @endforeach
-
                                                         </select>
                                                     </div>
+
                                                     <div class="mb-3">
-                                                        <label>Image</label>
-                                                        <input type="file" name="image" class="form-control"
-                                                            accept="image/*">
+                                                        <label class="form-label">Image</label>
+                                                        <input type="file" name="image" class="form-control" accept="image/*">
                                                     </div>
+
                                                     <div class="form-check mb-3">
-                                                        <label class="form-check-label">
-                                                            <input class="form-check-input" type="checkbox"
-                                                                name="is_active" value="1"
-                                                                {{ $food->is_active ? 'checked' : '' }}>Active</label>
+                                                        <input class="form-check-input" type="checkbox" name="is_active" value="1"
+                                                            id="active-{{ $food->id }}" {{ $food->is_active ? 'checked' : '' }}>
+                                                        <label class="form-check-label" for="active-{{ $food->id }}">
+                                                            Active
+                                                        </label>
                                                     </div>
                                                 </div>
+
                                                 <div class="modal-footer">
-                                                    <button type="submit" class="btn btn-success">Update</button>
-                                                    <button type="button" class="btn btn-secondary"
-                                                        data-bs-dismiss="modal">Cancel</button>
+                                                    <button type="submit" class="btn btn-success">💾 Update</button>
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                                                 </div>
                                             </div>
                                         </form>
                                     </div>
                                 </div>
+
 
                                 {{-- modal Default Items  --}}
                                 <div class="modal fade" id="defaultItemModal{{ $food->id }}" tabindex="-1"
@@ -402,31 +405,36 @@
 
     <!-- Modal Create -->
     <div class="modal fade" id="createFoodModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <form id="createFoodForm">
+        <div class="modal-dialog modal-dialog-centered modal-md">
+            <form id="createFoodForm" enctype="multipart/form-data" class="w-100">
                 @csrf
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Create Food</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <div class="modal-content shadow">
+                    <div class="modal-header bg-light">
+                        <h5 class="modal-title fw-semibold">🍽️ Create New Food</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
+
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label>Name</label>
-                            <input type="text" name="name" class="form-control" required>
+                            <label class="form-label">Name</label>
+                            <input type="text" name="name" class="form-control" required placeholder="e.g. Fried Rice">
                         </div>
+
                         <div class="mb-3">
-                            <label>Base Price</label>
-                            <input type="number" step="1" name="base_price" class="form-control" required>
+                            <label class="form-label">Base Price</label>
+                            <input type="number" step="1" name="base_price" class="form-control" required placeholder="e.g. 25000">
                         </div>
+
                         <div class="mb-3">
-                            <label>Description</label>
-                            <textarea name="description" class="form-control"></textarea>
+                            <label class="form-label">Description</label>
+                            <textarea name="description" class="form-control" rows="2" placeholder="Short description..."></textarea>
                         </div>
+
                         <div class="mb-3">
-                            <label>Nutrition Info</label>
-                            <textarea name="nutrition_info" class="form-control"></textarea>
+                            <label class="form-label">Nutrition Info</label>
+                            <textarea name="nutrition_info" class="form-control" rows="2" placeholder="e.g. Calories, Protein..."></textarea>
                         </div>
+
                         <div class="mb-3">
                             <label class="form-label">Category Food</label>
                             <select name="category_food_id" class="form-select" required>
@@ -436,8 +444,9 @@
                                 @endforeach
                             </select>
                         </div>
+
                         <div class="mb-3">
-                            <label>Categories Item</label>
+                            <label class="form-label">Item Categories</label>
                             <select name="category_ids[]" multiple="multiple" id="create-category-select"
                                 class="form-control category-select" style="width: 100%;">
                                 @foreach ($categoriesItem as $category)
@@ -445,24 +454,29 @@
                                 @endforeach
                             </select>
                         </div>
+
                         <div class="mb-3">
-                            <label>Image</label>
+                            <label class="form-label">Image</label>
                             <input type="file" name="image" class="form-control" accept="image/*">
                         </div>
+
                         <div class="form-check mb-3">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox" name="is_active" value="1"
-                                    checked>Active</label>
+                            <input class="form-check-input" type="checkbox" name="is_active" value="1" id="food-active" checked>
+                            <label class="form-check-label" for="food-active">
+                                Active
+                            </label>
                         </div>
                     </div>
+
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Create</button>
+                        <button type="submit" class="btn btn-primary">➕ Create</button>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     </div>
                 </div>
             </form>
         </div>
     </div>
+
 
     <!-- Show Categories Modal -->
     <div class="modal fade" id="showCategoriesModal" tabindex="-1">

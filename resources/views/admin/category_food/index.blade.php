@@ -83,27 +83,31 @@
     </div>
 
     <!-- Create Modal -->
-    <div class="modal fade" id="createModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <form id="createForm">
+    <div class="modal fade" id="createModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-md">
+            <form id="createForm" class="w-100">
                 @csrf
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Create Food Category</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <div class="modal-content shadow">
+                    <div class="modal-header bg-light">
+                        <h5 class="modal-title fw-semibold">🍽️ Create Food Category</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
+
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label class="form-label">Name</label>
-                            <input type="text" name="name" class="form-control" required>
+                            <label for="nameInput" class="form-label">Name</label>
+                            <input type="text" id="nameInput" name="name" class="form-control"
+                                placeholder="e.g. Beverages" required>
                         </div>
+
                         <div class="mb-3">
-                            <label class="form-label">Description</label>
-                            <textarea name="description" class="form-control" rows="3"></textarea>
+                            <label for="descInput" class="form-label">Description</label>
+                            <textarea id="descInput" name="description" class="form-control" rows="3" placeholder="Optional description..."></textarea>
                         </div>
                     </div>
+
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="submit" class="btn btn-primary">💾 Save</button>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     </div>
                 </div>
@@ -111,36 +115,42 @@
         </div>
     </div>
 
+
     <!-- Edit Modal -->
-    <div class="modal fade" id="editModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <form id="editForm">
+    <div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-md">
+            <form id="editForm" class="w-100">
                 @csrf
                 @method('PUT')
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Edit Food Category</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <div class="modal-content shadow">
+                    <div class="modal-header bg-light">
+                        <h5 class="modal-title fw-semibold">✏️ Edit Food Category</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
+
                     <div class="modal-body">
                         <input type="hidden" id="edit-id" name="id">
+
                         <div class="mb-3">
-                            <label class="form-label">Name</label>
-                            <input type="text" id="edit-name" name="name" class="form-control" required>
+                            <label for="edit-name" class="form-label">Name</label>
+                            <input type="text" id="edit-name" name="name" class="form-control" required placeholder="e.g. Snacks">
                         </div>
+
                         <div class="mb-3">
-                            <label class="form-label">Description</label>
-                            <textarea id="edit-description" name="description" class="form-control" rows="3"></textarea>
+                            <label for="edit-description" class="form-label">Description</label>
+                            <textarea id="edit-description" name="description" class="form-control" rows="3" placeholder="Optional description..."></textarea>
                         </div>
                     </div>
+
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-success">Update</button>
+                        <button type="submit" class="btn btn-success">✅ Update</button>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     </div>
                 </div>
             </form>
         </div>
     </div>
+
 @endsection
 
 @section('script')

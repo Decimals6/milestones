@@ -25,6 +25,24 @@
         .action li:last-child {
             margin-right: 0;
         }
+
+        .modal-dialog {
+            max-width: 740px;
+            width: 95%;
+            margin: auto;
+        }
+        .modal-content {
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 10px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal.show .modal-dialog {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
     </style>
 
     <div class="container-fluid">
@@ -95,28 +113,36 @@
                 @csrf
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Create Payment Method</h5><button type="button" class="btn-close"
-                            data-bs-dismiss="modal"></button>
+                        <h5 class="modal-title">Create Payment Method</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
-                        <div class="mb-3"><label class="form-label">Name</label><input type="text" name="name"
-                                class="form-control" required></div>
-                        <div class="mb-3"><label class="form-label">Description</label>
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <input type="text" name="name" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
                             <textarea name="description" class="form-control" rows="3"></textarea>
                         </div>
-                        <div class="form-check form-switch"><input class="form-check-input" type="checkbox" name="is_active"
-                                value="1" checked><label class="form-check-label">Active</label></div>
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" name="is_active" value="1" checked>
+                            <label class="form-check-label">Active</label>
+                        </div>
                     </div>
-                    <div class="modal-footer"><button type="submit" class="btn btn-primary">Save</button><button
-                            type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button></div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </div>
                 </div>
             </form>
         </div>
     </div>
 
+
     <!-- Edit Modal -->
     <div class="modal fade" id="editModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
             <form id="editForm">
                 @csrf
                 @method('PUT')
@@ -169,7 +195,7 @@
                         sessionStorage.setItem('success', res.message);
                         location.reload();
                     })
-                    .fail((err) => alertFail("Failed To Crate"));
+                    .fail((err) => alertFail("Failed To Create"));
             });
 
             if (sessionStorage.getItem('success')) {
@@ -227,6 +253,14 @@
                     }
                 });
             });
+        });
+
+        $('#createModal').on('shown.bs.modal', function() {
+            $(this).find('input[name="name"]').trigger('focus');
+        });
+
+        $('#editModal').on('shown.bs.modal', function() {
+            $(this).find('input[name="name"]').trigger('focus');
         });
     </script>
 @endsection
