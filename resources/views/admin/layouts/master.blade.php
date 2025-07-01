@@ -85,6 +85,20 @@
         }
 
 
+        .sidebar-link i.fa-credit-card {
+            color: var(--theme-color, #6c757d);
+            transition: color 0.3s ease;
+        }
+
+        body.dark-only .sidebar-link i.fa-credit-card {
+            color: #e0e0ff;
+        }
+
+        body.light-only .sidebar-link i.fa-credit-card {
+            color: #5c5c5c;
+        }
+
+
         #basic-1 {
             width: 100%;
             border-radius: 12px;

@@ -88,15 +88,11 @@
                             </svg><span>Orders</span></a></li>
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title" href="{{ route('payments.index') }}">
-                            <svg class="stroke-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-credit-card') }}"></use>
-                            </svg>
-                            <svg class="fill-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-credit-card') }}"></use>
-                            </svg>
+                            <i class="fa-solid fa-credit-card fa-fw me-2"></i>
                             <span>Payment Methods</span>
                         </a>
                     </li>
+
 
                 </ul>
             </div>
