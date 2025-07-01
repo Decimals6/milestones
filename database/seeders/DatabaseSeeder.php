@@ -16,6 +16,8 @@ class DatabaseSeeder extends Seeder
             CategoryItemSeeder::class,
             FoodSeeder::class,
             FoodItemSeeder::class,
+            DefaultFoodsItemSeeder::class,
+            FoodsCategoriesListSeeder::class,
             PaymentSeeder::class,
             OrderSeeder::class,
         ]);
