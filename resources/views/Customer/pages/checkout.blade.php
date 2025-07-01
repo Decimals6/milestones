@@ -64,8 +64,8 @@
         }
 
         /* ==========================
-                                                                                                       MODAL & BOTTOMSHEET STYLE
-                                                                                                    =========================== */
+                                                                                                           MODAL & BOTTOMSHEET STYLE
+                                                                                                        =========================== */
 
         .modal {
             z-index: 3000;
@@ -139,8 +139,8 @@
         }
 
         /* ==========================
-                                                                                                       BOTTOM SHEET MOBILE STYLE
-                                                                                                    =========================== */
+                                                                                                           BOTTOM SHEET MOBILE STYLE
+                                                                                                        =========================== */
         @media (max-width: 768px) {
             .modal.bottomsheet .modal-dialog {
                 margin: 0;
@@ -186,8 +186,8 @@
         }
 
         /* ===============================
-                                                                                           MODAL - BOTTOMSHEET RESPONSIVE
-                                                                                        ================================= */
+                                                                                               MODAL - BOTTOMSHEET RESPONSIVE
+                                                                                            ================================= */
 
         .modal.modal-bottom-sheet {
             z-index: 3000;
@@ -266,8 +266,8 @@
 
 
         /* ==========================
-                                                                                                       UI COMPONENT ENHANCEMENT
-                                                                                                    =========================== */
+                                                                                                           UI COMPONENT ENHANCEMENT
+                                                                                                        =========================== */
 
         .card-option {
             cursor: pointer;
@@ -736,17 +736,21 @@
 
                     // Kosongkan keranjang
                     fetch("{{ route('cart.meta.clear') }}", {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        }
-                    });
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            }
+                        })
+                        .then(() => {
+                            updateCartBadge(0); // ← set cart badge ke nol
+                        });
 
                     // Tutup semua modal aktif
                     document.querySelectorAll('.modal.show').forEach(m => bootstrap.Modal.getInstance(m).hide());
 
                     // Tampilkan konfirmasi
-                    Swal.fire('Order Berhasil!', '', 'success').then(() => location.href = "{{ route('myorders.index') }}");
+                    Swal.fire('Order Berhasil!', '', 'success').then(() => location.href =
+                        "{{ route('myorders.index') }}");
                 })
                 .catch(err => {
                     Swal.fire('Oops!', 'Terjadi kesalahan server.', 'error');
