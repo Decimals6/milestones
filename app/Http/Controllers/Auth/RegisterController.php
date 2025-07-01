@@ -19,19 +19,23 @@ class RegisterController extends Controller
     {
         $request->validate([
             'first_name' => 'required|string',
-            'last_name' => 'required|string',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:6|confirmed',
+            'last_name'  => 'required|string',
+            'email'      => 'required|email|unique:users',
+            'password'   => 'required|min:6|confirmed',
         ]);
 
         $user = User::create([
             'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'last_name'  => $request->last_name,
+            'email'      => $request->email,
+            'password'   => Hash::make($request->password),
         ]);
 
         $user->assignRole('customer');
+
+        $user->wallet()->create([
+            'balance' => 0
+        ]);
 
         return redirect()->route('login.form')->with('success', 'Register berhasil, silakan login.');
     }

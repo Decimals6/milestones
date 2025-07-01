@@ -64,8 +64,8 @@
         }
 
         /* ==========================
-                                                                                                                   MODAL & BOTTOMSHEET STYLE
-                                                                                                                =========================== */
+                                                                                                                                   MODAL & BOTTOMSHEET STYLE
+                                                                                                                                =========================== */
 
         .modal {
             z-index: 3000;
@@ -139,8 +139,8 @@
         }
 
         /* ==========================
-                                                                                                                   BOTTOM SHEET MOBILE STYLE
-                                                                                                                =========================== */
+                                                                                                                                   BOTTOM SHEET MOBILE STYLE
+                                                                                                                                =========================== */
         @media (max-width: 768px) {
             .modal.bottomsheet .modal-dialog {
                 margin: 0;
@@ -186,8 +186,8 @@
         }
 
         /* ===============================
-                                                                                                       MODAL - BOTTOMSHEET RESPONSIVE
-                                                                                                    ================================= */
+                                                                                                                       MODAL - BOTTOMSHEET RESPONSIVE
+                                                                                                                    ================================= */
 
         .modal.modal-bottom-sheet {
             z-index: 3000;
@@ -266,8 +266,8 @@
 
 
         /* ==========================
-                                                                                                                   UI COMPONENT ENHANCEMENT
-                                                                                                                =========================== */
+                                                                                                                                   UI COMPONENT ENHANCEMENT
+                                                                                                                                =========================== */
 
         .card-option {
             cursor: pointer;
@@ -397,6 +397,15 @@
 
         <div class="card-box">
             <h6 class="mb-3">Payment Method</h6>
+
+            <div class="payment-option mb-2" onclick="document.getElementById('payment_wallet').checked = true">
+                <label class="form-check-label d-flex align-items-center" for="payment_wallet">
+                    <input class="form-check-input me-3" type="radio" name="pay" id="payment_wallet" value="wallet">
+                    <i class="bi bi-wallet2 fs-5 me-2"></i>
+                    <strong>Wallet</strong> <span class="ms-2 text-muted"> (Saldo:
+                        Rp{{ number_format($walletBalance) }})</span>
+                </label>
+            </div>
 
             @foreach ($paymentMethods as $method)
                 <div class="payment-option mb-2"
@@ -708,7 +717,9 @@
 
         function finish() {
             resetTimers();
-            window.orderFinalized = true;
+
+            const paymentModal = bootstrap.Modal.getInstance(document.getElementById('paymentModal'));
+            if (paymentModal) paymentModal.hide();
 
             const payMethod = window.selectedMethod;
             const note = document.querySelector('textarea')?.value ?? '';
@@ -728,41 +739,32 @@
                         note: note,
                     })
                 })
-                .then(res => res.json())
-                .then(data => {
-                    if (data?.message?.includes('Gagal')) {
-                        return Swal.fire('Gagal', data.message, 'error');
+                .then(async res => {
+                    const data = await res.json();
+
+                    if (!res.ok) {
+                        const errorMsg = data.message || Object.values(data.errors || {})[0] ||
+                            'Gagal melakukan checkout.';
+                        throw new Error(errorMsg);
                     }
 
-                    // Kosongkan keranjang & update badge
+                    window.orderFinalized = true;
+
                     fetch("{{ route('cart.meta.clear') }}", {
                         method: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': '{{ csrf_token() }}'
                         }
-                    }).then(() => {
-                        const currentQty = parseInt(document.getElementById('badge-cart')?.textContent || '0');
-                        const checkoutQty = {{ $cartQty ?? 0 }};
-                        const newQty = Math.max(currentQty - checkoutQty, 0);
-
-                        sessionStorage.setItem('cartQtyAfterCheckout', newQty);
-                        location.href = "{{ route('myorders.index') }}";
                     });
 
-
-                    // Tutup semua modal aktif
-                    document.querySelectorAll('.modal.show').forEach(m => bootstrap.Modal.getInstance(m).hide());
-
-                    // Tampilkan konfirmasi
                     Swal.fire('Order Berhasil!', '', 'success').then(() => location.href =
                         "{{ route('myorders.index') }}");
                 })
                 .catch(err => {
-                    Swal.fire('Oops!', 'Terjadi kesalahan server.', 'error');
-                    console.error(err);
+                    Swal.fire('Gagal', err.message, 'error');
                 });
-
         }
+
 
         function openPay(method) {
             resetTimers();

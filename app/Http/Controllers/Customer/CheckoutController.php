@@ -10,7 +10,7 @@ use App\Models\OrderDetailOption;
 use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class CheckoutController extends Controller
 {
@@ -35,7 +35,7 @@ class CheckoutController extends Controller
         // Ambil dari session cart
         $mode = session('order_mode');
         $place = session('order_place');
-        $walletBalance = 150000; // Bisa ganti dengan ambil dari DB user
+        $walletBalance = auth()->user()->wallet->balance;
 
         // Optional: ambil metode pembayaran dari DB
         $paymentMethods = Payment::all()->where('is_active', 1);;
@@ -67,7 +67,8 @@ class CheckoutController extends Controller
         try {
             DB::beginTransaction();
 
-            $userId = auth()->id();
+            $user = auth()->user();
+            $userId = $user->id;
             $cartItems = CartItem::where('user_id', $userId)->get();
 
             if ($cartItems->isEmpty()) {
@@ -79,15 +80,34 @@ class CheckoutController extends Controller
             $fee = 5000;
             $total = $subtotal + $tax + $fee;
 
+            // Wallet check
+            if ($request->payment_method === 'wallet') {
+                $wallet = $user->wallet;
+
+                if (!$wallet || $wallet->balance < $total) {
+                    throw ValidationException::withMessages([
+                        'payment_method' => 'Saldo wallet tidak mencukupi.',
+                    ]);
+                }
+
+                $wallet->decrement('balance', $total);
+
+                $wallet->transactions()->create([
+                    'type' => 'out',
+                    'label' => 'Pembayaran Pesanan',
+                    'amount' => $total,
+                    'date' => now()->toDateString(),
+                ]);
+            }
+
             $order = Order::create([
                 'user_id' => $userId,
                 'order_type' => session('order_mode') === 'dine' ? 'dine-in' : 'take-away',
                 'total_amount' => $total,
                 'status' => 'pending',
-                'payment_id' => $request->payment_method,
+                'payment_id' => $request->payment_method === 'wallet' ? null : $request->payment_method,
             ]);
 
-            // Simpan order_details dan options
             foreach ($cartItems as $item) {
                 $detail = OrderDetail::create([
                     'order_id' => $order->id,
@@ -106,9 +126,7 @@ class CheckoutController extends Controller
                 }
             }
 
-            // Kosongkan keranjang
             CartItem::where('user_id', $userId)->delete();
-
             DB::commit();
 
             return response()->json(['message' => 'Order berhasil disimpan', 'order_id' => $order->id]);

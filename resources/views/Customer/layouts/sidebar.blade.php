@@ -87,7 +87,7 @@
         </div>
 
         <div class="d-flex justify-content-between mb-4">
-            <a href="{{ route('wallet') }}" class="text-center text-decoration-none">
+            <a href="{{ route('wallet.index') }}" class="text-center text-decoration-none">
                 <div class="tile-btn"><i class="bi bi-wallet2"></i></div>
                 <small class="d-block mt-2">Wallet</small>
             </a>

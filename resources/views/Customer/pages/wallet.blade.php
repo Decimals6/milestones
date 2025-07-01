@@ -465,6 +465,20 @@
 
     <div class="container py-4">
 
+        @if (session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>Berhasil!</strong> {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Gagal!</strong> {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Tutup"></button>
+            </div>
+        @endif
+
         {{-- Back Button Mobile --}}
         <a href="{{ route('home.index') }}" class="btn btn-outline-secondary btn-sm d-sm-none mb-3">
             back
@@ -475,7 +489,7 @@
         <div class="wallet-hero">
             <h5>Selamat Datang, <strong>{{ auth()->user()->name ?? 'Pengguna' }}</strong></h5>
             <div class="text-uppercase small mt-2">Saldo Anda</div>
-            <div class="wallet-balance-display">Rp120.000</div>
+            <div class="wallet-balance-display">Rp{{ number_format($wallet->balance, 2, ',', '.') }}</div>
 
             <div class="wallet-buttons mt-4">
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#topupModal">
@@ -525,11 +539,11 @@
             <div class="stat-grid mt-4">
                 <div class="stat-item text-success">
                     <div class="label">Pemasukan</div>
-                    <div class="amount">+Rp32.000</div>
+                    <div class="amount">+Rp{{ number_format($incomeTotal, 0, ',', '.') }}</div>
                 </div>
                 <div class="stat-item text-danger">
                     <div class="label">Pengeluaran</div>
-                    <div class="amount">-Rp10.500</div>
+                    <div class="amount">-Rp{{ number_format($expenseTotal, 0, ',', '.') }}</div>
                 </div>
             </div>
         </div>
@@ -538,24 +552,18 @@
         <div class="wallet-transactions mt-5">
             <h6 class="fw-bold mb-3">Transaksi Terakhir</h6>
             <ul>
-                <li>
-                    <div class="d-flex align-items-center">
-                        <i class="bi bi-wallet-fill icon"></i> Top Up Bank BCA
-                    </div>
-                    <div class="amount text-success">+Rp50.000</div>
-                </li>
-                <li>
-                    <div class="d-flex align-items-center">
-                        <i class="bi bi-receipt-cutoff icon"></i> Pembayaran Pesanan #A123
-                    </div>
-                    <div class="amount text-danger">-Rp28.000</div>
-                </li>
-                <li>
-                    <div class="d-flex align-items-center">
-                        <i class="bi bi-coin icon"></i> Cashback Promo
-                    </div>
-                    <div class="amount text-success">+Rp5.000</div>
-                </li>
+                @foreach ($transactions as $item)
+                    <li class="list-group-item d-flex justify-content-between align-items-center"
+                        data-date="{{ $item->date }}">
+                        <div>
+                            <div class="fw-semibold">{{ $item->label }}</div>
+                            <small class="text-muted">{{ $item->date }}</small>
+                        </div>
+                        <div class="fw-bold {{ $item->type === 'in' ? 'text-success' : 'text-danger' }}">
+                            {{ $item->type === 'in' ? '+' : '-' }}Rp{{ number_format($item->amount, 2, ',', '.') }}
+                        </div>
+                    </li>
+                @endforeach
             </ul>
         </div>
 
@@ -579,37 +587,15 @@
                         <button onclick="showTab('oldest')">Terlama</button>
                     </div>
                     <ul class="list-group wallet-list" id="walletHistoryList">
-                        @php
-                            $history = [
-                                [
-                                    'label' => 'Top Up via Transfer',
-                                    'amount' => 50000,
-                                    'type' => 'in',
-                                    'date' => '2025-06-26',
-                                ],
-                                [
-                                    'label' => 'Pembayaran Pesanan #INV12345',
-                                    'amount' => 28000,
-                                    'type' => 'out',
-                                    'date' => '2025-06-25',
-                                ],
-                                [
-                                    'label' => 'Cashback Promo',
-                                    'amount' => 10000,
-                                    'type' => 'in',
-                                    'date' => '2025-06-20',
-                                ],
-                            ];
-                        @endphp
                         @foreach ($history as $item)
                             <li class="list-group-item d-flex justify-content-between align-items-center"
-                                data-date="{{ $item['date'] }}">
+                                data-date="{{ $item->date }}">
                                 <div>
-                                    <div class="fw-semibold">{{ $item['label'] }}</div>
-                                    <small class="text-muted">{{ $item['date'] }}</small>
+                                    <div class="fw-semibold">{{ $item->label }}</div>
+                                    <small class="text-muted">{{ $item->date }}</small>
                                 </div>
-                                <div class="fw-bold {{ $item['type'] === 'in' ? 'text-success' : 'text-danger' }}">
-                                    {{ $item['type'] === 'in' ? '+' : '-' }}Rp{{ number_format($item['amount'], 0, ',', '.') }}
+                                <div class="fw-bold {{ $item->type === 'in' ? 'text-success' : 'text-danger' }}">
+                                    {{ $item->type === 'in' ? '+' : '-' }}Rp{{ number_format($item->amount, 0, ',', '.') }}
                                 </div>
                             </li>
                         @endforeach
@@ -634,30 +620,15 @@
                     <div id="step1" class="step">
                         <p class="fw-bold mb-3">Pilih Metode Pembayaran</p>
                         <div class="row g-3">
-                            <div class="col-6" onclick="goToStep('transfer')" style="cursor: pointer;">
-                                <div class="card shadow-sm text-center py-3 hover-shadow">
-                                    <i class="bi bi-bank2 fs-2 text-primary"></i>
-                                    <div class="mt-2 fw-semibold">Transfer Bank</div>
+                            @foreach ($payments as $payment)
+                                <div class="col-6" style="cursor: pointer;"
+                                    onclick="goToTopupForm({{ $payment->id }}, '{{ $payment->name }}')">
+                                    <div class="card shadow-sm text-center py-3 hover-shadow">
+                                        <i class="bi {{ $payment->icon }} fs-2 text-primary"></i>
+                                        <div class="mt-2 fw-semibold">{{ $payment->name }}</div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-6" onclick="goToStep('va')" style="cursor: pointer;">
-                                <div class="card shadow-sm text-center py-3 hover-shadow">
-                                    <i class="bi bi-upc-scan fs-2 text-warning"></i>
-                                    <div class="mt-2 fw-semibold">Virtual Account</div>
-                                </div>
-                            </div>
-                            <div class="col-6" onclick="goToStep('card')" style="cursor: pointer;">
-                                <div class="card shadow-sm text-center py-3 hover-shadow">
-                                    <i class="bi bi-credit-card-2-front fs-2 text-info"></i>
-                                    <div class="mt-2 fw-semibold">Kartu Debit</div>
-                                </div>
-                            </div>
-                            <div class="col-6" onclick="goToStep('qr')" style="cursor: pointer;">
-                                <div class="card shadow-sm text-center py-3 hover-shadow">
-                                    <i class="bi bi-qr-code-scan fs-2 text-success"></i>
-                                    <div class="mt-2 fw-semibold">QRIS</div>
-                                </div>
-                            </div>
+                            @endforeach
                         </div>
                     </div>
 
@@ -676,6 +647,19 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+        @if (session('success') || session('error'))
+            document.addEventListener('DOMContentLoaded', () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+
+                setTimeout(() => {
+                    document.querySelector('.alert')?.classList.remove('show');
+                }, 3000);
+            });
+        @endif
+
         function showTab(tab) {
             const items = [...document.querySelectorAll('#walletHistoryList li')];
             items.forEach(el => el.style.display = 'block');
@@ -730,48 +714,24 @@
         let selectedMethod = '';
         let selectedBank = '';
 
-        function goToStep(method) {
-            selectedMethod = method;
-            selectedBank = '';
-
+        function goToTopupForm(paymentId, paymentName) {
             document.getElementById('step1').classList.add('d-none');
             document.getElementById('step2').classList.remove('d-none');
 
-            let html = '';
+            const html = `
+        <form method="POST" action="{{ route('wallet.topup') }}">
+            @csrf
+            <input type="hidden" name="payment_method" value="${paymentId}">
+            <p class="mb-2">Metode: <strong>${paymentName}</strong></p>
 
-            if (method === 'transfer' || method === 'va') {
-                const banks = method === 'transfer' ? ['BCA', 'BRI', 'Mandiri'] : ['BNI VA', 'Permata VA'];
-
-                html += `<h6 class="fw-bold mb-3">Pilih Bank ${method === 'va' ? 'Virtual Account' : ''}</h6>`;
-                banks.forEach(bank => {
-                    html += `
-                <div class="card shadow-sm mb-2 p-3 payment-step-box" style="cursor:pointer"
-                    onclick="enterAmount('${method}', '${bank}')">
-                    <i class="bi bi-bank2 text-primary me-2"></i>
-                    <strong>${bank}</strong>
-                </div>
-            `;
-                });
-
-            } else if (method === 'qr') {
-                html += `
-            <h6 class="fw-bold mb-3">Masukkan Nominal</h6>
-            <input type="number" id="amountInput" class="form-control mb-3" placeholder="Contoh: 100000">
-            <button class="btn btn-primary w-100" onclick="showPaymentForm('qr')">Lanjutkan</button>
-        `;
-            } else if (method === 'card') {
-                html += `
-            <h6 class="fw-bold mb-3">Isi Data Kartu</h6>
-            <input type="text" class="form-control mb-2" placeholder="Nomor Kartu">
-            <input type="text" class="form-control mb-2" placeholder="Nama di Kartu">
-            <div class="row mb-2">
-                <div class="col"><input type="text" class="form-control" placeholder="MM/YY"></div>
-                <div class="col"><input type="text" class="form-control" placeholder="CVV"></div>
+            <div class="mb-3">
+                <label for="amount" class="form-label">Masukkan Nominal</label>
+                <input type="number" name="amount" class="form-control" placeholder="Contoh: 50000" required min="1000">
             </div>
-            <input type="number" class="form-control mb-3" placeholder="Nominal (Rp)">
-            <button class="btn btn-success w-100" onclick="topupSuccess()">Bayar Sekarang</button>
-        `;
-            }
+
+            <button type="submit" class="btn btn-success w-100">Top Up Sekarang</button>
+        </form>
+    `;
 
             document.getElementById('dynamicForm').innerHTML = html;
         }
@@ -862,38 +822,38 @@
 
 
         // wallet chart dummy
+
+        const monthlyData = @json($monthlyData);
+
+        function formatCurrency(value) {
+            return 'Rp' + parseInt(value).toLocaleString('id-ID');
+        }
+
+        const groupedData = {};
+        monthlyData.forEach(item => {
+            const m = item.month;
+            const t = item.type;
+            const v = parseFloat(item.total);
+
+            if (!groupedData[m]) groupedData[m] = {
+                in: 0,
+                out: 0
+            };
+            groupedData[m][t] = v;
+        });
+
+        const labels = Object.keys(groupedData);
+        const incomeData = labels.map(m => groupedData[m].in || 0);
+        const expenseData = labels.map(m => groupedData[m].out || 0);
+
         const ctx = document.getElementById('walletChart').getContext('2d');
-
-        const chartData = {
-            all: {
-                labels: ['April', 'Mei', 'Juni'],
-                income: [32000, 28000, 35000],
-                expense: [10500, 8000, 9500],
-            },
-            april: {
-                labels: ['01', '10', '20', '30'],
-                income: [4000, 7000, 5000, 6000],
-                expense: [1500, 2000, 1800, 2200],
-            },
-            may: {
-                labels: ['05', '15', '25'],
-                income: [6000, 9000, 11000],
-                expense: [3000, 2500, 2200],
-            },
-            june: {
-                labels: ['01', '10', '20', '30'],
-                income: [8000, 12000, 9000, 1000],
-                expense: [2000, 3000, 1500, 2000],
-            },
-        };
-
         const walletChart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: chartData.all.labels,
+                labels: labels,
                 datasets: [{
                         label: 'Pemasukan',
-                        data: chartData.all.income,
+                        data: incomeData,
                         borderColor: '#198754',
                         backgroundColor: 'rgba(25, 135, 84, 0.1)',
                         tension: 0.4,
@@ -903,7 +863,7 @@
                     },
                     {
                         label: 'Pengeluaran',
-                        data: chartData.all.expense,
+                        data: expenseData,
                         borderColor: '#dc3545',
                         backgroundColor: 'rgba(220, 53, 69, 0.1)',
                         tension: 0.4,
@@ -911,7 +871,7 @@
                         pointRadius: 5,
                         pointHoverRadius: 7,
                     },
-                ],
+                ]
             },
             options: {
                 responsive: true,
@@ -923,35 +883,22 @@
                 plugins: {
                     legend: {
                         labels: {
-                            color: isDarkMode() ? '#ccc' : '#333',
+                            color: '#333',
                             font: {
                                 weight: 'bold'
                             }
                         }
                     },
                     tooltip: {
-                        backgroundColor: isDarkMode() ? '#2a2a2a' : '#fff',
-                        titleColor: isDarkMode() ? '#fff' : '#000',
-                        bodyColor: isDarkMode() ? '#ddd' : '#333',
-                        borderColor: isDarkMode() ? '#444' : '#ccc',
-                        borderWidth: 1
+                        callbacks: {
+                            label: ctx => `${ctx.dataset.label}: ${formatCurrency(ctx.raw)}`
+                        }
                     }
                 },
                 scales: {
-                    x: {
-                        ticks: {
-                            color: isDarkMode() ? '#aaa' : '#333'
-                        },
-                        grid: {
-                            color: isDarkMode() ? '#333' : '#eee'
-                        }
-                    },
                     y: {
                         ticks: {
-                            color: isDarkMode() ? '#aaa' : '#333'
-                        },
-                        grid: {
-                            color: isDarkMode() ? '#333' : '#eee'
+                            callback: value => formatCurrency(value)
                         }
                     }
                 }
