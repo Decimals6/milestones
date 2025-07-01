@@ -143,7 +143,8 @@
                 class="badge bg-danger position-absolute top-50 start-50 translate-middle px-4">Not&nbsp;Available</span>
         @endif
 
-        <button class="btn btn-light position-absolute top-0 end-0 m-2 like-btn{{ $fav ? ' active' : '' }}">
+        <button class="btn btn-light position-absolute top-0 end-0 m-2 like-btn{{ $fav ? ' active' : '' }}"
+            data-id="{{ $id }}" onclick="toggleLike(this)">
             <i class="bi bi-heart{{ $fav ? '-fill' : '' }}"></i>
         </button>
     </div>
@@ -151,8 +152,10 @@
     <div class="p-3">
         <h6 class="fw-semibold mb-1 text-truncate">{{ $title }}</h6>
         <div class="d-flex justify-content-between align-items-center small mb-3">
-            <span class="text-warning"><i class="bi bi-star-fill me-1"></i>{{ number_format($rating, 1) }}</span>
-            <span class="fw-bold text-danger">Rp. {{ number_format($price, 2, ',', '.') }}</span>
+            <span class="text-warning">
+                <i class="bi bi-star-fill me-1"></i>{{ number_format((float) $rating, 1) }}
+            </span>
+            <span class="fw-bold text-danger">Rp. {{ number_format((float) $price, 2, ',', '.') }}</span>
         </div>
 
         <div class="action-area" data-action="{{ $id }}">
