@@ -345,7 +345,7 @@
                 <i class="bi bi-person"></i> Profile
             </a>
 
-            <a href="{{ route('orders') }}" class="menu-item">
+            <a href="{{ route('orders.index') }}" class="menu-item">
                 <i class="bi bi-receipt"></i> My Order
             </a>
 

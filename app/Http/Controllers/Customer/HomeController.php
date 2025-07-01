@@ -22,7 +22,6 @@ class HomeController extends Controller
         ->take(2)
         ->get()
         ->map(function ($category) {
-            // Ambil 3 teratas dari yang udah di-random
             $category->foods = $category->foods->take(3);
             return $category;
         });

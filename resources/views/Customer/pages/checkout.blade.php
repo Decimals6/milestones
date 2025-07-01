@@ -2,15 +2,6 @@
 @section('title', 'Checkout')
 
 @section('content')
-    @php
-        $subtotal = 67000;
-        $delivery = 0;
-        $tax = round($subtotal * 0.1);
-        $fee = 5000;
-        $total = $subtotal + $delivery + $tax + $fee;
-        $walletBalance = 150000;
-    @endphp
-
     <style>
         :root {
             --bg-light: #fff;
@@ -73,8 +64,8 @@
         }
 
         /* ==========================
-                                               MODAL & BOTTOMSHEET STYLE
-                                            =========================== */
+                                                                                                   MODAL & BOTTOMSHEET STYLE
+                                                                                                =========================== */
 
         .modal {
             z-index: 3000;
@@ -148,8 +139,8 @@
         }
 
         /* ==========================
-                                               BOTTOM SHEET MOBILE STYLE
-                                            =========================== */
+                                                                                                   BOTTOM SHEET MOBILE STYLE
+                                                                                                =========================== */
         @media (max-width: 768px) {
             .modal.bottomsheet .modal-dialog {
                 margin: 0;
@@ -195,8 +186,8 @@
         }
 
         /* ===============================
-                                   MODAL - BOTTOMSHEET RESPONSIVE
-                                ================================= */
+                                                                                       MODAL - BOTTOMSHEET RESPONSIVE
+                                                                                    ================================= */
 
         .modal.modal-bottom-sheet {
             z-index: 3000;
@@ -275,8 +266,8 @@
 
 
         /* ==========================
-                                               UI COMPONENT ENHANCEMENT
-                                            =========================== */
+                                                                                                   UI COMPONENT ENHANCEMENT
+                                                                                                =========================== */
 
         .card-option {
             cursor: pointer;
@@ -407,37 +398,17 @@
         <div class="card-box">
             <h6 class="mb-3">Payment Method</h6>
 
-            <div class="payment-option mb-2" onclick="document.getElementById('cash').checked = true">
-                <label class="form-check-label d-flex align-items-center" for="cash">
-                    <input class="form-check-input me-3" type="radio" name="pay" id="cash" value="cash">
-                    <i class="bi bi-cash-coin text-success fs-5 me-2"></i>
-                    <strong>Cash</strong>
-                </label>
-            </div>
-
-            <div class="payment-option mb-2" onclick="document.getElementById('card').checked = true">
-                <label class="form-check-label d-flex align-items-center" for="card">
-                    <input class="form-check-input me-3" type="radio" name="pay" id="card" value="card">
-                    <i class="bi bi-credit-card-2-front text-primary fs-5 me-2"></i>
-                    <strong>Debit / Card / Bank Transfer</strong>
-                </label>
-            </div>
-
-            <div class="payment-option mb-2" onclick="document.getElementById('wallet').checked = true">
-                <label class="form-check-label d-flex align-items-center" for="wallet">
-                    <input class="form-check-input me-3" type="radio" name="pay" id="wallet" value="wallet">
-                    <i class="bi bi-wallet2 text-warning fs-5 me-2"></i>
-                    <strong>Wallet</strong>
-                </label>
-            </div>
-
-            <div class="payment-option" onclick="document.getElementById('qr').checked = true">
-                <label class="form-check-label d-flex align-items-center" for="qr">
-                    <input class="form-check-input me-3" type="radio" name="pay" id="qr" value="qr">
-                    <i class="bi bi-qr-code-scan text-info fs-5 me-2"></i>
-                    <strong>QR Code</strong>
-                </label>
-            </div>
+            @foreach ($paymentMethods as $method)
+                <div class="payment-option mb-2"
+                    onclick="document.getElementById('payment_{{ $method->id }}').checked = true">
+                    <label class="form-check-label d-flex align-items-center" for="payment_{{ $method->id }}">
+                        <input class="form-check-input me-3" type="radio" name="pay" id="payment_{{ $method->id }}"
+                            value="{{ $method->id }}">
+                        <i class="bi {{ $method->icon ?? 'bi-credit-card' }} fs-5 me-2"></i>
+                        <strong>{{ $method->name }}</strong>
+                    </label>
+                </div>
+            @endforeach
         </div>
 
 
@@ -445,16 +416,26 @@
         <div class="card-box">
             <h6 class="mb-3">Order Summary</h6>
             <ul class="list-group list-group-flush">
-                <li class="d-flex justify-content-between"><span
-                        class="summary-label">Subtotal</span><span>Rp{{ number_format($subtotal) }}</span></li>
-                <li class="d-flex justify-content-between"><span
-                        class="summary-label">Delivery</span><span>Rp{{ number_format($delivery) }}</span></li>
-                <li class="d-flex justify-content-between"><span class="summary-label">Tax
-                        10%</span><span>Rp{{ number_format($tax) }}</span></li>
-                <li class="d-flex justify-content-between"><span class="summary-label">Service
-                        Fee</span><span>Rp{{ number_format($fee) }}</span></li>
-                <li class="d-flex justify-content-between fw-bold"><span>Total</span><span
-                        class="text-danger">Rp{{ number_format($total) }}</span></li>
+                <li class="d-flex justify-content-between">
+                    <span class="summary-label">Subtotal</span>
+                    <span>Rp{{ number_format($subtotal) }}</span>
+                </li>
+                <li class="d-flex justify-content-between">
+                    <span class="summary-label">Delivery</span>
+                    <span>Rp0</span> {{-- Kalau delivery nggak dipakai --}}
+                </li>
+                <li class="d-flex justify-content-between">
+                    <span class="summary-label">Tax 11%</span>
+                    <span>Rp{{ number_format($tax) }}</span>
+                </li>
+                <li class="d-flex justify-content-between">
+                    <span class="summary-label">Service Fee</span>
+                    <span>Rp{{ number_format($fee) }}</span>
+                </li>
+                <li class="d-flex justify-content-between fw-bold">
+                    <span>Total</span>
+                    <span class="text-danger">Rp{{ number_format($total) }}</span>
+                </li>
             </ul>
         </div>
 
@@ -686,16 +667,79 @@
         </div>
     </div>
 
+    <div class="modal fade" id="paymentModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-center p-4">
+                <h5 class="mb-3">Konfirmasi Pesanan</h5>
+                <p>Yakin ingin melanjutkan pembayaran?</p>
+                <button class="btn btn-primary w-100" onclick="finish()">Ya, Lanjutkan</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         let timer = null,
             remain = 0;
 
         function pay() {
-            const method = document.querySelector('input[name=pay]:checked').value;
-            if (method === 'cash') {
-                return finish();
+            const method = document.querySelector('input[name=pay]:checked')?.value;
+
+            if (!method) {
+                return Swal.fire('Pilih metode pembayaran dulu!', '', 'warning');
             }
-            openPay(method);
+
+            window.selectedMethod = method;
+
+            const modal = new bootstrap.Modal(document.getElementById('paymentModal'));
+            modal.show();
+        }
+
+        function finish() {
+            resetTimers();
+            window.orderFinalized = true;
+
+            const payMethod = window.selectedMethod;
+            const note = document.querySelector('textarea')?.value ?? '';
+
+            if (!payMethod) {
+                return Swal.fire('Pilih metode pembayaran dulu!', '', 'warning');
+            }
+
+            fetch("{{ route('checkout.store') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    },
+                    body: JSON.stringify({
+                        payment_method: payMethod,
+                        note: note,
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data?.message?.includes('Gagal')) {
+                        return Swal.fire('Gagal', data.message, 'error');
+                    }
+
+                    // Kosongkan keranjang
+                    fetch("{{ route('cart.meta.clear') }}", {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    });
+
+                    // Tutup semua modal aktif
+                    document.querySelectorAll('.modal.show').forEach(m => bootstrap.Modal.getInstance(m).hide());
+
+                    // Tampilkan konfirmasi
+                    Swal.fire('Order Berhasil!', '', 'success').then(() => location.href = "{{ route('orders.index') }}");
+                })
+                .catch(err => {
+                    Swal.fire('Oops!', 'Terjadi kesalahan server.', 'error');
+                    console.error(err);
+                });
         }
 
         function openPay(method) {
@@ -735,12 +779,6 @@
 
         function resetTimers() {
             clearInterval(timer);
-        }
-
-        function finish() {
-            resetTimers();
-            document.querySelectorAll('.modal.show').forEach(m => bootstrap.Modal.getInstance(m).hide());
-            Swal.fire('Order Confirmed!', '', 'success').then(() => location.href = "{{ route('orders') }}");
         }
 
         function cap(s) {
@@ -784,5 +822,13 @@
                 }
             });
         }
+
+        window.addEventListener('beforeunload', function() {
+            if (window.orderFinalized) return;
+
+            navigator.sendBeacon("{{ route('cart.meta.clear') }}", new URLSearchParams({
+                _token: '{{ csrf_token() }}'
+            }));
+        });
     </script>
 @endsection

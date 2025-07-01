@@ -181,4 +181,20 @@ class CartController extends Controller
         session(['cart_total_qty' => 0]); // Reset badge cart
         return back()->with('status', 'Keranjang berhasil dikosongkan.');
     }
+
+    public function saveMeta(Request $request)
+    {
+        session([
+            'order_mode' => $request->input('mode', 'dine'),
+            'order_place' => $request->input('place', null),
+        ]);
+
+        return response()->json(['status' => 'ok']);
+    }
+
+    public function clearMeta()
+    {
+        session()->forget(['order_mode', 'order_place']);
+        return response()->json(['status' => 'cleared']);
+    }
 }

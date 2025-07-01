@@ -291,6 +291,7 @@
             body.modal-open {
                 overflow: hidden;
             }
+        }
     </style>
 
     <div class="container-custom">

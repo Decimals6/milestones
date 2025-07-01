@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Customer\CartController;
 use App\Http\Controllers\Customer\CategoryController;
+use App\Http\Controllers\Customer\CheckoutController;
 use App\Http\Controllers\Customer\FoodController;
 use App\Http\Controllers\Customer\HomeController;
 use App\Http\Controllers\Customer\MenuController;
@@ -23,7 +24,14 @@ Route::middleware(['auth'])->prefix('customer')->group(function () {
         Route::post('cart/update', 'update')->name('cart.update');
         Route::delete('cart/remove', 'remove')->name('cart.remove');
         Route::delete('cart/clear', 'clear')->name('cart.clear');
+        Route::post('/cart/meta', 'saveMeta')->name('cart.meta.store');
+        Route::post('/cart/meta/clear', [CartController::class, 'clearMeta'])->name('cart.meta.clear');
+
     });
+
+    Route::resource('/checkout', CheckoutController::class);
+
+    Route::resource('/orders', CheckoutController::class);
 
     Route::get('/profile', function () {
         return view('Customer.pages.profile');
@@ -36,10 +44,6 @@ Route::middleware(['auth'])->prefix('customer')->group(function () {
     Route::get('/wallet', function () {
         return view('Customer.pages.wallet');
     })->name('wallet');
-
-    Route::get('/orders', function () {
-        return view('Customer.pages.orders');
-    })->name('orders');
 
     Route::get('/refer', function () {
         return view('Customer.pages.refer');
@@ -56,10 +60,6 @@ Route::middleware(['auth'])->prefix('customer')->group(function () {
     Route::get('/loyalty', function () {
         return view('Customer.pages.loyalty');
     })->name('loyalty');
-
-    Route::get('/checkout', function () {
-        return view('Customer.pages.checkout');
-    })->name('checkout');
 
     Route::get('/track', function () {
         return view('Customer.pages.track');

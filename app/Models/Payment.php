@@ -10,8 +10,9 @@ class Payment extends Model
     use HasFactory;
 
     protected $fillable = [
-        'nane',
+        'name',
         'description',
+        'is_active',
     ];
 
     public function order()

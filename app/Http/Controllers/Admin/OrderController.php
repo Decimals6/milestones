@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class OrderController extends Controller
 {
@@ -24,5 +25,16 @@ class OrderController extends Controller
         ])->findOrFail($id);
 
         return view('admin.order.show', compact('order'));
+    }
+
+    public function update(Request $request, Order $order)
+    {
+        $validated = $request->validate([
+            'status' => ['required', Rule::in(['pending', 'processing', 'completed', 'cancelled'])],
+        ]);
+
+        $order->update(['status' => $validated['status']]);
+
+        return response()->json(['message' => 'Order status updated successfully.']);
     }
 }

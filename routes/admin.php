@@ -6,6 +6,7 @@
     use App\Http\Controllers\Admin\FoodController;
     use App\Http\Controllers\Admin\FoodItemController;
     use App\Http\Controllers\Admin\OrderController;
+    use App\Http\Controllers\Admin\PaymentController;
     use App\Http\Controllers\Admin\UserController;
     use Illuminate\Support\Facades\Route;
 
@@ -25,7 +26,9 @@
 
         Route::resource('food-items', FoodItemController::class);
 
-        Route::resource('/orders', OrderCOntroller::class);
+        Route::resource('payments', PaymentController::class);
+
+        Route::resource('orders', OrderController::class)->only(['index', 'show', 'update']);
 
         Route::resource('/users', UserController::class);
     });

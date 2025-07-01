@@ -73,6 +73,18 @@
                             <svg class="fill-icon">
                                 <use href="{{ asset('assets/svg/icon-sprite.svg#fill-task') }}"></use>
                             </svg><span>Orders</span></a></li>
+                    <li class="sidebar-list">
+                        <a class="sidebar-link sidebar-title" href="{{ route('payments.index') }}">
+                            <svg class="stroke-icon">
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-credit-card') }}"></use>
+                            </svg>
+                            <svg class="fill-icon">
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-credit-card') }}"></use>
+                            </svg>
+                            <span>Payment Methods</span>
+                        </a>
+                    </li>
+
                 </ul>
             </div>
             <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>

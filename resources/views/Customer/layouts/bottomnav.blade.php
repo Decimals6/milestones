@@ -87,7 +87,7 @@
             </a>
         </div>
 
-        <a href="{{ route('orders') }}" class="text-center {{ request()->routeIs('orders') ? 'nav-active' : '' }}">
+        <a href="{{ route('orders.index') }}" class="text-center {{ request()->routeIs('orders') ? 'nav-active' : '' }}">
             <i class="bi bi-shop"></i><small>Order</small>
         </a>
 

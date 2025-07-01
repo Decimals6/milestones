@@ -249,26 +249,37 @@
             </div>
 
             <div class="d-flex justify-content-end mt-4">
-                <button class="btn btn-danger btn-checkout"
-                    onclick="window.location.href='{{ route('checkout') }}'">Checkout</button>
+                <button class="btn btn-danger btn-checkout" onclick="submitOrderMeta()">Checkout</button>
             </div>
         @endif
     </div>
 
     {{-- Script ini dikembalikan ke struktur asli yang menggunakan reload halaman --}}
     <script>
-        // [FIXED] Fungsi ini sekarang menerima cart_item_id, bukan food_id
+        function updateCartBadge(totalQty) {
+            const badge = document.getElementById('badge-cart');
+            if (!badge) return;
+
+            badge.textContent = totalQty;
+            badge.classList.add('btn-shake');
+
+            setTimeout(() => {
+                badge.classList.remove('btn-shake');
+            }, 300);
+        }
+
         function changeQty(cartItemId, action) {
             $.ajax({
                 url: "{{ route('cart.update') }}",
                 method: 'POST',
                 data: {
                     _token: "{{ csrf_token() }}",
-                    cart_item_id: cartItemId, // Mengirim cart_item_id
+                    cart_item_id: cartItemId,
                     action: action
                 },
                 success: function(res) {
-                    location.reload(); // Alur asli: reload halaman setelah berhasil
+                    updateCartBadge(res.cart_total_qty);
+                    location.reload();
                 },
                 error: function() {
                     alert('Gagal memperbarui kuantitas.');
@@ -276,7 +287,9 @@
             });
         }
 
-        // [FIXED] Fungsi ini sekarang menerima cart_item_id, bukan food_id
+
+
+
         function removeItem(cartItemId) {
             if (!confirm('Anda yakin ingin menghapus item ini?')) return;
 
@@ -285,10 +298,11 @@
                 method: 'DELETE',
                 data: {
                     _token: "{{ csrf_token() }}",
-                    cart_item_id: cartItemId // Mengirim cart_item_id
+                    cart_item_id: cartItemId
                 },
-                success: function() {
-                    location.reload(); // Alur asli: reload halaman setelah berhasil
+                success: function(response) {
+                    updateCartBadge(response.cart_total_qty);
+                    location.reload();
                 },
                 error: function() {
                     alert('Gagal menghapus item.');
@@ -296,12 +310,10 @@
             });
         }
 
-        // Fungsi clear cart, dikembalikan ke struktur asli
         document.getElementById('clear-cart-btn-original')?.addEventListener('click', function(e) {
             e.preventDefault();
             if (!confirm('Anda yakin ingin mengosongkan keranjang?')) return;
 
-            // Menggunakan form untuk request DELETE agar lebih standar
             let form = document.createElement('form');
             form.method = 'POST';
             form.action = "{{ route('cart.clear') }}";
@@ -324,6 +336,25 @@
             } else if (placeCard) {
                 placeCard.style.display = 'none';
             }
+        }
+
+        function submitOrderMeta() {
+            const mode = document.querySelector('input[name="mode"]:checked')?.value;
+            const place = document.querySelector('input[name="place"]:checked')?.value;
+
+            fetch("{{ route('cart.meta.store') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({
+                    mode,
+                    place
+                })
+            }).then(() => {
+                window.location.href = "{{ route('checkout.index') }}";
+            });
         }
 
         togglePlace();
