@@ -1,5 +1,6 @@
     <?php
 
+    use App\Http\Controllers\Admin\CategoryFoodController;
     use App\Http\Controllers\Admin\CategoryItemController;
     use App\Http\Controllers\Admin\DashboardController;
     use App\Http\Controllers\Admin\FoodController;
@@ -16,7 +17,11 @@
         Route::post('/admin/foods/default-items', [FoodController::class, 'storeDefaultItem'])->name('foods.default-items.store');
         Route::delete('/admin/foods/default-items/{id}', [FoodController::class, 'destroyDefaultItem'])->name('foods.default-items.destroy');
 
-        Route::resource('categories', CategoryItemController::class);
+        Route::resource('categoriesItems', CategoryItemController::class);
+
+        Route::resource('categoriesFoods', CategoryFoodController::class)->parameters([
+            'category-food' => 'categoryFood'
+        ]);
 
         Route::resource('food-items', FoodItemController::class);
 

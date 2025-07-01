@@ -43,7 +43,9 @@
                                     <tr>
                                         <th>Name</th>
                                         <th>Description</th>
-                                        <th>Foods</th>
+                                        <th>Selection Type</th>
+                                        <th>Builder Tags</th>
+                                        <th>Items</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -52,10 +54,20 @@
                                         <tr id="cat-row-{{ $cat->id }}">
                                             <td>{{ $cat->name }}</td>
                                             <td>{{ $cat->description }}</td>
+
+                                            <td><span
+                                                    class="badge {{ $cat->selection_type == 'radio' ? 'badge-light-primary' : 'badge-light-primary' }}">{{ ucfirst($cat->selection_type) }}</span>
+                                            </td>
                                             <td>
-                                                <a href="#" class="text-info show-foods-btn" data-bs-toggle="modal"
-                                                    data-bs-target="#showFoodsModal"
-                                                    data-json='@json($cat->foods->pluck('name', 'id'))'>
+                                                @foreach ($cat->builder_tags ?? [] as $tag)
+                                                    <span class="badge badge-light-secondary">{{ ucfirst($tag) }}</span>
+                                                @endforeach
+                                            </td>
+
+                                            <td>
+                                                <a href="#" class="text-info show-items-btn" data-bs-toggle="modal"
+                                                    data-bs-target="#showItemsModal"
+                                                    data-json='@json($cat->foodItems->pluck('name'))'>
                                                     <i class="icon-list"></i>
                                                 </a>
                                             </td>
@@ -101,7 +113,33 @@
                                                                 <label>Description</label>
                                                                 <textarea name="description" class="form-control">{{ $cat->description }}</textarea>
                                                             </div>
+                                                            <div class="mb-3">
+                                                                <label>Selection Type</label>
+                                                                <select name="selection_type" class="form-select" required>
+                                                                    <option value="checkbox"
+                                                                        {{ $cat->selection_type == 'checkbox' ? 'selected' : '' }}>
+                                                                        Checkbox (Bisa pilih banyak)</option>
+                                                                    <option value="radio"
+                                                                        {{ $cat->selection_type == 'radio' ? 'selected' : '' }}>
+                                                                        Radio (Hanya bisa pilih satu)</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label>Builder Tags (Untuk "Build Your Own")</label>
+                                                                <div class="builder-tags-group">
+                                                                    <label><input type="checkbox" name="builder_tags[]"
+                                                                            value="bowl"
+                                                                            {{ in_array('bowl', $cat->builder_tags ?? []) ? 'checked' : '' }}>
+                                                                        Bowl</label>
+                                                                    <label><input type="checkbox" name="builder_tags[]"
+                                                                            value="bread"
+                                                                            {{ in_array('bread', $cat->builder_tags ?? []) ? 'checked' : '' }}>
+                                                                        Bread/Sandwich</label>
+                                                                    {{-- Tambahkan tag lain di sini jika perlu --}}
+                                                                </div>
+                                                            </div>
                                                         </div>
+
                                                         <div class="modal-footer">
                                                             <button type="submit" class="btn btn-success">Update</button>
                                                             <button type="button" class="btn btn-secondary"
@@ -142,6 +180,22 @@
                             <label class="form-label">Description</label>
                             <textarea name="description" class="form-control" rows="3"></textarea>
                         </div>
+                        <div class="mb-3">
+                            <label>Selection Type</label>
+                            <select name="selection_type" class="form-select" required>
+                                <option value="checkbox" selected>Checkbox (Bisa pilih banyak)</option>
+                                <option value="radio">Radio (Hanya bisa pilih satu)</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label>Builder Tags (Untuk "Build Your Own")</label>
+                            <div class="builder-tags-group">
+                                <label><input type="checkbox" name="builder_tags[]" value="bowl"> Bowl</label>
+                                <label><input type="checkbox" name="builder_tags[]" value="bread">
+                                    Bread/Sandwich</label>
+                                {{-- Tambahkan tag lain di sini jika perlu --}}
+                            </div>
+                        </div>
                     </div>
 
                     <div class="modal-footer">
@@ -155,15 +209,15 @@
 
 
     <!-- Show Foods Modal -->
-    <div class="modal fade" id="showFoodsModal" tabindex="-1">
+    <div class="modal fade" id="showItemsModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-md">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Category Foods List</h5>
+                    <h5 class="modal-title">Items List</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body" style="max-height:400px; overflow-y:auto">
-                    <ul id="foodsList"></ul>
+                    <ul id="itemsList"></ul>
                 </div>
             </div>
         </div>
@@ -198,7 +252,7 @@
             // Create
             $('#createCategoryForm').on('submit', function(e) {
                 e.preventDefault();
-                $.post("{{ route('categories.store') }}", $(this).serialize())
+                $.post("{{ route('categoriesItems.store') }}", $(this).serialize())
                     .done(res => {
                         sessionStorage.setItem('category_success', res.message);
                         location.reload();
@@ -227,7 +281,7 @@
                 e.preventDefault();
                 const id = $(this).data('id');
                 $.ajax({
-                    url: "{{ url('admin/categories') }}/" + id,
+                    url: "{{ url('admin/categoriesItems') }}/" + id,
                     method: 'PUT',
                     data: $(this).serialize(),
                     success: function(res) {
@@ -251,7 +305,7 @@
                     confirmButtonText: 'Yes, delete it!'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        $.post("{{ url('admin/categories') }}/" + id, {
+                        $.post("{{ url('admin/categoriesItems') }}/" + id, {
                                 _method: 'DELETE',
                                 _token: '{{ csrf_token() }}'
                             })
@@ -265,15 +319,15 @@
             });
 
             // Show foods list
-            $(document).on('click', '.show-foods-btn', function() {
+            $(document).on('click', '.show-items-btn', function() {
                 const foods = $(this).data('json');
-                const $list = $('#foodsList');
+                const $list = $('#itemsList');
                 $list.empty();
 
-                $list.append(`<li><strong>Total Foods:</strong> ${Object.keys(foods).length}</li>`);
+                $list.append(`<li><strong>Total Items:</strong> ${Object.keys(foods).length}</li>`);
 
                 if (Object.keys(foods).length === 0) {
-                    $list.append('<li><em>No foods available.</em></li>');
+                    $list.append('<li><em>No Items available.</em></li>');
                 } else {
                     Object.entries(foods).forEach(([id, name]) => {
                         $list.append(`<li>${name}</li>`);
