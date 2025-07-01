@@ -197,4 +197,10 @@ class CartController extends Controller
         session()->forget(['order_mode', 'order_place']);
         return response()->json(['status' => 'cleared']);
     }
+
+    public function getQty()
+    {
+        $totalQty = CartItem::where('user_id', auth()->id())->sum('quantity');
+        return response()->json(['qty' => $totalQty]);
+    }
 }

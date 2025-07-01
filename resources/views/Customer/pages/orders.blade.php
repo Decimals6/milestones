@@ -414,11 +414,23 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const savedQty = sessionStorage.getItem('cartQtyAfterCheckout');
-            if (savedQty !== null) {
-                updateCartBadge(parseInt(savedQty));
-                sessionStorage.removeItem('cartQtyAfterCheckout');
-            }
+            fetch("{{ route('cart.meta.qty') }}")
+                .then(res => res.json())
+                .then(data => {
+                    if (typeof updateCartBadge === 'function') {
+                        updateCartBadge(data.qty || 0);
+                    }
+                });
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch("{{ route('cart.meta.qty') }}")
+                .then(res => res.json())
+                .then(data => {
+                    if (typeof updateCartBadge === 'function') {
+                        updateCartBadge(data.qty || 0);
+                    }
+                });
         });
 
 

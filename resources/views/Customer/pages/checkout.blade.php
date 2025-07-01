@@ -742,7 +742,7 @@
                         }
                     }).then(() => {
                         const currentQty = parseInt(document.getElementById('badge-cart')?.textContent || '0');
-                        const checkoutQty = {{ $cartQty ?? 0 }}; // jumlah item di checkout
+                        const checkoutQty = {{ $cartQty ?? 0 }};
                         const newQty = Math.max(currentQty - checkoutQty, 0);
 
                         sessionStorage.setItem('cartQtyAfterCheckout', newQty);

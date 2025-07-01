@@ -79,7 +79,8 @@ Route::middleware(['auth'])->prefix('customer')->group(function () {
     })->name('menu');
 
     Route::delete('/customer/delete-account', function () {
-        // Dummy response
         return back()->with('status', 'Dummy: Account deleted (simulasi).');
     })->name('customer.delete-account');
+
+    Route::get('/cart/meta/qty', [CartController::class, 'getQty'])->name('cart.meta.qty');
 });
