@@ -319,7 +319,7 @@
                     <button id="pm-like" class="btn btn-sm like-btn"><i class="bi bi-heart"></i></button>
                 </div>
                 <div class="mod-hdr mb-3">
-                    <img id="pm-img">
+                    <img id="pm-img" class="rounded">
                     <div class="flex-grow-1">
                         <h5 id="pm-title" class="mb-1"></h5>
                         <div class="small mb-1">
@@ -330,9 +330,11 @@
                         <span class="mod-badge" id="pm-badge"></span>
                     </div>
                 </div>
-                <div id="pm-opts"></div>
+
+                <div id="pm-opts" class="mb-3">
+                </div>
                 <div class="d-flex justify-content-between align-items-center total-row mb-3">
-                    <span>Total</span><span>Rp <span id="pm-total"></span></span>
+                    <span>Total</span><span class="h5 text-danger"><span id="pm-total"></span></span>
                 </div>
                 <div class="d-flex gap-3 mb-2">
                     <div class="d-flex align-items-center gap-2">
@@ -409,25 +411,22 @@
 
 
         function money(n) {
-            return 'Rp' + n.toLocaleString()
+            return 'Rp' + new Intl.NumberFormat('id-ID').format(n);
         }
 
         function calcTotal() {
-            let total = prod.price * prod.qty
-            const optSection = qs('#pm-opts')
-            optSection.querySelectorAll('.opt-line').forEach(row => {
-                const chk = row.querySelector('input[type=checkbox]')
-                if (chk && chk.checked) {
-                    const q = +row.querySelector('.qty')?.textContent || 0
-                    const pr = +row.querySelector('.price-sm')?.textContent.replace(/\D/g, '') || 0
-                    total += q * pr
-                }
-                const radio = row.querySelector('input[type=radio]')
-                if (radio && radio.checked) {
-                    total += +radio.dataset.price
-                }
-            })
-            qs('#pm-total').textContent = money(total)
+            if (!prod.price) return; // Jangan kalkulasi jika produk belum ada
+
+            let total = prod.price * prod.qty;
+            const optSection = qs('#pm-opts');
+
+            // Kalkulasi untuk semua input yang dipilih (radio & checkbox)
+            // [FIXED] Logika disatukan dan dibuat lebih andal dengan membaca `data-price`
+            optSection.querySelectorAll('input:checked').forEach(input => {
+                total += +input.dataset.price * prod.qty;
+            });
+
+            qs('#pm-total').textContent = money(total);
         }
 
         function chgMainQty(d) {
@@ -495,94 +494,73 @@
         }
 
         function populate(data) {
+            // 1. Set data produk utama ke variabel global `prod`
             prod = {
-                ...data,
+                id: data.id,
+                title: data.name,
+                price: data.base_price,
+                image: data.image_path,
                 qty: 1
-            }
-            qs('#pm-img').src = prod.image
-            qs('#pm-title').textContent = prod.title
-            qs('#pm-price').textContent = prod.price.toLocaleString()
-            qs('#pm-rating').textContent = '4.0'
-            qs('#pm-rev').textContent = ' ( 0 Reviews )'
+            };
+
+            // 2. Isi elemen-elemen dasar di modal
+            qs('#pm-img').src = prod.image;
+            qs('#pm-title').textContent = prod.title;
+            qs('#pm-price').textContent = prod.price.toLocaleString('id-ID');
+            qs('#pm-rating').textContent = data.rating || '4.0';
+            qs('#pm-rev').textContent = `(${data.reviews || 0} Reviews)`;
             qs('#pm-rev').href = "{{ route('reviews') }}";
+            qs('#pm-qty').textContent = '1';
+            qs('#pm-badge').textContent = 'Veg'; // Bisa dibuat dinamis juga jika perlu
+            qs('#pm-like i').className = liked.has(prod.id) ? 'bi bi-heart-fill' : 'bi bi-heart';
+            qs('#pm-like').onclick = () => toggleLike(prod.id, true);
 
-            qs('#pm-qty').textContent = '1'
-            qs('#pm-badge').textContent = 'Veg'
-            qs('#pm-like i').className = liked.has(prod.id) ? 'bi bi-heart-fill' : 'bi bi-heart'
-            qs('#pm-like').classList.toggle('active', liked.has(prod.id))
-            qs('#pm-like').onclick = () => toggleLike(prod.id, true)
+            // 3. [MODIFIKASI INTI] Hapus data statis dan gunakan data dari server
+            const opts = data.options; // `data.options` berasal dari AJAX call
+            const defaultIds = data.default_ids; // `data.default_ids` juga dari AJAX
+            const wrapper = qs('#pm-opts');
+            wrapper.innerHTML = ''; // Kosongkan opsi lama
 
-
-            const opts = [{
-                    group: 'Borhani',
-                    optional: false,
-                    items: [{
-                            name: '1 ltr',
-                            price: 12
-                        },
-                        {
-                            name: 'half',
-                            price: 6
-                        }
-                    ]
-                },
-                {
-                    group: 'Addons',
-                    optional: true,
-                    items: [{
-                            name: 'Coke',
-                            price: 5
-                        },
-                        {
-                            name: 'Water',
-                            price: 15
-                        }
-                    ]
-                }
-            ]
-            const wrapper = qs('#pm-opts')
-            wrapper.innerHTML = ''
+            // 4. Loop melalui data dinamis untuk membangun HTML
             opts.forEach(group => {
-                const box = document.createElement('div')
-                box.className = 'opt-box'
-                box.innerHTML = `
-    <div class="opt-hd">
-      ${group.group}
-      ${group.optional ? '<span class="badge text-bg-light small">Optional</span>' : ''}
-    </div>`
+                const box = document.createElement('div');
+                box.className = 'opt-box';
+
+                // Tentukan tipe input dan badge berdasarkan data dari backend
+                const inputType = group.selection_type === 'radio' ? 'radio' : 'checkbox';
+                const badge = inputType === 'checkbox' ? '<span class="badge text-bg-light small">Optional</span>' :
+                    '';
+
+                box.innerHTML = `<div class="opt-hd">${group.category_name} ${badge}</div>`;
 
                 group.items.forEach((it, i) => {
-                    const line = document.createElement('div')
-                    line.className = 'opt-line'
+                    const line = document.createElement('div');
+                    line.className = 'opt-line';
 
-                    if (group.optional) {
-                        line.innerHTML = `
-        <div class="form-check m-0 flex-grow-1">
-          <input type="checkbox" class="form-check-input chk" id="addon-${group.group}-${i}">
-          <label class="form-check-label ms-1" for="addon-${group.group}-${i}">${it.name}</label>
-        </div>
-        <div class="addon-qty d-flex align-items-center gap-1">
-          <span class="price-sm me-2">${money(it.price)}</span>
-          <button class="btn-qty outline mini" disabled>−</button>
-          <span class="qty small">0</span>
-          <button class="btn-qty outline mini" disabled>＋</button>
-        </div>`
-                    } else {
-                        line.innerHTML = `
-        <div class="form-check m-0 flex-grow-1">
-          <input type="radio" class="form-check-input" name="opt-${group.group}" data-price="${it.price}" id="radio-${group.group}-${i}">
-          <label class="form-check-label ms-1" for="radio-${group.group}-${i}">${it.name}</label>
-        </div>
-        <div class="price-sm">${money(it.price)}</div>`
-                    }
+                    // Cek apakah item ini harus terpilih secara default
+                    const isChecked = defaultIds.includes(it.id) ? 'checked' : '';
 
-                    box.appendChild(line)
-                })
+                    // [FIXED] Generate radio atau checkbox berdasarkan `inputType`
+                    // dan pastikan KEDUANYA memiliki `data-price`
+                    line.innerHTML = `
+                        <div class="form-check m-0 flex-grow-1">
+                            <input type="${inputType}"
+                                   class="form-check-input"
+                                   name="opt-${group.category_name.replace(/\s+/g, '-')}"
+                                   data-price="${it.extra_price}"
+                                   value="${it.id}"
+                                   id="item-${it.id}" ${isChecked}>
+                            <label class="form-check-label ms-1" for="item-${it.id}">${it.name}</label>
+                        </div>
+                        <div class="price-sm">${it.extra_price > 0 ? '+ ' + money(it.extra_price) : ''}</div>`;
 
-                wrapper.appendChild(box)
-            })
+                    box.appendChild(line);
+                });
+                wrapper.appendChild(box);
+            });
 
-            calcTotal()
+            // 5. Panggil fungsi kalkulasi harga awal
+            calcTotal();
         }
 
         function updateCard(id) {
@@ -618,18 +596,33 @@
         document.addEventListener('click', e => {
             const btn = e.target.closest('.add-btn')
             if (btn) {
-                const el = btn.closest('[data-id]')
-                const id = el.dataset.id
-                const title = el.dataset.title
-                const price = +el.dataset.price
-                const image = el.dataset.image
-                populate({
-                    id,
-                    title,
-                    price,
-                    image
-                })
-                modal.show()
+                const el = btn.closest('[data-id]');
+                const id = el.dataset.id;
+
+                // [MODIFIKASI] Lakukan AJAX call untuk mendapatkan detail produk
+                $.ajax({
+                    url: `/customer/foods/${id}/details`, // Pastikan route ini ada
+                    method: 'GET',
+                    beforeSend: function() {
+                        // Tampilkan modal dengan loading spinner
+                        qs('#pm-opts').innerHTML =
+                            '<div class="text-center p-5"><div class="spinner-border text-danger" role="status"></div></div>';
+                        modal.show();
+                    },
+                    success: function(response) {
+                        // Jika berhasil, panggil fungsi populate LAMA Anda dengan data BARU dari server
+                        populate(response);
+                    },
+                    error: function() {
+                        alert('Gagal memuat detail produk.');
+                        modal.hide();
+                    }
+                });
+            }
+
+            // Event listener untuk kalkulasi ulang harga (dari kode lama Anda)
+            if (e.target.matches('input[type=radio], input[type=checkbox]')) {
+                calcTotal();
             }
 
             if (e.target.classList.contains('mini')) {

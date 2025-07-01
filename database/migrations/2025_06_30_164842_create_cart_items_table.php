@@ -16,6 +16,11 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('food_id')->constrained('foods')->onDelete('cascade');
             $table->unsignedInteger('quantity');
+
+            $table->decimal('base_price', 15, 2);
+            $table->decimal('addons_total_price', 15, 2);
+            $table->json('customizations');
+
             $table->timestamps();
         });
     }
